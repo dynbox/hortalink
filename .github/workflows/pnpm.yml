@@ -1,0 +1,31 @@
+name: Node CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install
+        uses: pnpm/action-setup@v2
+        with:
+          version: 'latest'
+          run_install: false
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'latest'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm recursive install
+
+      - name: Build
+        run: pnpm recursive run build
+
+      - name: Test
+        run: pnpm recursive test
