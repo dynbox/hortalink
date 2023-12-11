@@ -1,8 +1,6 @@
 name: Issue report
-about: '🐛 Report an issue'
-title: ''
+description: '🐛 Report an issue'
 labels: ['type: bug']
-assignees: ''
 
 body:
   - type: textarea

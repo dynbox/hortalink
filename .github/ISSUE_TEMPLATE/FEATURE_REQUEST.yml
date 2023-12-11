@@ -1,8 +1,6 @@
 name: Feature request
-about: "💡 Suggest an idea"
-title: ''
+description: "💡 Suggest an idea"
 labels: 'type: feature'
-assignees: ''
 
 body:
   - type: textarea
