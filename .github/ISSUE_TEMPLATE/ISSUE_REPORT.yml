@@ -1,6 +1,7 @@
 name: Issue report
 description: '🐛 Report an issue'
 labels: ['type: bug']
+projects: OpenLift/2
 
 body:
   - type: textarea

@@ -1,6 +1,7 @@
 name: Feature request
 description: "💡 Suggest an idea"
 labels: 'type: feature'
+projects: OpenLift/2
 
 body:
   - type: textarea
