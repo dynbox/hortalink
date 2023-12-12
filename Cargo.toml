@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "common",
+    "core",
+    "rest-server",
+    "microservices"
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
