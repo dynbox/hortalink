@@ -2,3 +2,14 @@
 name = "rest-server"
 version = "0.1.0"
 edition.workspace = true
+
+[dependencies]
+common = { path = "../common"}
+core = { path = "../core" }
+
+sqlx.workspace = true
+axum.workspace = true
+redis.workspace = true
+tokio.workspace = true
+log.workspace = true
+env_logger.workspace = true
