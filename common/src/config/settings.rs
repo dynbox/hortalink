@@ -20,26 +20,26 @@ impl Settings {
             let config = Self::read(path);
             config.echo_env();
 
-            config
-        } else {
-            let enviroment = std::env::var("ENVIRONMENT").unwrap_or("PRODUCTION".to_string());
+            return config;
+        }
+        
+        let enviroment = std::env::var("ENVIRONMENT").unwrap_or("PRODUCTION".to_string());
 
-            match enviroment.as_str() {
-                "PRODUCTION" | "STAGE" => {
-                    info!("Creating settings for {enviroment} environment...");
+        match enviroment.as_str() {
+            "PRODUCTION" | "STAGE" => {
+                info!("Creating settings for {enviroment} environment...");
 
-                    Self::new_from_env()
-                }
-                "DEVELOPMENT" => {
-                    Self::write(path);
-                    warn!("A new settings file has been created at '{}'. Please edit the variables. Exiting...", path.display().to_string());
+                Self::new_from_env()
+            }
+            "DEVELOPMENT" => {
+                Self::write(path);
+                warn!("A new settings file has been created at '{}'. Please edit the variables. Exiting...", path.display().to_string());
 
-                    process::exit(1);
-                }
-                _ => {
-                    error!("Environment not recognized. Please edit '.cargo/config.toml' enviroment variable. Exiting...");
-                    process::exit(1);
-                }
+                process::exit(1);
+            }
+            _ => {
+                error!("Environment not recognized. Please edit '.cargo/config.toml' enviroment variable. Exiting...");
+                process::exit(1);
             }
         }
     }
