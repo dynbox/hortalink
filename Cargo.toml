@@ -9,3 +9,7 @@ resolver = "2"
 
 [workspace.package]
 edition = "2021"
+
+[workspace.dependencies]
+# https://github.com/serde-rs/serde
+serde = { version = "1.0.193", default-features = false, features = ["derive"] }
