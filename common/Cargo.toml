@@ -5,6 +5,7 @@ edition.workspace = true
 
 [dependencies]
 serde.workspace = true
+log.workspace = true
 
 # https://github.com/toml-rs/toml
 toml = { version = "0.8.8" }

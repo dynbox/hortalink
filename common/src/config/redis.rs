@@ -1,6 +1,6 @@
-use std::env;
-
 use serde::{Deserialize, Serialize};
+
+use super::env_var;
 
 #[derive(Serialize, Deserialize)]
 pub struct RedisSettings {
@@ -10,11 +10,11 @@ pub struct RedisSettings {
 }
 
 impl RedisSettings {
-    pub fn new() -> Self {
-        Self { 
-            host: env::var("REDIS_HOST").unwrap(), 
-            port: env::var("REDIS_PORT").unwrap().parse::<u16>().unwrap(), 
-            db: env::var("REDIS_DB").unwrap().parse::<u8>().unwrap(),
+    pub(super) fn new_from_env() -> Self {
+        Self {
+            host: env_var("REDIS_HOST"),
+            port: env_var("REDIS_PORT").parse::<u16>().unwrap(),
+            db: env_var("REDIS_DB").parse::<u8>().unwrap(),
         }
     }
 
@@ -25,7 +25,7 @@ impl RedisSettings {
 
 impl Default for RedisSettings {
     fn default() -> Self {
-        Self { 
+        Self {
             host: "127.0.0.1".to_string(),
             port: 6379,
             db: 0,

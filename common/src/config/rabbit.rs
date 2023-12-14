@@ -1,6 +1,6 @@
-use std::env;
-
 use serde::{Deserialize, Serialize};
+
+use super::env_var;
 
 #[derive(Serialize, Deserialize)]
 pub struct RabbitSettings {
@@ -11,17 +11,20 @@ pub struct RabbitSettings {
 }
 
 impl RabbitSettings {
-    pub fn new() -> Self {
+    pub(super) fn new_from_env() -> Self {
         Self {
-            username: env::var("RABBIT_USERNAME").unwrap(),
-            password: env::var("RABBIT_PASSWORD").unwrap(),
-            host: env::var("RABBIT_HOST").unwrap(),
-            port: env::var("RABBIT_PORT").unwrap().parse::<u16>().unwrap(),
+            username: env_var("RABBIT_USERNAME"),
+            password: env_var("RABBIT_PASSWORD"),
+            host: env_var("RABBIT_HOST"),
+            port: env_var("RABBIT_PORT").parse::<u16>().unwrap(),
         }
     }
 
     pub fn url(&self) -> String {
-        format!("amqp://{}:{}@{}:{}", self.username, self.password, self.host, self.port)
+        format!(
+            "amqp://{}:{}@{}:{}",
+            self.username, self.password, self.host, self.port
+        )
     }
 }
 

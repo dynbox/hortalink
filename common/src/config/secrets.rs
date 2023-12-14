@@ -1,6 +1,6 @@
-use std::env;
-
 use serde::{Deserialize, Serialize};
+
+use super::env_var;
 
 #[derive(Serialize, Deserialize)]
 pub struct Secrets {
@@ -8,9 +8,9 @@ pub struct Secrets {
 }
 
 impl Secrets {
-    pub fn new() -> Self {
+    pub(super) fn new_from_env() -> Self {
         Self {
-            jwt: env::var("JWT_KEY").unwrap(),
+            jwt: env_var("JWT_KEY"),
         }
     }
 
@@ -19,7 +19,7 @@ impl Secrets {
     }
 }
 
-impl Default for Secrets { 
+impl Default for Secrets {
     fn default() -> Self {
         Self {
             jwt: String::default(),

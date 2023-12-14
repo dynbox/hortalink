@@ -13,3 +13,7 @@ edition = "2021"
 [workspace.dependencies]
 # https://github.com/serde-rs/serde
 serde = { version = "1.0.193", default-features = false, features = ["derive"] }
+# https://github.com/rust-lang/log
+log = { version = "0.4.20" }
+# https://github.com/rust-cli/env_logger
+env_logger = { version = "0.10.1" }

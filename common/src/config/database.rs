@@ -1,6 +1,6 @@
-use std::env;
-
 use serde::{Deserialize, Serialize};
+
+use super::env_var;
 
 #[derive(Serialize, Deserialize)]
 pub struct DatabaseSettings {
@@ -12,15 +12,15 @@ pub struct DatabaseSettings {
 }
 
 impl DatabaseSettings {
-    pub fn new(database: &str) -> Self {
+    pub(super) fn new_from_env(database: &str) -> Self {
         let env_db = database.replace('-', "_").to_uppercase();
 
         Self {
-            username: env::var(format!("DB_{env_db}_USERNAME")).unwrap(),
+            username: env_var(format!("DB_{env_db}_USERNAME")),
             database: database.to_string(),
-            password: env::var(format!("DB_{env_db}_PASSWORD")).unwrap(),
-            host: env::var(format!("DB_{env_db}_HOST")).unwrap(),
-            port: env::var(format!("DB_{env_db}_PORT")).unwrap().parse::<u16>().unwrap(),
+            password: env_var(format!("DB_{env_db}_PASSWORD")),
+            host: env_var(format!("DB_{env_db}_HOST")),
+            port: env_var(format!("DB_{env_db}_PORT")).parse::<u16>().unwrap(),
         }
     }
 

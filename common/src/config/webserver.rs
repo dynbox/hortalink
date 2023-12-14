@@ -1,8 +1,6 @@
-use std::env;
-
 use serde::{Deserialize, Serialize};
 
-use super::database::DatabaseSettings;
+use super::{database::DatabaseSettings, env_var};
 
 #[derive(Serialize, Deserialize)]
 pub struct WebServerSettings {
@@ -12,11 +10,11 @@ pub struct WebServerSettings {
 }
 
 impl WebServerSettings {
-    pub fn new() -> Self {
+    pub(super) fn new_from_env() -> Self {
         Self {
-            host: env::var("API_SERVER_HOST").unwrap(),
-            port: env::var("API_SERVER_PORT").unwrap().parse::<u16>().unwrap(),
-            database: DatabaseSettings::new("hortalink"),
+            host: env_var("API_SERVER_HOST"),
+            port: env_var("API_SERVER_PORT").parse::<u16>().unwrap(),
+            database: DatabaseSettings::new_from_env("hortalink"),
         }
     }
 
@@ -34,7 +32,7 @@ impl Default for WebServerSettings {
         Self {
             host: "localhost".to_string(),
             port: 443,
-            database: DatabaseSettings::default()
+            database: DatabaseSettings::default(),
         }
     }
 }
