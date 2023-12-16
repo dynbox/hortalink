@@ -3,7 +3,6 @@ members = [
     "common",
     "core",
     "rest-server",
-    "cdn-server",
     "microservices"
 ]
 resolver = "2"
