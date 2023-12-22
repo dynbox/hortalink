@@ -4,7 +4,7 @@ use log::{error, info, warn};
 
 use super::{
     rabbit::RabbitSettings, redis::RedisSettings, secrets::Secrets, webserver::WebServerSettings,
-    Settings,
+    cdn_server::CdnServer, Settings,
 };
 
 impl Settings {
@@ -56,6 +56,7 @@ impl Settings {
     fn new_from_env() -> Self {
         Self {
             webserver: WebServerSettings::new_from_env(),
+            cdn_server: CdnServer::new_from_env(),
             redis: RedisSettings::new_from_env(),
             rabbitmq: RabbitSettings::new_from_env(),
             secrets: Secrets::new_from_env(),
