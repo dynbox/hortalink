@@ -8,10 +8,6 @@ pub struct SqlxManager {
     pub pool: Pool<Postgres>,
 }
 
-pub trait Table {
-    fn statement() -> String;
-}
-
 impl SqlxManager {
     pub async fn new(settings: &DatabaseSettings) -> Self {
         Self {
@@ -27,17 +23,6 @@ impl SqlxManager {
         pool_options.connect(&settings.url())
             .await
             .expect("Failed to connect to Postgres server")
-    }
-
-    pub async fn register_tables(&self, statements: Vec<String>) {
-        trace!("Trying to register {} tables", statements.len());
-
-        for table in statements {
-            sqlx::query(&table)
-                .execute(&self.pool)
-                .await
-                .unwrap();
-        }
     }
 
     fn configure_pool() -> PoolOptions<Postgres> {
