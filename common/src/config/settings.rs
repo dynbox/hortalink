@@ -66,5 +66,6 @@ impl Settings {
     fn echo_env(&self) {
         self.webserver.echo_env();
         self.secrets.echo_env();
+        self.cdn_server.echo_env();
     }
 }
