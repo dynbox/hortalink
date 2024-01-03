@@ -7,8 +7,8 @@ edition.workspace = true
 common = { path = "../common"}
 core = { path = "../core" }
 
-sqlx.workspace = true
-amqprs.workspace = true
-tokio.workspace = true
-log.workspace = true
-env_logger.workspace = true
+sqlx = { workspace = true }
+amqprs = { workspace = true }
+tokio = { workspace = true }
+log = { workspace = true }
+env_logger = { workspace = true }

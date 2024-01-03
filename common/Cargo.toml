@@ -4,8 +4,7 @@ version = "0.1.0"
 edition.workspace = true
 
 [dependencies]
-serde.workspace = true
-log.workspace = true
+serde = { workspace = true }
+log = { workspace = true }
 
-# https://github.com/toml-rs/toml
 toml = { version = "0.8.8" }
