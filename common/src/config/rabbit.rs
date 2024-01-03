@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::env_var;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct RabbitSettings {
     pub username: String,
     pub password: String,

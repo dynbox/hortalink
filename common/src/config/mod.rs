@@ -13,7 +13,7 @@ pub mod settings;
 pub mod webserver;
 pub mod cdn_server;
 
-#[derive(Serialize, Deserialize, Default)]
+#[derive(Serialize, Deserialize, Default, Clone)]
 pub struct Settings {
     pub webserver: WebServerSettings,
     #[serde(rename="cdn-server")]

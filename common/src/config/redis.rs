@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::env_var;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct RedisSettings {
     pub host: String,
     pub port: u16,
