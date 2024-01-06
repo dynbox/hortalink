@@ -3,7 +3,8 @@ members = [
     "common",
     "core",
     "rest-server",
-    "microservices"
+    "microservices",
+    "cdn-server"
 ]
 resolver = "2"
 
@@ -12,7 +13,7 @@ edition = "2021"
 
 [workspace.dependencies]
 # https://github.com/launchbadge/sqlx
-sqlx = { version = "0.7.3", default-features = false, features = [ "runtime-tokio", "tls-rustls", "postgres", "macros" ] }
+sqlx = { version = "0.7.3", default-features = false, features = [ "runtime-tokio", "tls-rustls", "postgres", "macros", "uuid" ] }
 # https://github.com/tokio-rs/tokio
 tokio = { version = "1.35.0", default-features = false, features = ["macros", "rt-multi-thread"] }
 # https://github.com/tokio-rs/axum

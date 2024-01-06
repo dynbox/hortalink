@@ -4,7 +4,7 @@ use log::{error, info, warn};
 
 use super::{
     rabbit::RabbitSettings, redis::RedisSettings, secrets::Secrets, webserver::WebServerSettings,
-    Settings,
+    cdn_server::CdnServer, Settings,
 };
 
 impl Settings {
@@ -23,11 +23,11 @@ impl Settings {
             return config;
         }
         
-        let enviroment = std::env::var("ENVIRONMENT").unwrap_or("PRODUCTION".to_string());
+        let environment = std::env::var("ENVIRONMENT").unwrap_or("PRODUCTION".to_string());
 
-        match enviroment.as_str() {
+        match environment.as_str() {
             "PRODUCTION" | "STAGE" => {
-                info!("Creating settings for {enviroment} environment...");
+                info!("Creating settings for {environment} environment...");
 
                 Self::new_from_env()
             }
@@ -38,7 +38,7 @@ impl Settings {
                 process::exit(1);
             }
             _ => {
-                error!("Environment not recognized. Please edit '.cargo/config.toml' enviroment variable. Exiting...");
+                error!("Environment not recognized. Please edit '.cargo/config.toml' environment variable. Exiting...");
                 process::exit(1);
             }
         }
@@ -56,6 +56,7 @@ impl Settings {
     fn new_from_env() -> Self {
         Self {
             webserver: WebServerSettings::new_from_env(),
+            cdn_server: CdnServer::new_from_env(),
             redis: RedisSettings::new_from_env(),
             rabbitmq: RabbitSettings::new_from_env(),
             secrets: Secrets::new_from_env(),
