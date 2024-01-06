@@ -31,7 +31,7 @@ impl Default for WebServerSettings {
     fn default() -> Self {
         Self {
             host: "localhost".to_string(),
-            port: 443,
+            port: 5443,
             database: DatabaseSettings::default(),
         }
     }
