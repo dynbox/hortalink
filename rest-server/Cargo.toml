@@ -5,13 +5,18 @@ edition.workspace = true
 
 [dependencies]
 common = { path = "../common"}
-core = { path = "../core" }
+app_core = { path = "../core" }
 
-sqlx = { workspace = true }
+sqlx = { workspace = true, features = ["migrate"] }
 amqprs = { workspace = true }
 tokio = { workspace = true }
 log = { workspace = true }
 env_logger = { workspace = true }
 serde = { workspace = true }
-axum = { workspace = true }
+axum = { workspace = true, features = ["form"] }
 serde_json = { workspace = true }
+axum-login = { workspace = true }
+tower-sessions = { workspace = true }
+
+async-trait = { version = "0.1.77" }
+password-auth = { version = "1.0.0" }

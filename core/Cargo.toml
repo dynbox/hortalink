@@ -1,12 +1,12 @@
 [package]
-name = "core"
+name = "app_core"
 version = "0.1.0"
 edition.workspace = true
 
 [dependencies]
 common = { path = "../common" }
 
-sqlx.workspace = true
-redis.workspace = true
+sqlx = { workspace = true }
+redis = { workspace = true }
 amqprs = { workspace = true, features = ["urispec"] }
-log.workspace = true
+log = { workspace = true }

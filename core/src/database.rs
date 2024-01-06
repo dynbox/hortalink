@@ -1,4 +1,4 @@
-use log::{info, trace};
+use log::info;
 use sqlx::{Pool, Postgres};
 use sqlx::pool::PoolOptions;
 use sqlx::postgres::PgPoolOptions;

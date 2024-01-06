@@ -5,7 +5,7 @@ edition.workspace = true
 
 [dependencies]
 common = { path = "../common"}
-core = { path = "../core" }
+app_core = { path = "../core" }
 
 sqlx = { workspace = true }
 amqprs = { workspace = true }
