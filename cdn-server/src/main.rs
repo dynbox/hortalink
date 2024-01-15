@@ -1,5 +1,5 @@
 use axum::Router;
-use core::database::SqlxManager;
+use app_core::database::SqlxManager;
 use common::config::Settings;
 
 #[tokio::main]
