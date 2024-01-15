@@ -11,6 +11,6 @@ pub fn router() -> Router<AppState> {
         .route("/auth/login", post(post::login))
         .route("/auth/logout", get(get::logout))
         .route("/auth/sign", post(post::sign))
-        .route("/oauth/:oauth_type", get(post::oauth))
+        .route("/oauth/:oauth_type", post(post::oauth))
         .route("/oauth/callback/:oauth_type", get(get::oauth_callback))
 }
