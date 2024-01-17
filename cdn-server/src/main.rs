@@ -5,7 +5,7 @@ use common::config::Settings;
 #[tokio::main]
 async fn main() {
     let settings = Settings::new("application.toml");
-    let database = SqlxManager::new(&settings.webserver.database)
+    let database = SqlxManager::new(&settings.cdn_server.database)
         .await;
 
     let router = Router::new()
