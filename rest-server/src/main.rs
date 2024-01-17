@@ -1,20 +1,16 @@
-use axum::Router;
-use core::database::SqlxManager;
-use common::config::Settings;
+use crate::app::WebApp;
+
+mod routes;
+mod models;
+mod app;
+pub mod json;
+mod provider;
 
 #[tokio::main]
 async fn main() {
-    let settings = Settings::new("application.toml");
-    let database = SqlxManager::new(&settings.webserver.database)
-        .await;
+    env_logger::init();
 
-    let router = Router::new()
-        .with_state(database.pool);
-
-    let listener = tokio::net::TcpListener::bind(settings.webserver.url())
+    WebApp::new().await
+        .serve()
         .await
-        .unwrap();
-    axum::serve(listener, router)
-        .await
-        .expect("Failed to start axum server");
 }

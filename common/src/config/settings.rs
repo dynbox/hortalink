@@ -1,9 +1,10 @@
 use std::{fs, path::Path, process};
 
 use log::{error, info, warn};
+use crate::config::web::WebApp;
 
 use super::{
-    rabbit::RabbitSettings, redis::RedisSettings, secrets::Secrets, webserver::WebServerSettings,
+    rabbit::RabbitSettings, redis::RedisSettings, secrets::Secrets, web::WebServerSettings,
     cdn_server::CdnServer, Settings,
 };
 
@@ -57,6 +58,7 @@ impl Settings {
         Self {
             webserver: WebServerSettings::new_from_env(),
             cdn_server: CdnServer::new_from_env(),
+            webapp: WebApp::new_from_env(),
             redis: RedisSettings::new_from_env(),
             rabbitmq: RabbitSettings::new_from_env(),
             secrets: Secrets::new_from_env(),
@@ -65,7 +67,6 @@ impl Settings {
 
     fn echo_env(&self) {
         self.webserver.echo_env();
-        self.secrets.echo_env();
         self.cdn_server.echo_env();
     }
 }

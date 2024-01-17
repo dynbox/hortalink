@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 use crate::config::cdn_server::CdnServer;
+use crate::config::web::WebApp;
 
 use self::{
-    rabbit::RabbitSettings, redis::RedisSettings, secrets::Secrets, webserver::WebServerSettings,
+    rabbit::RabbitSettings, redis::RedisSettings, secrets::Secrets, web::WebServerSettings,
 };
 
 pub mod database;
@@ -10,14 +11,17 @@ pub mod rabbit;
 pub mod redis;
 pub mod secrets;
 pub mod settings;
-pub mod webserver;
+pub mod web;
 pub mod cdn_server;
 
 #[derive(Serialize, Deserialize, Default, Clone)]
 pub struct Settings {
+    #[serde(rename="web-server")]
     pub webserver: WebServerSettings,
     #[serde(rename="cdn-server")]
     pub cdn_server: CdnServer,
+    #[serde(rename="web-app")]
+    pub webapp: WebApp,
     pub redis: RedisSettings,
     pub rabbitmq: RabbitSettings,
     pub secrets: Secrets,
