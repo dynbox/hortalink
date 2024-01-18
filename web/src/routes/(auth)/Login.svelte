@@ -1,9 +1,3 @@
-<script lang="ts">
-
-
-</script>
-
-
 <form method="post" action="http://localhost:5443/login">
     <input name="email" type="email" placeholder="E-mail ou número de telefone:" />
     <input name="password" type="password" placeholder="Senha:" />

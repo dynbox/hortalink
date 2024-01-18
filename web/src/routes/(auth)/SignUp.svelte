@@ -1,8 +1,3 @@
-<script lang="ts">
-
-</script>
-
-
 <form method="post" action="http://localhost:5443/sign">
     <input name="email" type="email" placeholder="E-mail:" />
     <input name="phone" type="number" placeholder="Número de telefone:" />

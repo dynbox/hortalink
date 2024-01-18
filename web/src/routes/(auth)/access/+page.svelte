@@ -1,16 +1,11 @@
 <script lang="ts">
     import '$lib/css/auth/acess.css';
-    import google from "$lib/google.png";
-    import facebook from "$lib/facebook.png";
-    import linkedin from "$lib/linkedin.png";
+    import google from '$lib/assets/google.svg';
+    import facebook from '$lib/assets/facebook.svg';
+    import linkedin from '$lib/assets/linkedin.svg';
     import { fade } from 'svelte/transition';
-
     import Login from "../Login.svelte";
     import Signup from "../SignUp.svelte";
-    
-
-
-    import { createEventDispatcher } from 'svelte';
 
     let componentRendered = "access"
 
@@ -20,12 +15,6 @@
             componentRendered = component
         }, 300)
     }
-
-
-    
-    const dispatch = createEventDispatcher();
-
-
 </script>
 
 <main class="fader">
@@ -36,37 +25,30 @@
             <div class="external-options">
                 <button type="button">
                     <img src={google} alt="google logo">
-                    <span>iniciar com Google</span>
+                    <span>Iniciar com Google</span>
                 </button>
                 <button type="button">
                     <img src={facebook} alt="facebook logo">
-                    <span>iniciar com Facebook</span>
+                    <span>Iniciar com Facebook</span>
                 </button>
                 <button type="button">
                     <img src={linkedin} alt="linkedin logo">
-                    <span>iniciar com Linkedin</span>
+                    <span>Iniciar com Linkedin</span>
                 </button>
             </div>
         </form>
-
-    {:else if componentRendered === "login"}
+    {:else}
     <div class="fader" transition:fade={{ delay: 250, duration: 300 }}>
         <div class="top-bar">
             <button on:click={()=> changeComponent('access')}>Voltar</button>
         </div>
 
-        <Login/>
-    </div>
-
-    {:else if componentRendered === "signup"}
-        <div class="fader" transition:fade={{ delay: 250, duration: 300 }}>
-            <div class="top-bar">
-                <button on:click={()=> changeComponent('access')}>Voltar</button>
-            </div>
-
+        {#if componentRendered === "login"}
+            <Login/>
+        {:else}
             <Signup/>
-        </div>
-
+        {/if}
+    </div>
     {/if}
 </main>
 
@@ -85,8 +67,8 @@
         align-items: center;
         justify-content: center;
     }
-    .external-options > button > img {
-        width: 30%;
-    }
 
+    .external-options > button > img {
+        width: 35px;
+    }
 </style>
