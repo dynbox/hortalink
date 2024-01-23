@@ -1,20 +1,18 @@
 <script>
-    import UserInfo from "../UserInfo.svelte";
-
-
+    import UserInfo from "./UserInfo.svelte";
 </script>
 
 <div class="fader">
-
     <UserInfo />
-    <a href="">configuracoes</a>
-    <a href="">idioma</a>
+    <a href="">Configurações</a>
+    <a href="">Fonte</a>
 </div>
 
 <style>
-    .fader{
+    .fader {
         padding: 1rem;
     }
+
     a {
         padding: 1rem;
         margin-top: 1rem;

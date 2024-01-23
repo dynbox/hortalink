@@ -1,7 +1,6 @@
-<script>
-// @ts-nocheck
-
-        import google from '$lib/assets/google.svg';
+<script lang="ts">
+    // @ts-nocheck
+    import google from '$lib/assets/google.svg';
 
     let fakeAPI = {
         fotoPerfil: google,
@@ -12,27 +11,26 @@
         email: "alysontxr@gmail.com",
         senha: "Leleco23@"
     }
-
     
     function handleFileChange(event) {
-    const file = event.target.files[0];
+        const file = event.target.files[0];
 
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        fakeAPI.fotoPerfil = reader.result;
-      };
-      reader.readAsDataURL(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                fakeAPI.fotoPerfil = reader.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
     }
-  }
-
 </script>
 
 <div class="component-elements">
     <form action="">
         
         <img src={fakeAPI.fotoPerfil} alt="">
-        <label for="foto-perfil">clique para trocar foto</label>
+        <label for="foto-perfil">Editar foto</label>
         <input type="file" name="foto-perfil" id="foto-perfil" on:change={handleFileChange} />
 
         <input bind:value={fakeAPI.apelido} type="text" name="apelido" id="apelido" placeholder="seu apelido: " />
@@ -49,11 +47,12 @@
 </div>
 
 <style>
-.component-elements{
+.component-elements {
     width: 100%;
     display: grid;
     place-items: center;
 }
+
 form {
     display: flex;
     flex-direction: column;
@@ -67,11 +66,12 @@ form {
     box-shadow: rgba(79, 161, 79, 0.2) 0px 2px 8px 0px;
 }
 
-img{
+img {
     width: 30%;
     border-radius: 30%;
     background-color: #ddd;
 }
+
 input[type="file"] {
     display: none;
 }
