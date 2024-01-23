@@ -6,14 +6,9 @@ use sqlx::types::Uuid;
 #[derive(Clone, Debug, Serialize, Deserialize, FromRow)]
 pub struct User {
     id: Uuid,
-    name: Option<String>,
     pub email: String,
-    phone: Option<i32>,
-    account_type: i32,
     pub password: Option<String>,
-    address: Option<String>,
-    avatar: Option<String>,
-    bio: Option<String>
+    access_token: Option<String>
 }
 
 impl AuthUser for User {
@@ -27,7 +22,10 @@ impl AuthUser for User {
         if let Some(password) = &self.password {
             password.as_bytes()
         } else {
-            "".as_bytes()
+            self.access_token
+                .as_ref()
+                .unwrap()
+                .as_bytes()
         }
     }
 }

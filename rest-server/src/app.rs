@@ -34,7 +34,7 @@ impl WebApp {
         }
     }
 
-    fn router(&self) -> Router {
+    async fn router(&self) -> Router {
         let state = AppState {
             pool: self.database.pool.clone(),
             settings: self.settings.clone(),
@@ -43,6 +43,7 @@ impl WebApp {
         Router::new()
             .nest("/api",
                   routes::auth::router()
+                      .merge(routes::users::router())
             )
             .with_state(state)
             .layer(self.auth_layer())
@@ -72,7 +73,7 @@ impl WebApp {
         let listener = tokio::net::TcpListener::bind(self.settings.webserver.url())
             .await
             .unwrap();
-        axum::serve(listener, self.router())
+        axum::serve(listener, self.router().await)
             .await
             .expect("Failed to start axum server");
     }
