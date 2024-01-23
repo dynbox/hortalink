@@ -45,7 +45,7 @@
 
         {#if componentRendered === "login"}
             <Login/>
-        {:else}
+        {:else if componentRendered === "signup"}
             <Signup/>
         {/if}
     </div>
