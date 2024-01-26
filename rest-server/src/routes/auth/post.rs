@@ -6,7 +6,7 @@ use tower_sessions::Session;
 use crate::app::AppState;
 use crate::json::auth::{Credentials, LoginCreds, SignCreds};
 use crate::provider::AuthProviders;
-use crate::routes::auth::backend::{AuthSession};
+use crate::routes::auth::backend::AuthSession;
 
 pub async fn login(
     mut auth_session: AuthSession,

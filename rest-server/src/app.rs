@@ -1,5 +1,5 @@
 use axum::{Extension, Router};
-use axum_login::{AuthManagerLayer, AuthManagerLayerBuilder};
+use axum_login::{login_required, AuthManagerLayer, AuthManagerLayerBuilder};
 use sqlx::{Pool, Postgres};
 use tower_sessions::{Expiry, PostgresStore, SessionManagerLayer};
 use tower_sessions::cookie::time::Duration;
@@ -43,7 +43,10 @@ impl WebApp {
         Router::new()
             .nest("/api",
                   routes::auth::router()
-                      .merge(routes::users::router())
+                      .merge(
+                        routes::users::router()
+                            .route_layer(login_required!(Backend))
+                    )
             )
             .with_state(state)
             .layer(self.auth_layer())

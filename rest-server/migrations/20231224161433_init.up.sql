@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS
         address varchar(255),
         avatar varchar(64),
         bio varchar(511),
-        access_token text
-    );
+        access_token text,
+        username VARCHAR(255));
 
 CREATE SCHEMA IF NOT EXISTS "tower_sessions";
 

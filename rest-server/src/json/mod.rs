@@ -1,2 +1,2 @@
 pub mod auth;
-mod users;
+pub mod users;

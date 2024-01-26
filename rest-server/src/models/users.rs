@@ -1,14 +1,18 @@
 use axum_login::AuthUser;
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
-use sqlx::types::Uuid;
+use sqlx::{types::Uuid, FromRow};
 
 #[derive(Clone, Debug, Serialize, Deserialize, FromRow)]
 pub struct User {
     id: Uuid,
     pub email: String,
     pub password: Option<String>,
-    access_token: Option<String>
+    access_token: Option<String>,
+    avatar: Option<String>,
+    username: Option<String>,
+    name: Option<String>,
+    phone: Option<String>,
+    address: Option<String>,
 }
 
 impl AuthUser for User {
