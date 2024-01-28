@@ -57,10 +57,12 @@ pub async fn oauth(
         .unwrap()
         .auth_url();
 
+    /*
     session
         .insert("oauth.csrf-state", csrf.secret())
         .await
         .expect("Serialization should not fail.");
+     */
 
     let response = AuthUrlResponse {
         auth_url: if oauth_type == "linkedin" {

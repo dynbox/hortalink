@@ -25,6 +25,7 @@ pub async fn oauth_callback(
     Query(AuthzResp { code, state: csrf }): Query<AuthzResp>,
     State(state): State<AppState>
 ) -> Response {
+    /*
     if let Some(saved_csrf) = session.remove::<String>("oauth.csrf-state").await.unwrap() {
         if csrf.secret().clone() != saved_csrf {
             return StatusCode::UNAUTHORIZED.into_response();
@@ -32,6 +33,7 @@ pub async fn oauth_callback(
     } else {
         return StatusCode::UNAUTHORIZED.into_response();
     }
+     */
 
     let provider = providers.get_provider(&oauth_type)
         .unwrap();

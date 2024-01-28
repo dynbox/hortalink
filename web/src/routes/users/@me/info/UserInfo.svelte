@@ -58,6 +58,8 @@
         if (address !== originalData.address) modifiedFields.address = address;
         if (email !== originalData.email) modifiedFields.email = email;
 
+        if (Object.keys(modifiedFields).length == 0) return;
+
         try {
             await fetch('http://localhost:5443/api/users/me', {
                 method: 'PATCH',
