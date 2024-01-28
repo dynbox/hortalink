@@ -28,7 +28,7 @@
             } else {
                 let data = await response.json()
 
-                window.open(data.auth_url, '_blank');
+                window.location.href = data.auth_url, '_blank';
             }
         } catch (error) {
             console.error('There was a problem with the fetch operation: ', error);
