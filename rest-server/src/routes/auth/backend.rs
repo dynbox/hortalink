@@ -2,6 +2,7 @@ use async_trait::async_trait;
 use axum_login::{AuthnBackend, UserId};
 use password_auth::verify_password;
 use sqlx::{Pool, Postgres};
+use sqlx::types::Uuid;
 use crate::json::auth::Credentials;
 use crate::models::users::User;
 
@@ -70,7 +71,7 @@ impl AuthnBackend for Backend {
 
     async fn get_user(&self, user_id: &UserId<Self>) -> Result<Option<Self::User>, Self::Error> {
         let user = sqlx::query_as("SELECT * FROM users WHERE id = $1")
-            .bind(user_id)
+            .bind(Uuid::parse_str(user_id).unwrap())
             .fetch_optional(&self.db)
             .await
             .map_err(Self::Error::Sqlx)?;

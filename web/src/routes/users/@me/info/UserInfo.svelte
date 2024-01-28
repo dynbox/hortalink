@@ -1,36 +1,37 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 
+    let originalData: any = {};
     let avatar = "";
     let username = "";
     let name = "";
     let phone = "";
     let address = "";
     let email = "";
-    let password = "";
 
     onMount(async () => {
         try {
-            const response = await fetch('https://fuzzy-sniffle-xpwrggw4r5h9qq4-5443.app.github.dev/api/users/me');
-            console.log(response);
+            const response = await fetch('http://localhost:5443/api/users/me', {
+                credentials: 'include'
+            });
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             } else {
-                const data = await response.json();
+                originalData = await response.json();
 
-                avatar = data.avatar || await fetch('https://api.dicebear.com/7.x/pixel-art/svg');
-                username = data.username || '';
-                name = data.name || '';
-                phone = data.phone || '';
-                address = data.address || '';
-                email = data.email || '';
-                password = data.password || '';
+                avatar = originalData.avatar || null;
+                username = originalData.username || null;
+                name = originalData.name || null;
+                phone = originalData.phone || null;
+                address = originalData.address || null;
+                email = originalData.email || null;
             }
         } catch (error) {
             console.error('There was a problem with the fetch operation: ', error);
         }
     });
-    
+
     function handleFileChange(event: Event) {
         const target = event.target as HTMLInputElement;
         const file = target.files ? target.files[0] : null;
@@ -48,31 +49,24 @@
     async function handleSubmit(event: Event) {
         event.preventDefault();
 
-        const formData = {
-            avatar,
-            username,
-            name,
-            phone,
-            address,
-            email,
-            password,
-        };
+        const modifiedFields: any = {};
+
+        if (avatar !== originalData.avatar) modifiedFields.avatar = avatar;
+        if (username !== originalData.username) modifiedFields.username = username;
+        if (name !== originalData.name) modifiedFields.name = name;
+        if (phone !== originalData.phone) modifiedFields.phone = phone;
+        if (address !== originalData.address) modifiedFields.address = address;
+        if (email !== originalData.email) modifiedFields.email = email;
 
         try {
-            const response = await fetch('https://fuzzy-sniffle-xpwrggw4r5h9qq4-5443.app.github.dev/api/users/me', {
+            await fetch('http://localhost:5443/api/users/me', {
                 method: 'PATCH',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(modifiedFields)
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            } else {
-                const data = await response.json();
-                console.log(data);
-            }
         } catch (error) {
             console.error('There was a problem with the fetch operation: ', error);
         }
@@ -81,7 +75,7 @@
 
 <div class="component-elements">
     <form on:submit={handleSubmit}>
-        
+
         <img src={avatar} alt="">
         <label for="avatar">Editar foto</label>
         <input type="file" name="avatar" id="avatar" on:change={handleFileChange} />
@@ -91,8 +85,7 @@
         <input bind:value={phone} type="number" name="phone" id="phone" placeholder="Número de celular: (63) 9 8129 4124" />
         <input bind:value={address} type="text" name="address" id="address" placeholder="Endereço: " />
         <input bind:value={email} type="email" name="email" id="email" placeholder="Email: " />
-        <input bind:value={password} type="password" name="password" id="password" placeholder="Senha: ">
-    
+
         <button type="submit">
             Salvar
         </button>

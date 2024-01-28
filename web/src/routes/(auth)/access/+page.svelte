@@ -15,6 +15,25 @@
             componentRendered = component
         }, 300)
     }
+
+    async function handleExternalLogin(oauthType: string) {
+        try {
+            const response = await fetch(`http://localhost:5443/api/oauth/${oauthType}`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            } else {
+                let data = await response.json()
+
+                window.open(data.auth_url, '_blank');
+            }
+        } catch (error) {
+            console.error('There was a problem with the fetch operation: ', error);
+        }
+    }
 </script>
 
 <main class="fader">
@@ -23,32 +42,32 @@
             <button on:click={()=>{changeComponent("login")}}>Entrar</button>
             <button on:click={()=>{changeComponent("signup")}}>Cadastre-se</button>
             <div class="external-options">
-                <button type="button">
+                <button type="button" on:click={() => handleExternalLogin('google')}>
                     <img src={google} alt="google logo">
                     <span>Iniciar com Google</span>
                 </button>
-                <button type="button">
+                <button type="button" on:click={() => handleExternalLogin('facebook')}>
                     <img src={facebook} alt="facebook logo">
                     <span>Iniciar com Facebook</span>
                 </button>
-                <button type="button">
+                <button type="button" on:click={() => handleExternalLogin('linkedin')}>
                     <img src={linkedin} alt="linkedin logo">
                     <span>Iniciar com Linkedin</span>
                 </button>
             </div>
         </form>
     {:else}
-    <div class="fader" transition:fade={{ delay: 250, duration: 300 }}>
-        <div class="top-bar">
-            <button on:click={()=> changeComponent('access')}>Voltar</button>
-        </div>
+        <div class="fader" transition:fade={{ delay: 250, duration: 300 }}>
+            <div class="top-bar">
+                <button on:click={()=> changeComponent('access')}>Voltar</button>
+            </div>
 
-        {#if componentRendered === "login"}
-            <Login/>
-        {:else if componentRendered === "signup"}
-            <Signup/>
-        {/if}
-    </div>
+            {#if componentRendered === "login"}
+                <Login/>
+            {:else if componentRendered === "signup"}
+                <Signup/>
+            {/if}
+        </div>
     {/if}
 </main>
 
