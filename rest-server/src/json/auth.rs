@@ -1,5 +1,5 @@
 use oauth2::CsrfToken;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize)]
 pub enum Credentials {
@@ -23,9 +23,8 @@ pub struct LoginCreds {
 pub struct SignCreds {
     pub email: String,
     pub name: String,
-    pub phone: String,
+    pub phone: i32,
     pub password: String,
-    pub next: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -38,4 +37,9 @@ pub struct AuthzResp {
 pub struct UserInfo {
     pub email: String,
     pub name: String
+}
+
+#[derive(Serialize)]
+pub struct AuthUrlResponse {
+    pub(crate) auth_url: String,
 }

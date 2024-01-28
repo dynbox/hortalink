@@ -20,6 +20,7 @@ amqprs = { version = "1.5.1", default-features = false, features = ["tls"] }
 serde = { version = "1.0.193", default-features = false, features = ["derive"] }
 serde_json = { version = "1.0.110" }
 log = { version = "0.4.20" }
-env_logger = { version = "0.10.1" }
-axum-login = { version = "0.12.0" }
-tower-sessions = { version = "0.9.1", default-features = false, features = ["postgres-store"] }
+env_logger = { version = "0.11.1" }
+axum-login = { version = "0.13.1" }
+tower-sessions = { version = "0.10.0" }
+tower-sessions-sqlx-store = { version = "0.10.0", features = ["postgres"] }

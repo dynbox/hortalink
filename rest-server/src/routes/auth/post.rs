@@ -4,13 +4,12 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Redirect};
 use tower_sessions::Session;
 use crate::app::AppState;
-use crate::json::auth::{Credentials, LoginCreds, SignCreds};
+use crate::json::auth::{AuthUrlResponse, Credentials, LoginCreds, SignCreds};
 use crate::provider::AuthProviders;
-use crate::routes::auth::backend::{AuthSession};
+use crate::routes::auth::backend::AuthSession;
 
 pub async fn login(
     mut auth_session: AuthSession,
-    State(state): State<AppState>,
     Json(payload): Json<LoginCreds>,
 ) -> impl IntoResponse {
     match auth_session.authenticate(Credentials::Password(payload)).await {
@@ -18,9 +17,7 @@ pub async fn login(
             if auth_session.login(&user).await.is_err() {
                 return StatusCode::INTERNAL_SERVER_ERROR.into_response();
             } else {
-                Redirect::to(
-                    &format!("{}{}", &state.settings.webapp.protocol_url(), "/")
-                ).into_response()
+                StatusCode::OK.into_response()
             }
         }
         Ok(None) => StatusCode::UNAUTHORIZED.into_response(),
@@ -35,7 +32,7 @@ pub async fn sign(
 ) -> impl IntoResponse {
     match sqlx::query("INSERT INTO users (name, email, phone, password) VALUES ($1, $2, $3, $4)")
         .bind(&payload.name).bind(&payload.email)
-        .bind(&payload.phone.parse::<i32>().unwrap())
+        .bind(&payload.phone.to_string())
         .bind(password_auth::generate_hash(&payload.password))
         .execute(&state.pool)
         .await {
@@ -45,7 +42,7 @@ pub async fn sign(
                 password: payload.password,
             };
 
-            login(auth_session, State(state.clone()), Json(creds)).await.into_response()
+            login(auth_session, Json(creds)).await.into_response()
         },
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     }
@@ -67,9 +64,13 @@ pub async fn oauth(
         .expect("Serialization should not fail.");
      */
 
-    if oauth_type == "linkedin" {
-        Redirect::to(&auth_url.as_str().replace("+", "%20")).into_response()
-    } else {
-        Redirect::to(&auth_url.as_str()).into_response()
-    }
+    let response = AuthUrlResponse {
+        auth_url: if oauth_type == "linkedin" {
+            auth_url.as_str().replace("+", "%20")
+        } else {
+            auth_url.as_str().to_string()
+        }
+    };
+
+    Json(&response).into_response()
 }

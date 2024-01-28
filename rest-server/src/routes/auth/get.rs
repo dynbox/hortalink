@@ -10,9 +10,9 @@ use crate::json::auth::{AuthzResp, Credentials, OAuthCreds};
 use crate::provider::AuthProviders;
 use crate::routes::auth::backend::AuthSession;
 
-pub async fn logout(mut auth_session: AuthSession, State(state): State<AppState>) -> impl IntoResponse {
+pub async fn logout(mut auth_session: AuthSession) -> impl IntoResponse {
     match auth_session.logout().await {
-        Ok(_) => Redirect::to(&format!("{}/logout", state.settings.webapp.protocol_url())).into_response(),
+        Ok(_) => StatusCode::OK.into_response(),
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     }
 }
