@@ -3,7 +3,6 @@ use axum_login::{login_required, AuthManagerLayer, AuthManagerLayerBuilder};
 use http::header::CONTENT_TYPE;
 use http::{HeaderValue, Method};
 use sqlx::{Pool, Postgres};
-use tower_http::cors::Any;
 use tower_sessions::{Expiry, SessionManagerLayer};
 use tower_sessions::cookie::time::Duration;
 use tower_sessions_sqlx_store::PostgresStore;

@@ -1,7 +1,7 @@
 use axum::extract::{Path, State};
 use axum::{Extension, Json};
 use axum::http::StatusCode;
-use axum::response::{IntoResponse, Redirect};
+use axum::response::IntoResponse;
 use tower_sessions::Session;
 use crate::app::AppState;
 use crate::json::auth::{AuthUrlResponse, Credentials, LoginCreds, SignCreds};

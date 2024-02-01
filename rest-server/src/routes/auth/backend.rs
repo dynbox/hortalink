@@ -4,7 +4,7 @@ use password_auth::verify_password;
 use sqlx::{Pool, Postgres};
 use sqlx::types::Uuid;
 use crate::json::auth::Credentials;
-use crate::models::users::User;
+use crate::models::users::ProtectedUser;
 
 #[derive(Clone)]
 pub struct Backend {
@@ -25,7 +25,7 @@ pub enum BackendError {
 
 #[async_trait]
 impl AuthnBackend for Backend {
-    type User = User;
+    type User = ProtectedUser;
     type Credentials = Credentials;
     type Error = BackendError;
 

@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::{types::Uuid, FromRow, Row};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct User {
+pub struct ProtectedUser {
     id: String,
     pub email: String,
     pub password: Option<String>,
@@ -15,7 +15,16 @@ pub struct User {
     address: Option<String>,
 }
 
-impl<'r> FromRow<'r, sqlx::postgres::PgRow> for User {
+#[derive(Serialize)]
+pub struct User {
+    pub id: String,
+    avatar: Option<String>,
+    username: Option<String>,
+    name: Option<String>,
+    bio: Option<String>
+}
+
+impl<'r> FromRow<'r, sqlx::postgres::PgRow> for ProtectedUser {
     fn from_row(row: &'r sqlx::postgres::PgRow) -> Result<Self, sqlx::Error> {
         Ok(Self {
             id: row.try_get::<Uuid, _>("id")?.to_string(),
@@ -31,8 +40,19 @@ impl<'r> FromRow<'r, sqlx::postgres::PgRow> for User {
     }
 }
 
+impl<'r> FromRow<'r, sqlx::postgres::PgRow> for User {
+    fn from_row(row: &'r sqlx::postgres::PgRow) -> Result<Self, sqlx::Error> {
+        Ok(Self {
+            id: row.try_get::<Uuid, _>("id")?.to_string(),
+            avatar: row.try_get("avatar")?,
+            username: row.try_get("username")?,
+            name: row.try_get("name")?,
+            bio: row.try_get("bio")?,
+        })
+    }
+}
 
-impl AuthUser for User {
+impl AuthUser for ProtectedUser {
     type Id = String;
 
     fn id(&self) -> Self::Id {
