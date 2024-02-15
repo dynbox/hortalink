@@ -11,7 +11,7 @@
 
     onMount(async () => {
         try {
-            const response = await fetch('http://localhost:5443/api/users/me', {
+            const response = await fetch('http://localhost:5443/api/v1/users/me', {
                 credentials: 'include'
             });
 

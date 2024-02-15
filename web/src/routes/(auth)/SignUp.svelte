@@ -5,11 +5,13 @@
     let phone: string = '';
     let password: string = '';
     let accountType: string = '';
+    let username: string = '';
+    let name: string = '';
 
     const handleSignup: EventHandler<Event, HTMLFormElement> = async (event) => {
         event.preventDefault();
 
-        const response = await fetch('http://localhost:5443/api/auth/sign', {
+        const response = await fetch('http://localhost:5443/api/v1/auth/sign-in', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -17,9 +19,10 @@
             credentials: 'include',
             body: JSON.stringify({
                 email,
-                phone,
+                //phone,
                 password,
-                name: accountType
+                name,
+                username
             })
         });
 
@@ -46,5 +49,8 @@
             Vendedor
         </label>
     </div>
+
+    <input bind:value={username} name="username" type="text" placeholder="Apelido:" />
+    <input bind:value={name} name="name" type="text" placeholder="Nome:" />
     <button type="submit">Cadastrar</button>
 </form>

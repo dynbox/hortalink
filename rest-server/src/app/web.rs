@@ -1,16 +1,15 @@
 use axum::{Extension, Router};
-use axum_login::{login_required, AuthManagerLayer, AuthManagerLayerBuilder};
-use http::header::CONTENT_TYPE;
-use http::{HeaderValue, Method};
+use axum_login::{AuthManagerLayer, AuthManagerLayerBuilder};
+use http::{header, Method};
 use sqlx::{Pool, Postgres};
 use tower_sessions::{Expiry, SessionManagerLayer};
 use tower_sessions::cookie::time::Duration;
 use tower_sessions_sqlx_store::PostgresStore;
 use app_core::database::SqlxManager;
 use common::config::Settings;
-use crate::provider::AuthProviders;
+use crate::app::backend::Backend;
+use crate::app::provider::AuthProviders;
 use crate::routes;
-use crate::routes::auth::backend::Backend;
 
 pub struct WebApp {
     settings: Settings,
@@ -43,20 +42,22 @@ impl WebApp {
             settings: self.settings.clone(),
         };
 
-        let cors = tower_http::cors::CorsLayer::default()
-            .allow_origin(state.settings.webapp.protocol_url().parse::<HeaderValue>().unwrap())
-            .allow_methods([Method::GET, Method::POST, Method::PATCH])
-            .allow_headers([CONTENT_TYPE])
-            .allow_credentials(true);
+        let cors = tower_http::cors::CorsLayer::new()
+            .allow_credentials(true)
+            .allow_origin([
+                state.settings.webapp.protocol_url().parse()
+                    .unwrap()
+            ])
+            .allow_headers([
+                header::AUTHORIZATION, header::CONTENT_TYPE,
+            ])
+            .allow_methods([
+                Method::GET, Method::PUT,
+                Method::DELETE, Method::PATCH,
+            ]);
 
         Router::new()
-            .nest("/api",
-                  routes::auth::router()
-                      .merge(
-                        routes::users::router()
-                            .route_layer(login_required!(Backend))
-                    )
-            )
+            .nest("/api", routes::router())
             .with_state(state)
             .layer(self.auth_layer())
             .layer(Extension(AuthProviders::new(&self.settings)))
@@ -92,4 +93,8 @@ impl WebApp {
             .await
             .expect("Failed to start axum server");
     }
+}
+
+impl axum::extract::FromRef<AppState> for () {
+    fn from_ref(_: &AppState) {}
 }

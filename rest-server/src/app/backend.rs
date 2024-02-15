@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use axum_login::{AuthnBackend, UserId};
 use password_auth::verify_password;
 use sqlx::{Pool, Postgres};
-use sqlx::types::Uuid;
+
 use crate::json::auth::Credentials;
 use crate::models::users::ProtectedUser;
 
@@ -32,7 +32,15 @@ impl AuthnBackend for Backend {
     async fn authenticate(&self, creds: Self::Credentials) -> Result<Option<Self::User>, Self::Error> {
         match creds {
             Credentials::Password(creds) => {
-                let user: Option<Self::User> = sqlx::query_as("SELECT * FROM USERS WHERE email = $1")
+                let user: Option<Self::User> = sqlx::query_as(
+                    r#"
+                        SELECT 
+                            id, email, password, 
+                            permissions, access_token, account_type
+                        FROM USERS
+                        WHERE email = $1
+                    "#
+                )
                     .bind(creds.email)
                     .fetch_optional(&self.db)
                     .await
@@ -51,10 +59,13 @@ impl AuthnBackend for Backend {
             Credentials::OAuth(creds) => {
                 let user = sqlx::query_as(
                     r#"
-                    INSERT INTO users (email, name, access_token) VALUES ($1, $2, $3)
-                    ON CONFLICT(email) DO UPDATE
-                    SET access_token = excluded.access_token
-                    RETURNING *
+                        INSERT INTO users (email, name, access_token)
+                        VALUES ($1, $2, $3)
+                        ON CONFLICT(email) DO UPDATE
+                        SET access_token = excluded.access_token
+                        RETURNING
+                            id, email, password,
+                            permissions, access_token, account_type
                     "#,
                 )
                     .bind(creds.user.email)
@@ -70,8 +81,15 @@ impl AuthnBackend for Backend {
     }
 
     async fn get_user(&self, user_id: &UserId<Self>) -> Result<Option<Self::User>, Self::Error> {
-        let user = sqlx::query_as("SELECT * FROM users WHERE id = $1")
-            .bind(Uuid::parse_str(user_id).unwrap())
+        let user = sqlx::query_as(
+            r#"
+                SELECT 
+                    id, email, password, 
+                    permissions, access_token, account_type
+                FROM users WHERE id = $1
+                "#
+        )
+            .bind(user_id)
             .fetch_optional(&self.db)
             .await
             .map_err(Self::Error::Sqlx)?;

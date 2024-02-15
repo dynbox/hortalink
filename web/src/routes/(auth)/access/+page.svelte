@@ -18,7 +18,7 @@
 
     async function handleExternalLogin(oauthType: string) {
         try {
-            const response = await fetch(`http://localhost:5443/api/oauth/${oauthType}`, {
+            const response = await fetch(`http://localhost:5443/api/v1/oauth/${oauthType}`, {
                 method: 'POST',
                 credentials: 'include'
             });

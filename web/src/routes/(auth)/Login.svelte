@@ -7,7 +7,7 @@
     const handleSubmit: EventHandler<Event, HTMLFormElement> = async (event) => {
         event.preventDefault();
 
-        const response = await fetch('http://localhost:5443/api/auth/login', {
+        const response = await fetch('http://localhost:5443/api/v1/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

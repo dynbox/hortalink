@@ -1,10 +1,9 @@
-use crate::app::WebApp;
+use crate::app::web::WebApp;
 
 mod routes;
 mod models;
-mod app;
 pub mod json;
-mod provider;
+mod app;
 
 #[tokio::main]
 async fn main() {
