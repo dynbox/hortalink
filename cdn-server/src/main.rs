@@ -1,17 +1,19 @@
 use axum::Router;
-use app_core::database::SqlxManager;
 use common::config::Settings;
+
+mod routes;
+mod json;
 
 #[tokio::main]
 async fn main() {
     let settings = Settings::new("application.toml");
-    let database = SqlxManager::new(&settings.cdn_server.database)
-        .await;
 
     let router = Router::new()
-        .with_state(database.pool);
+        .merge(
+            routes::avatars::router()
+        );
 
-    let listener = tokio::net::TcpListener::bind(settings.webserver.url())
+    let listener = tokio::net::TcpListener::bind(settings.cdn_server.url())
         .await
         .unwrap();
     axum::serve(listener, router)
