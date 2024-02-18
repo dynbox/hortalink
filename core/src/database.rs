@@ -2,7 +2,7 @@ use log::info;
 use sqlx::{Pool, Postgres};
 use sqlx::pool::PoolOptions;
 use sqlx::postgres::PgPoolOptions;
-use common::config::database::DatabaseSettings;
+use common::settings::database::DatabaseSettings;
 
 pub struct SqlxManager {
     pub pool: Pool<Postgres>,

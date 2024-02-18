@@ -7,6 +7,4 @@ edition.workspace = true
 common = { path = "../common" }
 
 sqlx = { workspace = true }
-redis = { workspace = true }
-amqprs = { workspace = true, features = ["urispec"] }
 log = { workspace = true }

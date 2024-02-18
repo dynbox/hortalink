@@ -1,15 +1,15 @@
-use crate::app::web::WebApp;
-
-mod routes;
-mod models;
-pub mod json;
-mod app;
+use rest_server::app::web::Server;
 
 #[tokio::main]
 async fn main() {
     env_logger::init();
 
-    WebApp::new().await
-        .serve()
+    let app = Server::new("application.toml")
+        .await;
+    sqlx::migrate!()
+        .run(&app.state.pool)
         .await
+        .expect("Failed to migrate tables.");
+
+    app.run().await;
 }
