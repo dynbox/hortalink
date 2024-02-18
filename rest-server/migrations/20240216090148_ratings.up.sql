@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "inventory_rating" (
     id SERIAL PRIMARY KEY,
-    inventory_id INT REFERENCES "inventories"(product_id),
+    inventory_id INT REFERENCES "seller_products"(id),
     customer_id INT REFERENCES "customers"(user_id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     was_edited BOOLEAN NOT NULL DEFAULT FALSE,
@@ -24,7 +24,7 @@ CREATE INDEX customer_rating_id ON "customer_rating"(customer_id);
 CREATE TABLE IF NOT EXISTS "seller_rating" (
     id SERIAL PRIMARY KEY,
     author_id INT REFERENCES "customers"(product_id),
-    seller_id INT REFERENCES "customers"(user_id),
+    seller_id INT REFERENCES "sellers"(user_id),
     rating SMALLINT NOT NULL,
     UNIQUE(author_id, seller_id)
 );

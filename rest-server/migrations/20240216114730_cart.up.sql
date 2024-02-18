@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS "cart" (
-    inventory_id INT REFERENCES "inventories"(product_id),
+    seller_product_id INT REFERENCES "seller_products"(id),
     customer_id INT REFERENCES "customers"(user_id),
     status SMALLINT NOT NULL DEFAULT 1,
     withdrawn TIMESTAMP NOT NULL,
