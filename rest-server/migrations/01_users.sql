@@ -1,5 +1,4 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
-CREATE EXTENSION IF NOT EXISTS pg_libphonenumber;
 
 CREATE TABLE IF NOT EXISTS "users" (
     id SERIAL PRIMARY KEY,
@@ -9,7 +8,7 @@ CREATE TABLE IF NOT EXISTS "users" (
     avatar VARCHAR(256),
     password TEXT,
     roles SMALLINT NOT NULL,
-    phone phone_number
+    phone CHAR(11)
 );
 
 CREATE INDEX user_email ON "users"(email);
