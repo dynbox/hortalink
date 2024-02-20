@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS "sellers" (
     user_id INT REFERENCES "users"(id),
     global_schedule INT REFERENCES "seller_schedules"(id),
+    bio VARCHAR(512),
     PRIMARY KEY (user_id)
 );
 

@@ -13,9 +13,11 @@ edition = "2021"
 [workspace.dependencies]
 axum = { version = "0.7.2", default-features = false, features = ["http2", "tokio"] }
 sqlx = { version = "0.7.3", default-features = false, features = ["runtime-tokio", "postgres"] }
-tokio = { version = "1.35.0", default-features = false, features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.35.0", default-features = false, features = ["rt", "rt-multi-thread", "macros"] }
 serde = { version = "1.0.193", default-features = false, features = ["derive"] }
 tower-http = { version = "0.5.1", default-features = false, features = ["cors"] }
+axum_garde = { version = "0.18.0", default-features = false }
+garde = { version = "0.18.0", default-features = false }
 log = { version = "0.4.20" }
 env_logger = { version = "0.11.1" }
 
