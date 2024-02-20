@@ -4,6 +4,7 @@ members = [
     "core",
     "rest-server",
     "microservices",
+    "gateway",
 ]
 resolver = "2"
 
