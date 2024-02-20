@@ -19,21 +19,21 @@ impl Default for Secrets {
         Self {
             google: OauthSecret {
                 client_id: var("GOOGLE_CLIENT_ID")
-                    .unwrap(),
+                    .unwrap_or(String::new()),
                 client_secret: var("GOOGLE_SECRET")
-                    .unwrap()
+                    .unwrap_or(String::new())
             },
             facebook: OauthSecret {
                 client_id: var("FACEBOOK_CLIENT_ID")
-                    .unwrap(),
+                    .unwrap_or(String::new()),
                 client_secret: var("FACEBOOK_SECRET")
-                    .unwrap()
+                    .unwrap_or(String::new())
             },
             linkedin: OauthSecret {
                 client_id: var("LINKEDIN_CLIENT_ID")
-                    .unwrap(),
+                    .unwrap_or(String::new()),
                 client_secret: var("LINKEDIN_SECRET")
-                    .unwrap()
+                    .unwrap_or(String::new())
             },
         }
     }

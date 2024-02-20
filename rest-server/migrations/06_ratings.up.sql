@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS "seller_product_ratings" (
     was_edited BOOLEAN NOT NULL DEFAULT FALSE,
     rating SMALLINT NOT NULL,
     content VARCHAR(256) NOT NULL,
-    UNIQUE(inventory_id, customer_id)
+    UNIQUE(seller_product_id, customer_id)
 );
 
 CREATE INDEX seller_product_rating ON "seller_product_ratings"(seller_product_id, rating);

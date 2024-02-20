@@ -9,7 +9,7 @@ async fn main() {
     sqlx::migrate!()
         .run(&app.state.pool)
         .await
-        .expect("Failed to migrate tables.");
+        .expect("Failed to migrate tables");
 
     app.run().await;
 }
