@@ -1,9 +1,8 @@
 mod me;
 
 use axum::Router;
-use crate::app::web::AppState;
 
-pub fn router() -> Router<AppState> {
+pub fn router() -> Router {
     Router::new()
         .nest("/@me", me::router())
 }

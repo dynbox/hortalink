@@ -1,5 +1,5 @@
 use garde::Validate;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use common::entities::UserRole;
 
 #[derive(Debug, Clone, Deserialize)]
@@ -14,7 +14,7 @@ pub struct OAuthCreds {
     pub token: String,
 }
 
-#[derive(Debug, Clone, Deserialize, Validate)]
+#[derive(Debug, Clone, Deserialize, Serialize, Validate)]
 pub struct LoginCreds {
     #[garde(email)]
     pub email: String,
@@ -28,7 +28,7 @@ pub struct UserInfo {
     pub name: String
 }
 
-#[derive(Deserialize, Validate)]
+#[derive(Deserialize, Serialize, Validate)]
 pub struct SignCreds {
     #[garde(skip)]
     pub name: String,
@@ -41,7 +41,7 @@ pub struct SignCreds {
     #[garde(skip)]
     pub avatar: Option<String>,
     #[garde(custom(validate_account_role))]
-    pub account_role: UserRole
+    pub role: UserRole
 }
 
 fn validate_account_role(value: &UserRole, _: &()) -> garde::Result {

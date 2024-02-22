@@ -7,7 +7,7 @@ pub struct LoginUser {
     pub id: i32,
     pub password: Option<String>,
     #[sqlx(try_from = "i16")]
-    pub permissions: UserRole,
+    pub role: UserRole,
     access_token: Option<String>
 }
 

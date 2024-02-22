@@ -5,9 +5,8 @@ use axum::Router;
 use axum::routing::{get, post};
 use axum_login::login_required;
 use crate::app::auth::AuthGate;
-use crate::app::web::AppState;
 
-pub fn router() -> Router<AppState> {
+pub fn router() -> Router {
     Router::new()
         .route("/logout", get(get::logout))
         .route_layer(login_required!(AuthGate))

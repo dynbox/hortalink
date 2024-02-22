@@ -1,6 +1,5 @@
-use axum::extract::State;
 use axum::http::StatusCode;
-use axum::Json;
+use axum::{Extension, Json};
 use axum::response::{IntoResponse, Response};
 use axum_garde::WithValidation;
 use crate::app::auth::AuthSession;
@@ -14,10 +13,7 @@ pub async fn login(
     WithValidation(payload): WithValidation<Json<LoginCreds>>,
 ) -> impl IntoResponse {
     match auth_session.authenticate(Credentials::Password(payload.into_inner())).await {
-        Ok(Some(user)) => {
-            login_user(auth_session, user)
-                .await
-        }
+        Ok(Some(user)) => login_user(auth_session, user).await,
         Ok(None) => error_message(StatusCode::UNAUTHORIZED, "Usuário não encontrado"),
         Err(e) => error_message(
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -27,7 +23,7 @@ pub async fn login(
 }
 
 pub async fn sign_in(
-    State(state): State<AppState>,
+    Extension(state): Extension<AppState>,
     auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<SignCreds>>,
 ) -> impl IntoResponse {
@@ -35,29 +31,24 @@ pub async fn sign_in(
 
     match sqlx::query_as::<_, LoginUser>(
         r#"
-            INSERT INTO users (name, username, email, roles, avatar, password)
+            INSERT INTO users (name, username, email, role, avatar, password)
             VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING id, password, permissions
+            RETURNING id, password, role, access_token
         "#
     )
         .bind(payload.name)
         .bind(payload.username)
         .bind(payload.email)
-        .bind(payload.account_role as i16)
+        .bind(payload.role as i16)
         .bind(payload.avatar)
         .bind(password_auth::generate_hash(&payload.password))
         .fetch_one(&state.pool)
         .await {
-        Ok(user) => {
-            login_user(auth_session, user)
-                .await
-        },
-        Err(e) => {
-            error_message(
-                StatusCode::INTERNAL_SERVER_ERROR,
-                &format!("Falha ao cadastrar usuário: {:?}", e)
-            )
-        }
+        Ok(user) => login_user(auth_session, user).await,
+        Err(e) => error_message(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            &format!("Falha ao cadastrar usuário: {:?}", e)
+        )
     }
 }
 

@@ -37,7 +37,7 @@ impl AuthnBackend for AuthGate {
                     r#"
                         SELECT
                             id, password,
-                            permissions, access_token
+                            role, access_token
                         FROM USERS
                         WHERE email = $1
                     "#
@@ -68,7 +68,7 @@ impl AuthnBackend for AuthGate {
                         SET access_token = excluded.access_token
                         RETURNING
                             id, password,
-                            permissions, access_token
+                            role, access_token
                     "#,
                 )
                     .bind(creds.user.email)
@@ -88,7 +88,7 @@ impl AuthnBackend for AuthGate {
             r#"
                 SELECT
                     id, password,
-                    permissions, access_token
+                    role, access_token
                 FROM users WHERE id = $1
             "#
         )
@@ -109,7 +109,7 @@ impl AuthzBackend for AuthGate {
         &self,
         user: &Self::User
     ) -> Result<HashSet<Self::Permission>, Self::Error> {
-        let permissions = HashSet::from_iter(vec![user.permissions.clone()]);
+        let permissions = HashSet::from_iter(vec![user.role.clone()]);
 
         Ok(permissions)
     }

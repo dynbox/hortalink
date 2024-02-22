@@ -14,12 +14,12 @@ CREATE TABLE IF NOT EXISTS "seller_products" (
     photos VARCHAR(256)[] NOT NULL
 );
 
-CREATE INDEX seller_product_id ON "seller_products" (user_id);
+CREATE INDEX seller_product_id ON "seller_products" (seller_id);
 CREATE INDEX seller_product_price ON "seller_products" (price);
 
 CREATE TABLE IF NOT EXISTS "product_schedules" (
     id SERIAL PRIMARY KEY,
     seller_product_id INT REFERENCES "seller_products"(id),
     schedule_id INT REFERENCES "schedules"(id),
-    UNIQUE (product_id, schedule_id)
+    UNIQUE (seller_product_id, schedule_id)
 );

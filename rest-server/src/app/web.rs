@@ -1,5 +1,5 @@
 use axum::http::{header, Method};
-use axum::Router;
+use axum::{Extension, Router};
 use axum_login::AuthManagerLayerBuilder;
 use axum_login::tower_sessions::{Expiry, SessionManagerLayer};
 use axum_login::tower_sessions::cookie::time::Duration;
@@ -44,7 +44,7 @@ impl Server {
                 AuthManagerLayerBuilder::new(gate, Self::configure_session(&state))
                     .build()
             )
-            .with_state(state)
+            .layer(Extension(state))
     }
 
     pub async fn run(self) {
