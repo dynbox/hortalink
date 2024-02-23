@@ -9,4 +9,4 @@ VALUES
     (7, 'Notification  7', 'This is the content of notification  7',  1,  1),
     (8, 'Notification  8', 'This is the content of notification  8',  1,  1),
     (9, 'Notification  9', 'This is the content of notification  9',  1,  1),
-    (10, 'Notification  10', 'This is the content of notification  10',  1,  1);
+    (1, 'Notification  10', 'This is the content of notification  10',  1,  1);

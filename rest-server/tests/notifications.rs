@@ -12,6 +12,8 @@ async fn test_notifications(pool: Pool<Postgres>) {
 
     test_read_notifications(server)
         .await;
+    get_notifications(server)
+        .await;
 }
 
 async fn test_read_notifications(server: &TestServer) {
@@ -33,5 +35,17 @@ async fn test_read_notifications(server: &TestServer) {
             read: true,
         })
         .expect_failure()
+        .await;
+}
+
+async fn get_notifications(server: &TestServer) {
+    login(server, LoginCreds {
+        email: "john.doe@gmail.com".to_string(),
+        password: "secured123456".to_string(),
+    })
+        .await;
+
+    server.get("/api/v1/users/@me/notifications")
+        .expect_success()
         .await;
 }

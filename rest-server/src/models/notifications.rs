@@ -1,0 +1,15 @@
+use serde::Serialize;
+use sqlx::types::chrono::NaiveDateTime;
+use crate::json::serialize_timestamp;
+
+#[derive(sqlx::FromRow, Serialize)]
+pub struct Notification {
+    id: i32,
+    title: String,
+    content: String,
+    #[serde(serialize_with = "serialize_timestamp")]
+    created_at: NaiveDateTime,
+    read: bool,
+    status: i16,
+    notification_type: i16,
+}
