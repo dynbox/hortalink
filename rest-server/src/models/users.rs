@@ -1,6 +1,34 @@
 use std::fmt::Debug;
 use axum_login::AuthUser;
+use serde::Serialize;
+use sqlx::types::chrono::NaiveDateTime;
 use common::entities::UserRole;
+use crate::json::serialize_timestamp;
+
+#[derive(sqlx::FromRow, Serialize)]
+pub struct ProtectedUser {
+    id: i32,
+    email: String,
+    name: String,
+    avatar: Option<String>,
+    phone: String,
+    username: String
+}
+
+#[derive(sqlx::FromRow, Serialize)]
+pub struct CustomerUser {
+    address: String
+}
+
+#[derive(sqlx::FromRow, Serialize)]
+pub struct SellerUser {
+}
+
+#[derive(sqlx::FromRow, Serialize)]
+pub struct ViewerUser {
+    #[serde(serialize_with = "serialize_timestamp")]
+    end_time: NaiveDateTime,
+}
 
 #[derive(sqlx::FromRow, Clone, Debug)]
 pub struct LoginUser {
