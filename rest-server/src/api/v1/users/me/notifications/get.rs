@@ -5,7 +5,7 @@ use crate::app::web::AppState;
 
 pub async fn notifications(
     Extension(state): Extension<AppState>,
-    auth_session: AuthSession,
+    auth_session: AuthSession
 ) -> impl IntoResponse {
-    todo!()
+    
 }

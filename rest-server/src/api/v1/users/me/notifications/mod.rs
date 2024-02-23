@@ -7,5 +7,5 @@ mod patch;
 pub fn router() -> Router {
     Router::new()
         .route("/", get(get::notifications))
-        .route("/:notification_id/read", patch(patch::mark_as_read))
+        .route("/:notification_id", patch(patch::read))
 }

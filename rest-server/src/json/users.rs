@@ -2,7 +2,7 @@ use serde::{Serialize, Serializer};
 use crate::models::users::{CustomerUser, ProtectedUser, SellerUser, ViewerUser};
 
 #[derive(Serialize)]
-pub struct UserMePayload {
+pub struct UserMeResponse {
     pub user: ProtectedUser,
     pub info: Option<UserType>
 }

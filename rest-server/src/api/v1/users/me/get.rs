@@ -3,7 +3,7 @@ use axum::response::IntoResponse;
 use common::entities::UserRole;
 use crate::app::auth::AuthSession;
 use crate::app::web::AppState;
-use crate::json::users::{UserMePayload, UserType};
+use crate::json::users::{UserMeResponse, UserType};
 use crate::models::users::{CustomerUser, ProtectedUser, ViewerUser};
 
 pub async fn me(
@@ -59,5 +59,5 @@ pub async fn me(
 
     tx.commit().await;
 
-    Json(UserMePayload { user: protected_user, info: user_info })
+    Json(UserMeResponse { user: protected_user, info: user_info })
 }
