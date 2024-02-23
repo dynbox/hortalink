@@ -10,19 +10,21 @@ mod common;
 async fn test_notifications(pool: Pool<Postgres>) {
     let server = &mut test_app(pool);
 
-    test_read_notifications(server)
-        .await;
-    get_notifications(server)
-        .await;
-}
-
-async fn test_read_notifications(server: &TestServer) {
     login(server, LoginCreds {
         email: "john.doe@gmail.com".to_string(),
         password: "secured123456".to_string(),
     })
         .await;
-    
+
+    test_read_notifications(server)
+        .await;
+    get_notifications(server)
+        .await;
+    delete_notification(server)
+        .await;
+}
+
+async fn test_read_notifications(server: &TestServer) {
     server.patch("/api/v1/users/@me/notifications/1")
         .json(&UpdateNotificationPayload {
             read: true,
@@ -39,13 +41,17 @@ async fn test_read_notifications(server: &TestServer) {
 }
 
 async fn get_notifications(server: &TestServer) {
-    login(server, LoginCreds {
-        email: "john.doe@gmail.com".to_string(),
-        password: "secured123456".to_string(),
-    })
-        .await;
-
     server.get("/api/v1/users/@me/notifications")
         .expect_success()
+        .await;
+}
+
+async fn delete_notification(server: &TestServer) {
+    server.delete("/api/v1/users/@me/notifications/1")
+        .expect_success()
+        .await;
+
+    server.delete("/api/v1/users/@me/notifications/1")
+        .expect_failure()
         .await;
 }
