@@ -26,7 +26,7 @@ pub async fn me(
         .await
         .unwrap();
     let user_info = match login_user.role {
-        UserRole::Customer => {
+        3 => {
             let user = sqlx::query_as::<_, CustomerUser>(
                 r#"
                     SELECT address FROM customers
@@ -40,7 +40,7 @@ pub async fn me(
 
             Some(UserType::Customer(user))
         },
-        UserRole::Viewer => {
+        2 => {
             let user = sqlx::query_as::<_, ViewerUser>(
                 r#"
                     SELECT end_time FROM blacklist

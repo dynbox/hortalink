@@ -103,7 +103,7 @@ impl AuthnBackend for AuthGate {
 
 #[async_trait]
 impl AuthzBackend for AuthGate {
-    type Permission = UserRole;
+    type Permission = i16;
 
     async fn get_user_permissions(
         &self,

@@ -34,8 +34,7 @@ pub struct ViewerUser {
 pub struct LoginUser {
     pub id: i32,
     pub password: Option<String>,
-    #[sqlx(try_from = "i16")]
-    pub role: UserRole,
+    pub role: i16,
     access_token: Option<String>
 }
 

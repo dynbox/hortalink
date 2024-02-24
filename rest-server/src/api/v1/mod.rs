@@ -2,10 +2,10 @@ mod users;
 mod sellers;
 mod customers;
 mod auth;
+mod products;
 
 use axum::Router;
-use axum_login::{login_required, permission_required};
-use common::entities::UserRole;
+use axum_login::{login_required};
 use crate::app::auth::AuthGate;
 
 
@@ -19,8 +19,6 @@ pub fn router() -> Router {
 fn protected_router() -> Router {
     Router::new()
         .nest("/sellers", sellers::router())
-        .layer(permission_required!(AuthGate, UserRole::Seller))
         .nest("/customers", customers::router())
-        .layer(permission_required!(AuthGate, UserRole::Customer))
         .nest("/users", users::router())
 }
