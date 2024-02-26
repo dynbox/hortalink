@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS "cart" (
     customer_id INT REFERENCES "customers"(user_id),
     status SMALLINT NOT NULL DEFAULT 1,
     withdrawn TIMESTAMP NOT NULL,
+    amount INT NOT NULL,
     UNIQUE(seller_product_id, customer_id)
 );
 

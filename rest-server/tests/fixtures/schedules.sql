@@ -6,8 +6,8 @@ INSERT INTO schedules (geolocation, address, start_time, end_time, day_of_week) 
     (ST_GeomFromText('POINT(40  40)',  4326), '654 Maple St', '12:00:00', '21:00:00',  5);
     
 INSERT INTO seller_schedules (seller_id, schedule_id) VALUES
-    (3,  1),
-    (4,  2),
-    (5,  3),
-    (8,  4),
-    (8,  5);
+    (3, 1),
+    (4, 2),
+    (5, 3),
+    (8, 4),
+    (8, 5);

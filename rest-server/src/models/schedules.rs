@@ -1,5 +1,6 @@
 use serde::Serialize;
 use sqlx::types::time::Time;
+use common::entities::WeekDay;
 use crate::json::serialize_time;
 
 #[derive(sqlx::FromRow, Serialize)]
@@ -10,5 +11,6 @@ pub struct Schedule {
     start_time: Time,
     #[serde(serialize_with = "serialize_time")]
     end_time: Time,
-    day_of_week: i16,
+    #[sqlx(try_from = "i16")]
+    day_of_week: WeekDay,
 }

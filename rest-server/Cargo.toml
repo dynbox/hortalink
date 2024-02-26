@@ -22,6 +22,7 @@ axum-login = { version = "0.13.1" }
 thiserror = { version = "1.0.57" }
 password-auth = { version = "1.0.0" }
 serde_json = { version = "1.0.114" }
+time = { version = "0.3.34" }
 
 [dev-dependencies]
 axum-test = { workspace = true }

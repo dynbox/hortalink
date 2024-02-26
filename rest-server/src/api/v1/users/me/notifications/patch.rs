@@ -29,6 +29,8 @@ pub async fn read(
         .unwrap();
 
     if query.rows_affected() ==  0 {
+        tx.rollback().await.unwrap();
+        
         return error_message(
             StatusCode::UNAUTHORIZED,
             "Você não é o dono da notificação ou a notificação não existe",

@@ -1,12 +1,13 @@
 use axum::{Extension, Json};
 use axum::extract::Path;
 use axum::response::IntoResponse;
+
 use crate::app::web::AppState;
 use crate::models::schedules::Schedule;
 
 pub async fn schedules(
     Extension(state): Extension<AppState>,
-    Path(seller_id): Path<i32>
+    Path(seller_id): Path<i32>,
 ) -> impl IntoResponse {
     let schedules: Vec<Schedule> = sqlx::query_as::<_, Schedule>(
         r#"

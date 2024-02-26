@@ -12,7 +12,9 @@ pub async fn notifications(
 
     let notifications: Vec<Notification> = sqlx::query_as(
         r#"
-            SELECT id, title, content, created_at, "read", status, type as notification_type
+            SELECT id, title, content, created_at, "read", 
+                status, type as notification_type,
+                icon
             FROM notifications
             WHERE user_id = $1
             ORDER BY created_at DESC

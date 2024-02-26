@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS "notifications" (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "read" BOOLEAN NOT NULL DEFAULT FALSE,
     status SMALLINT NOT NULL,
-    type SMALLINT NOT NULL
+    type SMALLINT NOT NULL,
+    icon TEXT NOT NULL
 );
 
 CREATE INDEX user_notification ON "notifications" (user_id);

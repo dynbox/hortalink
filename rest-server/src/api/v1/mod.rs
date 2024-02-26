@@ -11,14 +11,10 @@ use crate::app::auth::AuthGate;
 
 pub fn router() -> Router {
     Router::new()
-        .merge(protected_router())
-        .layer(login_required!(AuthGate))
-        .nest("/auth", auth::router())
-}
-
-fn protected_router() -> Router {
-    Router::new()
         .nest("/sellers", sellers::router())
         .nest("/customers", customers::router())
         .nest("/users", users::router())
+        .nest("/products", products::router())
+        .layer(login_required!(AuthGate))
+        .nest("/auth", auth::router())
 }

@@ -12,4 +12,5 @@ pub struct Notification {
     read: bool,
     status: i16,
     notification_type: i16,
+    icon: Option<String>
 }

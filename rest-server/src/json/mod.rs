@@ -1,4 +1,3 @@
-use std::fmt::format;
 use serde::Serializer;
 use sqlx::types::chrono::NaiveDateTime;
 use sqlx::types::time::Time;
@@ -7,6 +6,7 @@ pub mod auth;
 pub mod error;
 pub mod users;
 pub mod notifications;
+pub mod schedules;
 
 pub fn serialize_timestamp<S>(naive_datetime: &NaiveDateTime, serializer: S) -> Result<S::Ok, S::Error>
     where
