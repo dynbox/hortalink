@@ -31,9 +31,9 @@ pub async fn sign_in(
 
     match sqlx::query_as::<_, LoginUser>(
         r#"
-            INSERT INTO users (name, username, email, role, avatar, password)
+            INSERT INTO users (name, username, email, roles, avatar, password)
             VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING id, password, role, access_token
+            RETURNING id, password, roles, access_token
         "#
     )
         .bind(payload.name)

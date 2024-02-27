@@ -1,6 +1,6 @@
 use axum::{Extension, Json};
 use axum::response::IntoResponse;
-use common::entities::UserRole;
+
 use crate::app::auth::AuthSession;
 use crate::app::web::AppState;
 use crate::json::users::{UserMeResponse, UserType};
@@ -25,8 +25,10 @@ pub async fn me(
         .fetch_one(&mut *tx)
         .await
         .unwrap();
-    let user_info = match login_user.role {
-        3 => {
+
+    let mut infos = Vec::<UserType>::new();
+    for role in login_user.roles {
+        if role == 3 {
             let user = sqlx::query_as::<_, CustomerUser>(
                 r#"
                     SELECT address FROM customers
@@ -37,13 +39,12 @@ pub async fn me(
                 .fetch_one(&mut *tx)
                 .await
                 .unwrap();
-
-            Some(UserType::Customer(user))
-        },
-        2 => {
+            
+            infos.push(UserType::Customer(user))
+        } else if role == 2 {
             let user = sqlx::query_as::<_, ViewerUser>(
                 r#"
-                    SELECT end_time FROM blacklist
+                    SELECT * FROM blacklist
                     WHERE user_id = $1
                 "#
             )
@@ -52,12 +53,11 @@ pub async fn me(
                 .await
                 .unwrap();
 
-            Some(UserType::Viewer(user))
-        },
-        _ => None
-    };
+            infos.push(UserType::Viewer(user))
+        }
+    }
 
     tx.commit().await;
 
-    Json(UserMeResponse { user: protected_user, info: user_info })
+    Json(UserMeResponse { user: protected_user, infos })
 }

@@ -15,7 +15,7 @@ async fn test_users(pool: Pool<Postgres>) {
 }
 
 async fn test_user_me(server: &TestServer) {
-    let file = std::fs::read_to_string("../rest-server/tests/json/users_me.json")
+    let file = std::fs::read_to_string("tests/json/user_me.json")
         .unwrap();
     let user_json: Value = serde_json::from_str(&file).unwrap();
 

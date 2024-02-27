@@ -4,7 +4,7 @@ use crate::models::users::{CustomerUser, ProtectedUser, SellerUser, ViewerUser};
 #[derive(Serialize)]
 pub struct UserMeResponse {
     pub user: ProtectedUser,
-    pub info: Option<UserType>
+    pub infos: Vec<UserType>
 }
 
 pub enum UserType {

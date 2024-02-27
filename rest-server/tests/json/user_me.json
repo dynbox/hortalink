@@ -8,9 +8,11 @@
       "phone": "63983424568",
       "username": "johndoe"
     },
-    "info": {
-      "end_time": 1709251200
-    }
+    "infos": [
+      {
+        "end_time": 1709251200
+      }
+    ]
   },
   "1": {
     "user": {
@@ -21,9 +23,11 @@
       "phone": "63983524568",
       "username": "janesmith"
     },
-    "info": {
-      "address": "123 Main St, Boston, MA"
-    }
+    "infos": [
+      {
+        "address": "123 Main St, Boston, MA"
+      }
+    ]
   },
   "2": {
     "user": {
@@ -34,7 +38,7 @@
       "phone": "63983424598",
       "username": "bobjohnson"
     },
-    "info": null
+    "infos": []
   },
   "3": {
     "user": {
@@ -45,7 +49,7 @@
       "phone": "63943424568",
       "username": "alicewilliams"
     },
-    "info": null
+    "infos": []
   },
   "4": {
     "user": {
@@ -56,7 +60,7 @@
       "phone": "63987424568",
       "username": "charliebrown"
     },
-    "info": null
+    "infos": []
   },
   "5": {
     "user": {
@@ -67,9 +71,11 @@
       "phone": "63983429568",
       "username": "dianaprince"
     },
-    "info": {
-      "address": "123 Main St, Boston, MA"
-    }
+    "infos": [
+      {
+        "address": "123 Main St, Boston, MA"
+      }
+    ]
   },
   "6": {
     "user": {
@@ -80,9 +86,11 @@
       "phone": "63983424568",
       "username": "harrypotter"
     },
-    "info": {
-      "address": "123 Main St, Boston, MA"
-    }
+    "infos": [
+      {
+        "address": "123 Main St, Boston, MA"
+      }
+    ]
   },
   "7": {
     "user": {
@@ -93,7 +101,7 @@
       "phone": "63986524568",
       "username": "sherlockholmes"
     },
-    "info": null
+    "infos": []
   },
   "8": {
     "user": {
@@ -104,7 +112,7 @@
       "phone": "63983624568",
       "username": "elizabethbennet"
     },
-    "info": null
+    "infos": []
   },
   "9": {
     "user": {
@@ -115,8 +123,10 @@
       "phone": "63983424068",
       "username": "frodobaggins"
     },
-    "info": {
-      "address": "123 Main St, Boston, MA"
-    }
+    "infos": [
+      {
+        "address": "123 Main St, Boston, MA"
+      }
+    ]
   }
 }

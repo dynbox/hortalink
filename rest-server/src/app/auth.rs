@@ -3,7 +3,6 @@ use axum::async_trait;
 use axum_login::{AuthnBackend, AuthzBackend, UserId};
 use password_auth::verify_password;
 use sqlx::{Pool, Postgres};
-use common::entities::UserRole;
 use crate::json::auth::Credentials;
 use crate::models::users::LoginUser;
 
@@ -37,7 +36,7 @@ impl AuthnBackend for AuthGate {
                     r#"
                         SELECT
                             id, password,
-                            role, access_token
+                            roles, access_token
                         FROM USERS
                         WHERE email = $1
                     "#
@@ -68,7 +67,7 @@ impl AuthnBackend for AuthGate {
                         SET access_token = excluded.access_token
                         RETURNING
                             id, password,
-                            role, access_token
+                            roles, access_token
                     "#,
                 )
                     .bind(creds.user.email)
@@ -88,7 +87,7 @@ impl AuthnBackend for AuthGate {
             r#"
                 SELECT
                     id, password,
-                    role, access_token
+                    roles, access_token
                 FROM users WHERE id = $1
             "#
         )
@@ -109,7 +108,7 @@ impl AuthzBackend for AuthGate {
         &self,
         user: &Self::User
     ) -> Result<HashSet<Self::Permission>, Self::Error> {
-        let permissions = HashSet::from_iter(vec![user.role.clone()]);
+        let permissions = HashSet::from_iter(user.roles.clone());
 
         Ok(permissions)
     }

@@ -17,10 +17,11 @@ pub enum StarRating {
 #[derivative(PartialEq, Eq, Hash)]
 #[repr(i16)]
 pub enum UserRole {
-    Viewer = 1,
-    Customer = 2,
-    Seller = 3,
-    Administrator = 4
+    Verified = 1,
+    Viewer = 2,
+    Customer = 3,
+    Seller = 4,
+    Administrator = 5
 }
 
 #[derive(TryFromPrimitive, Deserialize_repr, Serialize_repr)]

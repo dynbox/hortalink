@@ -2,7 +2,6 @@ use std::fmt::Debug;
 use axum_login::AuthUser;
 use serde::Serialize;
 use sqlx::types::chrono::NaiveDateTime;
-use common::entities::UserRole;
 use crate::json::serialize_timestamp;
 
 #[derive(sqlx::FromRow, Serialize)]
@@ -34,8 +33,8 @@ pub struct ViewerUser {
 pub struct LoginUser {
     pub id: i32,
     pub password: Option<String>,
-    pub role: i16,
-    access_token: Option<String>
+    pub roles: Vec<i16>,
+    access_token: Option<String>,
 }
 
 impl AuthUser for LoginUser {

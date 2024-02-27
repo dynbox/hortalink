@@ -46,7 +46,7 @@ pub struct SignCreds {
 
 fn validate_account_role(value: &UserRole, _: &()) -> garde::Result {
     match value {
-        UserRole::Customer |  UserRole::Seller => Ok(()),
+        UserRole::Customer | UserRole::Seller => Ok(()),
         _ => Err(garde::Error::new("Invalid account role")),
     }
 }
