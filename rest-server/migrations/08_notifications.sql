@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS "notifications" (
     "read" BOOLEAN NOT NULL DEFAULT FALSE,
     status SMALLINT NOT NULL,
     type SMALLINT NOT NULL,
-    icon TEXT NOT NULL
+    icon TEXT
 );
 
 CREATE INDEX user_notification ON "notifications" (user_id);

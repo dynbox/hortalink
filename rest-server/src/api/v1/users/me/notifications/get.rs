@@ -1,13 +1,14 @@
 use axum::{Extension, Json};
-use axum::response::IntoResponse;
+
 use crate::app::auth::AuthSession;
 use crate::app::web::AppState;
+use crate::json::error::ApiError;
 use crate::models::notifications::Notification;
 
 pub async fn notifications(
     Extension(state): Extension<AppState>,
-    auth_session: AuthSession
-) -> impl IntoResponse {
+    auth_session: AuthSession,
+) -> Result<Json<Vec<Notification>>, ApiError> {
     let user_id = auth_session.user.unwrap().id;
 
     let notifications: Vec<Notification> = sqlx::query_as(
@@ -22,8 +23,7 @@ pub async fn notifications(
     )
         .bind(user_id)
         .fetch_all(&state.pool)
-        .await
-        .unwrap();
-    
-    Json(notifications)
+        .await?;
+
+    Ok(Json(notifications))
 }

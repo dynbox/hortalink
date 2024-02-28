@@ -1,12 +1,10 @@
 use axum::{Extension, Json};
 use axum::extract::Path;
-use axum::http::StatusCode;
-use axum::response::IntoResponse;
 use axum_garde::WithValidation;
 
 use crate::app::auth::AuthSession;
 use crate::app::web::AppState;
-use crate::json::error::error_message;
+use crate::json::error::ApiError;
 use crate::json::schedules::{ScheduleParams, UpdateSchedulePayload};
 
 pub async fn schedule(
@@ -14,10 +12,10 @@ pub async fn schedule(
     Path(params): Path<ScheduleParams>,
     auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<UpdateSchedulePayload>>,
-) -> impl IntoResponse {
+) -> Result<(), ApiError> {
     let login_user = auth_session.user.unwrap();
     let payload = payload.into_inner();
-    let mut tx = state.pool.begin().await.unwrap();
+    let mut tx = state.pool.begin().await?;
 
     let is_author = sqlx::query_scalar::<_, bool>(
         r#"
@@ -30,16 +28,12 @@ pub async fn schedule(
         .bind(login_user.id)
         .bind(params.schedule_id)
         .fetch_one(&mut *tx)
-        .await
-        .unwrap();
+        .await?;
 
     if !is_author {
-        tx.rollback().await.unwrap();
+        tx.rollback().await?;
 
-        return error_message(
-            StatusCode::UNAUTHORIZED,
-            "Você não é o dono da notificação ou a notificação não existe",
-        );
+        return Err(ApiError::Unauthorized("Somente o autor da agenda pode editá-la".to_string()));
     }
 
     sqlx::query(r#"
@@ -63,9 +57,8 @@ pub async fn schedule(
             .map(|day| day as i16))
         .bind(params.schedule_id)
         .execute(&mut *tx)
-        .await
-        .unwrap();
+        .await?;
 
-    tx.commit().await.unwrap();
-    StatusCode::OK.into_response()
+    tx.commit().await?;
+    Ok(())
 }

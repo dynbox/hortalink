@@ -4,6 +4,7 @@ use axum_login::{AuthnBackend, AuthzBackend, UserId};
 use password_auth::verify_password;
 use sqlx::{Pool, Postgres};
 use crate::json::auth::Credentials;
+use crate::json::error::ApiError;
 use crate::models::users::LoginUser;
 
 #[derive(Clone)]
@@ -17,17 +18,11 @@ impl AuthGate {
     }
 }
 
-#[derive(Debug, thiserror::Error)]
-pub enum BackendError {
-    #[error(transparent)]
-    Sqlx(sqlx::Error),
-}
-
 #[async_trait]
 impl AuthnBackend for AuthGate {
     type User = LoginUser;
     type Credentials = Credentials;
-    type Error = BackendError;
+    type Error = ApiError;
 
     async fn authenticate(&self, creds: Self::Credentials) -> Result<Option<Self::User>, Self::Error> {
         match creds {
@@ -43,8 +38,7 @@ impl AuthnBackend for AuthGate {
                 )
                     .bind(creds.email)
                     .fetch_optional(&self.db)
-                    .await
-                    .map_err(Self::Error::Sqlx)?;
+                    .await?;
 
                 let user = user.filter(|user| {
                     let Some(user_password) = &user.password else {
@@ -74,8 +68,7 @@ impl AuthnBackend for AuthGate {
                     .bind(creds.user.name)
                     .bind(creds.token)
                     .fetch_one(&self.db)
-                    .await
-                    .map_err(Self::Error::Sqlx)?;
+                    .await?;
 
                 Ok(Some(user))
             }
@@ -93,8 +86,7 @@ impl AuthnBackend for AuthGate {
         )
             .bind(user_id)
             .fetch_optional(&self.db)
-            .await
-            .map_err(Self::Error::Sqlx)?;
+            .await?;
 
         Ok(user)
     }

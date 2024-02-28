@@ -1,20 +1,20 @@
 use axum::{Extension, Json};
 use axum::http::StatusCode;
-use axum::response::IntoResponse;
 use axum_garde::WithValidation;
 
 use crate::app::auth::AuthSession;
 use crate::app::web::AppState;
+use crate::json::error::ApiError;
 use crate::json::schedules::CreateSchedulePayload;
 
 pub async fn schedule(
     Extension(state): Extension<AppState>,
     auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<CreateSchedulePayload>>,
-) -> impl IntoResponse {
+) -> Result<StatusCode, ApiError> {
     let user_id = auth_session.user.unwrap().id;
     let payload = payload.into_inner();
-    let mut tx = state.pool.begin().await.unwrap();
+    let mut tx = state.pool.begin().await?;
 
     let schedule_id = sqlx::query_scalar::<_, i32>(
         r#"
@@ -30,8 +30,7 @@ pub async fn schedule(
         .bind(payload.end_time)
         .bind(payload.day_of_week as i16)
         .fetch_one(&mut *tx)
-        .await
-        .unwrap();
+        .await?;
 
     sqlx::query(
         r#"
@@ -42,10 +41,9 @@ pub async fn schedule(
         .bind(user_id)
         .bind(schedule_id)
         .execute(&mut *tx)
-        .await
-        .unwrap();
+        .await?;
 
-    tx.commit().await;
+    tx.commit().await?;
 
-    return StatusCode::CREATED.into_response();
+    Ok(StatusCode::CREATED)
 }

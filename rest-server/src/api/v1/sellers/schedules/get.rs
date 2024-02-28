@@ -1,14 +1,14 @@
 use axum::{Extension, Json};
 use axum::extract::Path;
-use axum::response::IntoResponse;
 
 use crate::app::web::AppState;
+use crate::json::error::ApiError;
 use crate::models::schedules::Schedule;
 
 pub async fn schedules(
     Extension(state): Extension<AppState>,
     Path(seller_id): Path<i32>,
-) -> impl IntoResponse {
+) -> Result<Json<Vec<Schedule>>, ApiError> {
     let schedules: Vec<Schedule> = sqlx::query_as::<_, Schedule>(
         r#"
             SELECT schedules.id, schedules.geolocation, 
@@ -21,8 +21,7 @@ pub async fn schedules(
     )
         .bind(seller_id)
         .fetch_all(&state.pool)
-        .await
-        .unwrap();
+        .await?;
 
-    Json(schedules)
+    Ok(Json(schedules))
 }

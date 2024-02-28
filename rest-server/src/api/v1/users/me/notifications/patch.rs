@@ -1,10 +1,9 @@
 use axum::{Extension, Json};
 use axum::extract::Path;
-use axum::http::StatusCode;
-use axum::response::IntoResponse;
+
 use crate::app::auth::AuthSession;
 use crate::app::web::AppState;
-use crate::json::error::error_message;
+use crate::json::error::ApiError;
 use crate::json::notifications::UpdateNotificationPayload;
 
 pub async fn read(
@@ -12,10 +11,10 @@ pub async fn read(
     auth_session: AuthSession,
     Path(notification_id): Path<i32>,
     Json(payload): Json<UpdateNotificationPayload>,
-) -> impl IntoResponse {
+) -> Result<(), ApiError> {
     let login_user = auth_session.user.unwrap();
-    
-    let mut tx = state.pool.begin().await.unwrap();
+
+    let mut tx = state.pool.begin().await?;
     let query = sqlx::query(r#"
         UPDATE notifications
         SET read = $2
@@ -25,18 +24,14 @@ pub async fn read(
         .bind(payload.read)
         .bind(login_user.id)
         .execute(&mut *tx)
-        .await
-        .unwrap();
+        .await?;
 
-    if query.rows_affected() ==  0 {
-        tx.rollback().await.unwrap();
-        
-        return error_message(
-            StatusCode::UNAUTHORIZED,
-            "Você não é o dono da notificação ou a notificação não existe",
-        );
+    if query.rows_affected() == 0 {
+        tx.rollback().await?;
+
+        return Err(ApiError::Unauthorized("Somente o autor da notificação pode editá-la".to_string()));
     }
 
-    tx.commit().await.unwrap();
-    StatusCode::OK.into_response()
+    tx.commit().await?;
+    Ok(())
 }
