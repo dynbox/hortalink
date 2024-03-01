@@ -44,7 +44,7 @@ jobs:
 
       - name: Run migrations
         run: |
-          psql -h localhost -U postgres -d hortalink -f rest-server/migrations/setup/20240215193325_init.up.sql
+          PGPASSWORD=postgres psql -h localhost -U postgres -d hortalink -f rest-server/migrations/setup/20240215193325_init.up.sql
 
       - name: Test
         uses: actions-rs/cargo@v1
