@@ -47,6 +47,8 @@ jobs:
 
       - name: Test
         uses: actions-rs/cargo@v1
+        run: |
+          export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hortalink
         with:
-          command: DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hortalink test
+          command: test
           args: --workspace --all-features
