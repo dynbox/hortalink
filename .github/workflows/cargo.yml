@@ -15,7 +15,6 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: hortalink
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/hortalink
         ports:
           - 5432:5432
         options: >-
@@ -49,5 +48,5 @@ jobs:
       - name: Test
         uses: actions-rs/cargo@v1
         with:
-          command: test
+          command: DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hortalink test
           args: --workspace --all-features
