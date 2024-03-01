@@ -7,9 +7,15 @@ use crate::app::auth::AuthGate;
 #[derive(Debug, thiserror::Error, Serialize)]
 pub enum ApiError {
     #[error("Database")]
+    #[serde(rename = "message")]
     Database(String),
     #[error("Unauthorized")]
+    #[serde(rename = "message")]
     Unauthorized(String),
+    #[error("NotFound")]
+    #[serde(rename = "message")]
+    NotFound(String),
+    #[serde(rename = "message")]
     #[error("Custom")]
     Custom(
         #[serde(serialize_with = "serialize_status_code")]
@@ -23,6 +29,7 @@ impl IntoResponse for ApiError {
         let status = match self {
             ApiError::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
             ApiError::Unauthorized(_) => StatusCode::UNAUTHORIZED,
+            ApiError::NotFound(_) => StatusCode::NOT_FOUND,
             ApiError::Custom(code, _) => code
         };
 
@@ -31,14 +38,14 @@ impl IntoResponse for ApiError {
 }
 
 impl From<sqlx::Error> for ApiError {
-    fn from(error: sqlx::Error) -> Self {
-        ApiError::Database(format!("{}", error))
+    fn from(value: sqlx::Error) -> Self {
+        ApiError::Database(format!("Falha no banco de dados: {}", value))
     }
 }
 
 impl From<axum_login::Error<AuthGate>> for ApiError {
     fn from(value: axum_login::Error<AuthGate>) -> Self {
-        ApiError::Database(format!("{}", value))
+        ApiError::Database(format!("Falha no banco de dados: {}", value))
     }
 }
 

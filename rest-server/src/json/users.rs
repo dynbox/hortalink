@@ -1,16 +1,19 @@
 use serde::{Serialize, Serializer};
-use crate::models::users::{CustomerUser, ProtectedUser, SellerUser, ViewerUser};
+
+use crate::models::customers::CustomerUser;
+use crate::models::sellers::SellerUser;
+use crate::models::users::{ProtectedUser, ViewerUser};
 
 #[derive(Serialize)]
 pub struct UserMeResponse {
     pub user: ProtectedUser,
-    pub infos: Vec<UserType>
+    pub infos: Vec<UserType>,
 }
 
 pub enum UserType {
     Customer(CustomerUser),
     Seller(SellerUser),
-    Viewer(ViewerUser)
+    Viewer(ViewerUser),
 }
 
 impl Serialize for UserType {

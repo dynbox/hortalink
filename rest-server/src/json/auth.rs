@@ -32,8 +32,6 @@ pub struct UserInfo {
 pub struct SignCreds {
     #[garde(skip)]
     pub name: String,
-    #[garde(length(min=2, max=16))]
-    pub username: String,
     #[garde(email)]
     pub email: String,
     #[garde(length(min=8, max=64))]

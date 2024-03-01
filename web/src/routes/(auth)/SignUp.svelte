@@ -5,7 +5,6 @@
     let phone: string = '';
     let password: string = '';
     let accountType: string = '';
-    let username: string = '';
     let name: string = '';
 
     const handleSignup: EventHandler<Event, HTMLFormElement> = async (event) => {
@@ -21,8 +20,7 @@
                 email,
                 //phone,
                 password,
-                name,
-                username
+                name
             })
         });
 
@@ -50,7 +48,6 @@
         </label>
     </div>
 
-    <input bind:value={username} name="username" type="text" placeholder="Apelido:" />
     <input bind:value={name} name="name" type="text" placeholder="Nome:" />
     <button type="submit">Cadastrar</button>
 </form>

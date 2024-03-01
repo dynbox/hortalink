@@ -7,7 +7,7 @@ edition.workspace = true
 common = { path = "../common" }
 app_core = { path = "../core" }
 
-sqlx = { workspace = true, features = ["macros", "migrate", "chrono"] }
+sqlx = { workspace = true, features = ["macros", "migrate", "chrono", "rust_decimal"] }
 garde = { workspace = true, features = ["email", "phone-number"] }
 axum_garde = { workspace = true, features = ["json", "query"] }
 axum = { workspace = true }

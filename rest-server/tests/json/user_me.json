@@ -5,8 +5,7 @@
       "email": "john.doe@gmail.com",
       "name": "John Doe",
       "avatar": null,
-      "phone": "63983424568",
-      "username": "johndoe"
+      "phone": "63983424568"
     },
     "infos": [
       {
@@ -20,8 +19,7 @@
       "email": "jane.smith@hotmail.com",
       "name": "Jane Smith",
       "avatar": null,
-      "phone": "63983524568",
-      "username": "janesmith"
+      "phone": "63983524568"
     },
     "infos": [
       {
@@ -35,10 +33,13 @@
       "email": "bob.johnson@outlook.com",
       "name": "Bob Johnson",
       "avatar": null,
-      "phone": "63983424598",
-      "username": "bobjohnson"
+      "phone": "63983424598"
     },
-    "infos": []
+    "infos": [
+      {
+        "bio": null
+      }
+    ]
   },
   "3": {
     "user": {
@@ -46,10 +47,13 @@
       "email": "alice.williams@yahoo.com",
       "name": "Alice Williams",
       "avatar": null,
-      "phone": "63943424568",
-      "username": "alicewilliams"
+      "phone": "63943424568"
     },
-    "infos": []
+    "infos": [
+      {
+        "bio": null
+      }
+    ]
   },
   "4": {
     "user": {
@@ -57,10 +61,13 @@
       "email": "charlie.brown@hotmail.com",
       "name": "Charlie Brown",
       "avatar": null,
-      "phone": "63987424568",
-      "username": "charliebrown"
+      "phone": "63987424568"
     },
-    "infos": []
+    "infos": [
+      {
+        "bio": null
+      }
+    ]
   },
   "5": {
     "user": {
@@ -68,8 +75,7 @@
       "email": "diana.prince@aol.com",
       "name": "Diana Prince",
       "avatar": null,
-      "phone": "63983429568",
-      "username": "dianaprince"
+      "phone": "63983429568"
     },
     "infos": [
       {
@@ -83,8 +89,7 @@
       "email": "harry.potter@gmail.com",
       "name": "Harry Potter",
       "avatar": null,
-      "phone": "63983424568",
-      "username": "harrypotter"
+      "phone": "63983424568"
     },
     "infos": [
       {
@@ -98,10 +103,13 @@
       "email": "sherlock.holmes@proton.me",
       "name": "Sherlock Holmes",
       "avatar": null,
-      "phone": "63986524568",
-      "username": "sherlockholmes"
+      "phone": "63986524568"
     },
-    "infos": []
+    "infos": [
+      {
+        "bio": null
+      }
+    ]
   },
   "8": {
     "user": {
@@ -109,10 +117,13 @@
       "email": "elizabeth.bennet@gmail.com",
       "name": "Elizabeth Bennet",
       "avatar": null,
-      "phone": "63983624568",
-      "username": "elizabethbennet"
+      "phone": "63983624568"
     },
-    "infos": []
+    "infos": [
+      {
+        "bio": null
+      }
+    ]
   },
   "9": {
     "user": {
@@ -120,8 +131,7 @@
       "email": "frodo.baggins@icloud.com",
       "name": "Frodo Baggins",
       "avatar": null,
-      "phone": "63983424068",
-      "username": "frodobaggins"
+      "phone": "63983424068"
     },
     "infos": [
       {

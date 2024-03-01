@@ -11,14 +11,15 @@ pub async fn login(
     mut auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<LoginCreds>>,
 ) -> Result<(), ApiError> {
-    match auth_session.authenticate(Credentials::Password(payload.into_inner())).await? {
-        Some(user) => {
-            auth_session.login(&user).await?;
+    let user = auth_session.authenticate(
+        Credentials::Password(payload.into_inner())
+    )
+        .await?
+        .ok_or(ApiError::NotFound("Usuário não encontrado".to_string()))?;
 
-            Ok(())
-        }
-        None => Err(ApiError::Unauthorized("Usuário não encontrado".to_string())),
-    }
+    auth_session.login(&user)
+        .await?;
+    Ok(())
 }
 
 pub async fn sign_in(
@@ -30,13 +31,12 @@ pub async fn sign_in(
 
     let user = sqlx::query_as::<_, LoginUser>(
         r#"
-            INSERT INTO users (name, username, email, roles, avatar, password)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            INSERT INTO users (name, email, roles, avatar, password)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING id, password, roles, access_token
         "#
     )
         .bind(payload.name)
-        .bind(payload.username)
         .bind(payload.email)
         .bind(vec![payload.role as i16])
         .bind(payload.avatar)

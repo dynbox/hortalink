@@ -11,16 +11,6 @@ pub struct ProtectedUser {
     name: String,
     avatar: Option<String>,
     phone: String,
-    username: String
-}
-
-#[derive(sqlx::FromRow, Serialize)]
-pub struct CustomerUser {
-    address: String
-}
-
-#[derive(sqlx::FromRow, Serialize)]
-pub struct SellerUser {
 }
 
 #[derive(sqlx::FromRow, Serialize)]

@@ -21,7 +21,6 @@ async fn test_auth(pool: Pool<Postgres>) {
 async fn test_sign_in(server: &TestServer) {
     let payload = SignCreds {
         name: "Luis Fernando".to_string(),
-        username: "baskerbyte".to_string(),
         email: "baskerbyte@gmail.com".to_string(),
         password: "secured123456".to_string(),
         avatar: None,
