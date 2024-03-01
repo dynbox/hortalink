@@ -48,6 +48,9 @@ jobs:
       - name: Create .env file
         run: echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hortalink" > .env
 
+      - name: Setup PostGIS
+        uses: nyurik/action-setup-postgis@v1.1
+
       - name: Test
         uses: actions-rs/cargo@v1
         with:
