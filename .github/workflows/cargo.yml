@@ -1,6 +1,6 @@
 name: Rust CI
 
-on: [push]
+on: [ push ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -44,7 +44,9 @@ jobs:
       - name: Run migrations
         run: |
           PGPASSWORD=postgres psql -h localhost -U postgres -d hortalink -f rest-server/migrations/setup/20240215193325_init.up.sql
-          export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hortalink
+
+      - name: Create .env file
+        run: echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hortalink" > .env
 
       - name: Test
         uses: actions-rs/cargo@v1
