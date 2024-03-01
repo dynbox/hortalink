@@ -7,7 +7,7 @@ pub struct SellerProduct {
     #[sqlx(flatten)]
     product: Product,
     photos: Vec<String>,
-    quantity: i16,
+    quantity: Option<i16>,
     price: Decimal,
     rating: Option<f64>,
 }

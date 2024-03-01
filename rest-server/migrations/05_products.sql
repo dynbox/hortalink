@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS "seller_products" (
     product_id INT REFERENCES "products"(id),
     seller_id INT REFERENCES "sellers"(user_id),
     price NUMERIC(7, 2) NOT NULL,
-    quantity SMALLINT NOT NULL,
+    quantity SMALLINT,
     photos VARCHAR(256)[] NOT NULL
 );
 
