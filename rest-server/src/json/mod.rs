@@ -8,6 +8,7 @@ pub mod users;
 pub mod notifications;
 pub mod schedules;
 pub mod sellers;
+pub mod ratings;
 
 pub fn serialize_timestamp<S>(naive_datetime: &NaiveDateTime, serializer: S) -> Result<S::Ok, S::Error>
     where

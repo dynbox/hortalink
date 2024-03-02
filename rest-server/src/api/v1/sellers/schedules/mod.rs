@@ -17,6 +17,6 @@ pub fn router() -> Router {
         .route("/:schedule_id", patch(patch::schedule)
             .delete(delete::schedule)
         )
-        .layer(permission_required!(AuthGate, UserRole::Seller as i16))
+        .layer(permission_required!(AuthGate, UserRole::Seller))
         .route("/", get(get::schedules))
 }

@@ -5,11 +5,11 @@ use axum_garde::WithValidation;
 use crate::app::auth::AuthSession;
 use crate::app::web::AppState;
 use crate::json::error::ApiError;
-use crate::json::schedules::{ScheduleParams, UpdateSchedulePayload};
+use crate::json::schedules::UpdateSchedulePayload;
 
 pub async fn schedule(
     Extension(state): Extension<AppState>,
-    Path(params): Path<ScheduleParams>,
+    Path((_, schedule_id)): Path<(i32, i32)>,
     auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<UpdateSchedulePayload>>,
 ) -> Result<(), ApiError> {
@@ -26,7 +26,7 @@ pub async fn schedule(
         "#
     )
         .bind(login_user.id)
-        .bind(params.schedule_id)
+        .bind(schedule_id)
         .fetch_one(&mut *tx)
         .await?;
 
@@ -53,9 +53,9 @@ pub async fn schedule(
         .bind(payload.address)
         .bind(payload.start_time)
         .bind(payload.end_time)
-        .bind(payload.day_of_week
-            .map(|day| day as i16))
-        .bind(params.schedule_id)
+        .bind::<Option<i16>>(payload.day_of_week
+            .map(|day| day.into()))
+        .bind(schedule_id)
         .execute(&mut *tx)
         .await?;
 

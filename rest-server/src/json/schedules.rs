@@ -29,8 +29,3 @@ pub struct UpdateSchedulePayload {
     pub end_time: Option<time::Time>,
     pub day_of_week: Option<WeekDay>,
 }
-
-#[derive(Deserialize)]
-pub struct ScheduleParams {
-    pub schedule_id: i32,
-}
