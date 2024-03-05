@@ -11,3 +11,10 @@ VALUES (3, 1),
        (5, 3),
        (8, 4),
        (8, 5);
+
+INSERT INTO product_schedules (seller_product_id, schedule_id)
+VALUES (3, 1),
+       (4, 2),
+       (5, 3),
+       (6, 4),
+       (8, 5);
