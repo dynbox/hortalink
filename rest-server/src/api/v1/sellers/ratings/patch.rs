@@ -5,13 +5,13 @@ use axum_garde::WithValidation;
 use crate::app::auth::AuthSession;
 use crate::app::web::AppState;
 use crate::json::error::ApiError;
-use crate::json::ratings::PatchRatingPayload;
+use crate::json::ratings::PatchSellerRating;
 
 pub async fn rating(
     Extension(state): Extension<AppState>,
     auth_session: AuthSession,
     Path((_, rating_id)): Path<(i32, i32)>,
-    WithValidation(payload): WithValidation<Json<PatchRatingPayload>>,
+    WithValidation(payload): WithValidation<Json<PatchSellerRating>>,
 ) -> Result<(), ApiError> {
     let user = auth_session.user.unwrap();
     let payload = payload.into_inner();
@@ -25,7 +25,7 @@ pub async fn rating(
             WHERE id = $3 AND author_id = $4
         "#
     )
-        .bind(payload.rating)
+        .bind::<Option<i16>>(payload.rating.map(|it| it.into()))
         .bind(payload.tags.map(|vec| {
             vec.into_iter()
                 .map(|tag| tag.into())

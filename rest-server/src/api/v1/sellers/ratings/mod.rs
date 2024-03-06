@@ -15,5 +15,5 @@ pub fn router() -> Router {
         .route("/:rating_id", patch(patch::rating)
             .delete(delete::rating)
         )
-        .layer(permission_required!(AuthGate, UserRole::Customer))
+        .route_layer(permission_required!(AuthGate, UserRole::Verified, UserRole::Customer))
 }

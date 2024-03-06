@@ -14,6 +14,16 @@ pub struct ProtectedUser {
 }
 
 #[derive(sqlx::FromRow, Serialize)]
+pub struct PreviewUser {
+    #[sqlx(rename = "user_id")]
+    id: i32,
+    #[sqlx(rename = "user_name")]
+    name: String,
+    #[sqlx(rename = "user_avatar")]
+    avatar: Option<String>
+}
+
+#[derive(sqlx::FromRow, Serialize)]
 pub struct ViewerUser {
     #[serde(serialize_with = "serialize_timestamp")]
     end_time: NaiveDateTime,
