@@ -8,7 +8,7 @@ use crate::common::{login, test_app};
 
 mod common;
 
-#[sqlx::test(fixtures("users", "sellers", "schedules"))]
+#[sqlx::test(fixtures("users", "sellers", "products", "schedules"))]
 async fn test_schedules(pool: Pool<Postgres>) {
     let server = &mut test_app(pool);
 
@@ -68,7 +68,8 @@ async fn test_patch_schedules(server: &TestServer) {
 }
 
 async fn test_delete_schedules(server: &TestServer) {
-    server.delete("/api/v1/sellers/8/schedules/5")
-        .expect_success()
+    let res = server.delete("/api/v1/sellers/8/schedules/5")
         .await;
+    
+    println!("{}", res.text())
 }

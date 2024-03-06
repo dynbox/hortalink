@@ -29,6 +29,15 @@ pub async fn schedule(
     }
 
     sqlx::query(r#"
+        DELETE FROM product_schedules
+        WHERE schedule_id = $1
+    "#)
+        .bind(schedule_id)
+        .bind(login_user.id)
+        .execute(&mut *tx)
+        .await?;
+
+    sqlx::query(r#"
         DELETE FROM schedules
         WHERE id = $1
     "#)
