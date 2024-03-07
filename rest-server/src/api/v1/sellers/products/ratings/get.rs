@@ -2,7 +2,7 @@ use axum::{Extension, Json};
 use axum::extract::{Path, Query};
 use axum_garde::WithValidation;
 
-use crate::app::web::AppState;
+use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::utils::Pagination;
 use crate::models::ratings::ProductRatingInfo;

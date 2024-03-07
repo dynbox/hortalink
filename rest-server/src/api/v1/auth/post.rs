@@ -2,7 +2,7 @@ use axum::{Extension, Json};
 use axum_garde::WithValidation;
 
 use crate::app::auth::AuthSession;
-use crate::app::web::AppState;
+use crate::app::server::AppState;
 use crate::json::auth::{Credentials, LoginCreds, SignCreds};
 use crate::json::error::ApiError;
 use crate::models::users::LoginUser;

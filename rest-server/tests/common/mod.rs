@@ -1,6 +1,6 @@
 use axum_test::{TestServer, TestServerConfig};
 use sqlx::{Pool, Postgres};
-use rest_server::app::web::{Server, AppState};
+use rest_server::app::server::{Server, AppState};
 use rest_server::json::auth::LoginCreds;
 
 pub fn test_app(pool: Pool<Postgres>) -> TestServer {

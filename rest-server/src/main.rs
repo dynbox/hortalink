@@ -1,4 +1,4 @@
-use rest_server::app::web::Server;
+use rest_server::app::server::Server;
 
 #[tokio::main]
 async fn main() {

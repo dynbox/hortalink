@@ -2,7 +2,7 @@ use axum::Extension;
 use axum::extract::Path;
 
 use crate::app::auth::AuthSession;
-use crate::app::web::AppState;
+use crate::app::server::AppState;
 use crate::json::error::ApiError;
 
 pub async fn rating(

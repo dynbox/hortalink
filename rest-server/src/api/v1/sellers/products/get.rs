@@ -1,7 +1,7 @@
 use axum::{Extension, Json};
 use axum::extract::Path;
 
-use crate::app::web::AppState;
+use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::products::SellerProductResponse;
 use crate::models::products::SellerProduct;

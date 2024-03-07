@@ -1,7 +1,7 @@
 use axum::{Extension, Json};
 
 use crate::app::auth::AuthSession;
-use crate::app::web::AppState;
+use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::users::{UserMeResponse, UserType};
 use crate::models::customers::CustomerUser;
