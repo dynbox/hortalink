@@ -1,10 +1,8 @@
 use axum::{Extension, Router};
 use axum::http::{header, Method};
 use tower_http::cors::CorsLayer;
-use app_core::database::SqlxManager;
 
-use common::settings::AppSettings;
-use common::settings::web::WebServer;
+use common::settings::{AppSettings, Protocol};
 
 use crate::routes;
 

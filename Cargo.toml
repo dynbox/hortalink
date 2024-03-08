@@ -18,6 +18,7 @@ sqlx = { version = "0.7.3", default-features = false, features = ["runtime-tokio
 tokio = { version = "1.35.0", default-features = false, features = ["rt", "rt-multi-thread", "macros"] }
 serde = { version = "1.0.193", default-features = false, features = ["derive"] }
 tower-http = { version = "0.5.1", default-features = false, features = ["cors"] }
+amqprs = { version = "1.5.3", default-features = false }
 axum_garde = { version = "0.18.0", default-features = false }
 garde = { version = "0.18.0", default-features = false, features = ["derive"] }
 log = { version = "0.4.20" }

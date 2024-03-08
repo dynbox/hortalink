@@ -1,5 +1,6 @@
 use std::env::var;
 use serde::{Deserialize, Serialize};
+use crate::settings::Protocol;
 
 #[derive(Serialize, Deserialize, Clone, Default)]
 pub struct WebApp {
@@ -27,23 +28,7 @@ pub struct CdnServer {
     pub storage: String
 }
 
-pub trait WebServer {
-    fn get_host(&self) -> &String;
-
-    fn get_port(&self) -> &u16;
-
-    fn url(&self) -> String {
-        format!("{}:{}", self.get_host(), self.get_port())
-    }
-
-    fn protocol_url(&self) -> String {
-        let protocol = if &self.get_host() == &"localhost" { "http" } else { "https" };
-
-        format!("{}://{}", protocol, self.url())
-    }
-}
-
-impl WebServer for RestServer {
+impl Protocol for RestServer {
     fn get_host(&self) -> &String {
         &self.host
     }
@@ -65,7 +50,7 @@ impl Default for RestServer {
     }
 }
 
-impl WebServer for WebClient {
+impl Protocol for WebClient {
     fn get_host(&self) -> &String {
         &self.host
     }
@@ -87,7 +72,7 @@ impl Default for WebClient {
     }
 }
 
-impl WebServer for CdnServer {
+impl Protocol for CdnServer {
     fn get_host(&self) -> &String {
         &self.host
     }
