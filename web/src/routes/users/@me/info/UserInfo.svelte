@@ -3,7 +3,6 @@
 
     let originalData: any = {};
     let avatar = "";
-    let username = "";
     let name = "";
     let phone = "";
     let address = "";
@@ -21,7 +20,6 @@
                 originalData = await response.json();
 
                 avatar = originalData.avatar || null;
-                username = originalData.username || null;
                 name = originalData.name || null;
                 phone = originalData.phone || null;
                 address = originalData.address || null;
@@ -52,7 +50,6 @@
         const modifiedFields: any = {};
 
         if (avatar !== originalData.avatar) modifiedFields.avatar = avatar;
-        if (username !== originalData.username) modifiedFields.username = username;
         if (name !== originalData.name) modifiedFields.name = name;
         if (phone !== originalData.phone) modifiedFields.phone = phone;
         if (address !== originalData.address) modifiedFields.address = address;
@@ -82,7 +79,6 @@
         <label for="avatar">Editar foto</label>
         <input type="file" name="avatar" id="avatar" on:change={handleFileChange} />
 
-        <input bind:value={username} type="text" name="username" id="username" placeholder="Apelido: " />
         <input bind:value={name} type="text" name="name" id="name" placeholder="Nome: " />
         <input bind:value={phone} type="number" name="phone" id="phone" placeholder="Número de celular: (63) 9 8129 4124" />
         <input bind:value={address} type="text" name="address" id="address" placeholder="Endereço: " />

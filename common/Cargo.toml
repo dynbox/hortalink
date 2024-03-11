@@ -8,4 +8,5 @@ serde = { workspace = true }
 log = { workspace = true }
 
 toml = { version = "0.8.8" }
+num_enum = { version = "0.7.2" }
 serde_repr = { version = "0.1.18" }

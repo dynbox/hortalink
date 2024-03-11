@@ -1,4 +1,4 @@
-use rest_server::app::web::Server;
+use rest_server::app::server::Server;
 
 #[tokio::main]
 async fn main() {
@@ -9,7 +9,7 @@ async fn main() {
     sqlx::migrate!()
         .run(&app.state.pool)
         .await
-        .expect("Failed to migrate tables.");
+        .expect("Failed to migrate tables");
 
     app.run().await;
 }

@@ -1,35 +1,55 @@
 name: Rust CI
 
-on: [push]
+on: [ push ]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:15-3.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: hortalink
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
-
-      - name: Check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-
-      - name: Test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --workspace --all-features
+          toolchain: stable
 
       - name: Build
         uses: actions-rs/cargo@v1
         with:
           command: build
           args: --release
+
+      - name: Check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+
+      - name: Run migrations
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d hortalink -f rest-server/migrations/setup/20240215193325_init.up.sql
+
+      - name: Create .env file
+        run: echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hortalink" > .env
+
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --workspace --all-features

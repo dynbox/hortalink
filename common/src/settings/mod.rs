@@ -3,17 +3,36 @@ use log::{error, info};
 use serde::{Deserialize, Serialize};
 use crate::settings::database::DatabaseSettings;
 use crate::settings::secrets::Secrets;
+use crate::settings::services::RabbitMQ;
 use crate::settings::web::WebApp;
 
 pub mod web;
 pub mod database;
 pub mod secrets;
+pub mod services;
 
 #[derive(Serialize, Deserialize, Clone, Default)]
 pub struct AppSettings {
     pub web: WebApp,
     pub database: DatabaseSettings,
     pub secrets: Secrets,
+    pub rabbitmq: RabbitMQ
+}
+
+pub trait Protocol {
+    fn get_host(&self) -> &String;
+
+    fn get_port(&self) -> &u16;
+
+    fn url(&self) -> String {
+        format!("{}:{}", self.get_host(), self.get_port())
+    }
+
+    fn protocol_url(&self) -> String {
+        let protocol = if &self.get_host() == &"localhost" { "http" } else { "https" };
+
+        format!("{}://{}", protocol, self.url())
+    }
 }
 
 impl AppSettings {

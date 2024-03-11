@@ -6,5 +6,6 @@ edition.workspace = true
 [dependencies]
 common = { path = "../common" }
 
+amqprs = { workspace = true, features = ["urispec"] }
 sqlx = { workspace = true }
 log = { workspace = true }

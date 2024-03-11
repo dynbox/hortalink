@@ -7,12 +7,22 @@ edition.workspace = true
 common = { path = "../common" }
 app_core = { path = "../core" }
 
-sqlx = { workspace = true, features = ["macros", "migrate"] }
+sqlx = { workspace = true, features = ["macros", "migrate", "chrono", "rust_decimal"] }
+garde = { workspace = true, features = ["email", "phone-number"] }
+axum_garde = { workspace = true, features = ["json", "query"] }
 axum = { workspace = true }
 tower-http = { workspace = true }
 env_logger = { workspace = true }
 log = { workspace = true }
-tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }
+tokio = { workspace = true }
+serde = { workspace = true }
+
+tower-sessions-sqlx-store = { version = "0.10.0", default-features = false, features = ["postgres"] }
+axum-login = { version = "0.13.1" }
+thiserror = { version = "1.0.57" }
+password-auth = { version = "1.0.0" }
+serde_json = { version = "1.0.114" }
+time = { version = "0.3.34" }
 
 [dev-dependencies]
 axum-test = { workspace = true }
