@@ -3,7 +3,7 @@ use log::{error, info};
 use serde::{Deserialize, Serialize};
 use crate::settings::database::DatabaseSettings;
 use crate::settings::secrets::Secrets;
-use crate::settings::services::RabbitMQ;
+use crate::settings::services::{RabbitMQ, WebSocket};
 use crate::settings::web::WebApp;
 
 pub mod web;
@@ -16,7 +16,8 @@ pub struct AppSettings {
     pub web: WebApp,
     pub database: DatabaseSettings,
     pub secrets: Secrets,
-    pub rabbitmq: RabbitMQ
+    pub rabbitmq: RabbitMQ,
+    pub websocket: WebSocket
 }
 
 pub trait Protocol {

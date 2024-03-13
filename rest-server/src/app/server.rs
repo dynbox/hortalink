@@ -7,8 +7,7 @@ use sqlx::{Pool, Postgres};
 use tower_http::cors::CorsLayer;
 use tower_sessions_sqlx_store::PostgresStore;
 use app_core::database::SqlxManager;
-use common::settings::AppSettings;
-use common::settings::web::WebServer;
+use common::settings::{AppSettings, Protocol};
 use crate::app::auth::AuthGate;
 
 #[derive(Clone)]
