@@ -2,7 +2,7 @@ use std::fmt;
 
 use sha1::{Digest, Sha1};
 
-trait Header {
+pub trait Header {
     /// Format a single http header field
     fn fmt(_: &Self) -> String;
 }

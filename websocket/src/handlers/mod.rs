@@ -7,7 +7,7 @@ use tokio::sync::Mutex;
 use web_socket::WebSocket;
 
 pub mod handshake;
-mod identify;
+pub mod event;
 
 pub struct GatewayHandler {
     users: Arc<Mutex<HashMap<i32, Arc<WebSocket<Buff>>>>>,

@@ -11,6 +11,8 @@ sqlx = { workspace = true }
 log = { workspace = true }
 env_logger = { workspace = true }
 tokio = { workspace = true }
+serde = { workspace = true }
+garde = { workspace = true }
 
 futures-util = { version = "0.3.30", default-features = false, features = ["sink"] }
 web-socket = { version = "0.7.0" }

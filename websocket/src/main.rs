@@ -7,6 +7,6 @@ mod handlers;
 #[tokio::main]
 async fn main() {
     env_logger::init();
-    let server = Server::new();
+    let server = Server::new().await;
     server.run().await;
 }

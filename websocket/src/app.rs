@@ -11,11 +11,11 @@ use web_socket::{CloseCode, DataType, Event, Stream, WebSocket};
 use app_core::database::SqlxManager;
 use common::settings::{AppSettings, Protocol};
 
-use crate::handlers::{Buff, GatewayHandler};
+use crate::handlers::Buff;
+use crate::handlers::event::handle_event;
 use crate::handlers::handshake::response;
 
 pub struct Server {
-    handler: GatewayHandler,
     settings: AppSettings,
     pool: Pool<Postgres>,
 }
@@ -26,7 +26,6 @@ impl Server {
         let pool = SqlxManager::new(&settings.database).await.pool;
 
         Self {
-            handler: GatewayHandler::new(),
             settings,
             pool,
         }
@@ -70,10 +69,13 @@ async fn handle_connection(stream: TcpStream, addr: SocketAddr) {
                             match ws.recv_event().await {
                                 Ok(event) => match event {
                                     Event::Data { ty, data } => match ty {
-                                        DataType::Complete(_) => {}
+                                        DataType::Complete(_) =>
+                                            handle_event(&ws, &data).await,
                                         DataType::Stream(stream) => {
                                             buf.extend_from_slice(&data);
+
                                             if let Stream::End(_) = stream {
+                                                handle_event(&ws, &buf).await;
                                                 buf.clear();
                                             }
                                         }
