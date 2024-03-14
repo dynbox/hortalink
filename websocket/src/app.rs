@@ -1,23 +1,25 @@
 use std::collections::HashMap;
 use std::io::Error;
 use std::net::SocketAddr;
+use std::sync::Arc;
 
 use log::{error, info, trace, warn};
 use sqlx::{Pool, Postgres};
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::net::{TcpListener, TcpStream};
+use tokio::sync::Mutex;
 use web_socket::{CloseCode, DataType, Event, Stream, WebSocket};
 
 use app_core::database::SqlxManager;
 use common::settings::{AppSettings, Protocol};
 
-use crate::handlers::Buff;
-use crate::handlers::event::handle_event;
+use crate::handlers::{Buff, Context, GatewayHandler};
+use crate::handlers::event::dispatch_event;
 use crate::handlers::handshake::response;
 
 pub struct Server {
     settings: AppSettings,
-    pool: Pool<Postgres>,
+    context: Arc<Mutex<Context>>,
 }
 
 impl Server {
@@ -27,7 +29,10 @@ impl Server {
 
         Self {
             settings,
-            pool,
+            context: Arc::new(Mutex::new(Context {
+                gateway_handler: GatewayHandler::new(),
+                pool,
+            })),
         }
     }
 
@@ -38,7 +43,7 @@ impl Server {
         loop {
             match listener.accept().await {
                 Ok((stream, addr)) => {
-                    handle_connection(stream, addr).await;
+                    handle_connection(stream, addr, self.context.clone()).await;
                 }
                 Err(e) => {
                     error!("Error accepting connection: {}", e);
@@ -48,7 +53,7 @@ impl Server {
     }
 }
 
-async fn handle_connection(stream: TcpStream, addr: SocketAddr) {
+async fn handle_connection(stream: TcpStream, addr: SocketAddr, context: Arc<Mutex<Context>>) {
     let mut stream = BufReader::new(stream);
 
     match parse_headers(&mut stream).await {
@@ -70,12 +75,12 @@ async fn handle_connection(stream: TcpStream, addr: SocketAddr) {
                                 Ok(event) => match event {
                                     Event::Data { ty, data } => match ty {
                                         DataType::Complete(_) =>
-                                            handle_event(&ws, &data).await,
+                                            dispatch_event(&ws, &data, &context).await,
                                         DataType::Stream(stream) => {
                                             buf.extend_from_slice(&data);
 
                                             if let Stream::End(_) = stream {
-                                                handle_event(&ws, &buf).await;
+                                                dispatch_event(&ws, &buf, &context).await;
                                                 buf.clear();
                                             }
                                         }

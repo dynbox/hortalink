@@ -23,5 +23,6 @@ axum_garde = { version = "0.18.0", default-features = false }
 garde = { version = "0.18.0", default-features = false, features = ["derive"] }
 log = { version = "0.4.20" }
 env_logger = { version = "0.11.1" }
+serde_json = { version = "1.0.114" }
 
 axum-test = { version = "14.3.0", default-features = false, features = ["pretty-assertions"] }

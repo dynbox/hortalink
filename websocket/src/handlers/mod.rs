@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::sync::Arc;
+use sqlx::{Pool, Postgres};
 
 use tokio::io::BufReader;
 use tokio::net::TcpStream;
@@ -8,6 +9,12 @@ use web_socket::WebSocket;
 
 pub mod handshake;
 pub mod event;
+mod identify;
+
+pub struct Context {
+    pub gateway_handler: GatewayHandler,
+    pub pool: Pool<Postgres>
+}
 
 pub struct GatewayHandler {
     users: Arc<Mutex<HashMap<i32, Arc<WebSocket<Buff>>>>>,
@@ -20,7 +27,7 @@ impl GatewayHandler {
         }
     }
 
-    pub async fn add_user(&self, user_id: i32, socket: WebSocket<Buff>) {
+    pub async fn add_user(&self, user_id: i32, socket: &WebSocket<Buff>) {
         let mut users = self.users.lock().await;
         users.insert(user_id, Arc::new(socket));
     }
