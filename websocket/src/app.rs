@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::io::Error;
+use std::io::{Error, ErrorKind};
 use std::net::SocketAddr;
 use std::sync::Arc;
 
@@ -19,7 +19,6 @@ use crate::handlers::handshake::response;
 
 pub struct Server {
     settings: AppSettings,
-    context: Arc<Mutex<Context>>,
 }
 
 impl Server {
@@ -28,11 +27,7 @@ impl Server {
         let pool = SqlxManager::new(&settings.database).await.pool;
 
         Self {
-            settings,
-            context: Arc::new(Mutex::new(Context {
-                gateway_handler: GatewayHandler::new(),
-                pool,
-            })),
+            settings
         }
     }
 
@@ -43,7 +38,7 @@ impl Server {
         loop {
             match listener.accept().await {
                 Ok((stream, addr)) => {
-                    handle_connection(stream, addr, self.context.clone()).await;
+                    handle_connection(stream, addr).await;
                 }
                 Err(e) => {
                     error!("Error accepting connection: {}", e);
@@ -53,60 +48,55 @@ impl Server {
     }
 }
 
-async fn handle_connection(stream: TcpStream, addr: SocketAddr, context: Arc<Mutex<Context>>) {
+async fn handle_connection(
+    stream: TcpStream,
+    addr: SocketAddr,
+) -> Result<(), Error> {
     let mut stream = BufReader::new(stream);
+    let headers = parse_headers(&mut stream).await?;
 
-    match parse_headers(&mut stream).await {
-        Ok(headers) => {
-            if let Some(key) = get_sec_key(&headers) {
-                if let Err(e) = stream
-                    .write_all(response(key, [("x-agent", "web-socket")]).as_bytes())
-                    .await {
-                    error!("[{addr}] failed to send response {e}");
-                } else {
-                    tokio::spawn(async move {
-                        let mut ws = WebSocket::server(stream);
-                        let mut buf = Vec::with_capacity(4096);
+    let Some(key) = get_sec_key(&headers) else {
+        return Err(Error::new(ErrorKind::InvalidData, "teste"));
+    };
 
-                        trace!("[{addr}] connection successfully established");
+    stream
+        .write_all(response(key, [("x-agent", "web-socket")]).as_bytes())
+        .await?;
 
-                        loop {
-                            match ws.recv_event().await {
-                                Ok(event) => match event {
-                                    Event::Data { ty, data } => match ty {
-                                        DataType::Complete(_) =>
-                                            dispatch_event(&ws, &data, &context).await,
-                                        DataType::Stream(stream) => {
-                                            buf.extend_from_slice(&data);
+    tokio::spawn(async move {
+        let mut ws = WebSocket::server(stream);
+        let mut buf = Vec::with_capacity(4096);
 
-                                            if let Stream::End(_) = stream {
-                                                dispatch_event(&ws, &buf, &context).await;
-                                                buf.clear();
-                                            }
-                                        }
-                                    }
-                                    Event::Ping(data) => ws.send_pong(data).await?,
-                                    Event::Pong(_) => {}
-                                    Event::Error(_) => return ws.close(CloseCode::ProtocolError).await,
-                                    Event::Close { .. } => return ws.close(()).await,
-                                }
-                                Err(e) => {
-                                    error!("[{addr}] WebSocket error: {e}");
+        trace!("[{addr}] connection successfully established");
 
-                                    return ws.close(CloseCode::ProtocolError).await;
-                                }
+        loop {
+            match ws.recv_event().await {
+                Ok(event) => match event {
+                    Event::Data { ty, data } => match ty {
+                        DataType::Complete(_) =>
+                            dispatch_event(&ws, &data).await?,
+                        DataType::Stream(stream) => {
+                            buf.extend_from_slice(&data);
+
+                            if let Stream::End(_) = stream {
+                                dispatch_event(&ws, &buf).await?;
+                                buf.clear();
                             }
                         }
-                    });
+                    }
+                    Event::Ping(data) => ws.send_pong(data).await?,
+                    Event::Pong(_) => {}
+                    Event::Error(_) => return ws.close(CloseCode::ProtocolError).await,
+                    Event::Close { .. } => return ws.close(()).await,
                 }
-            } else {
-                warn!("[{addr}] expected websocket upgrade request");
+                Err(e) => {
+                    error!("[{addr}] WebSocket error: {e}");
+
+                    return ws.close(CloseCode::ProtocolError).await;
+                }
             }
         }
-        Err(e) => {
-            warn!("[{addr}] failed to parse connection headers: {e}");
-        }
-    }
+    }).await?
 }
 
 async fn parse_headers(reader: &mut Buff) -> Result<HashMap<String, String>, Error> {

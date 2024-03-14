@@ -29,7 +29,7 @@ impl GatewayHandler {
 
     pub async fn add_user(&self, user_id: i32, socket: &WebSocket<Buff>) {
         let mut users = self.users.lock().await;
-        users.insert(user_id, Arc::new(socket));
+        //users.insert(user_id, Arc::new(socket));
     }
 
     pub async fn get_user(&self, user_id: &i32) -> Option<Arc<WebSocket<Buff>>> {
