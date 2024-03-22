@@ -1,13 +1,14 @@
-use crate::app::Server;
+use tokio::io::{AsyncBufReadExt, AsyncWriteExt};
 
-mod emitters;
-mod app;
-mod handlers;
-mod json;
+use crate::socket::server::SocketServer;
+
+mod socket;
+mod handshake;
 
 #[tokio::main]
 async fn main() {
     env_logger::init();
-    let server = Server::new().await;
-    server.run().await;
+
+    let server = SocketServer::new()
+        .await;
 }

@@ -10,7 +10,7 @@ app_core = { path = "../core" }
 sqlx = { workspace = true }
 log = { workspace = true }
 env_logger = { workspace = true }
-tokio = { workspace = true }
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }
 serde = { workspace = true }
 garde = { workspace = true }
 serde_json = { workspace = true }

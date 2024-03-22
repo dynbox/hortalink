@@ -1,5 +1,3 @@
-use std::fmt;
-
 use sha1::{Digest, Sha1};
 
 pub trait Header {
@@ -28,13 +26,13 @@ fn base64_encode(string: impl AsRef<[u8]>) -> String {
     base64::Engine::encode(&base64::prelude::BASE64_STANDARD, string)
 }
 
-impl<T: fmt::Display> Header for [T; 2] {
+impl<T: std::fmt::Display> Header for [T; 2] {
     fn fmt([key, value]: &Self) -> String {
         format!("{key}: {value}\r\n")
     }
 }
 
-impl<K: fmt::Display, V: fmt::Display> Header for (K, V) {
+impl<K: std::fmt::Display, V: std::fmt::Display> Header for (K, V) {
     fn fmt((key, value): &Self) -> String {
         format!("{key}: {value}\r\n")
     }

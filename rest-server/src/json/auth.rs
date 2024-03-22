@@ -1,4 +1,5 @@
 use garde::Validate;
+use oauth2::CsrfToken;
 use serde::{Deserialize, Serialize};
 use common::entities::UserRole;
 
@@ -40,6 +41,17 @@ pub struct SignCreds {
     pub avatar: Option<String>,
     #[garde(custom(validate_account_role))]
     pub role: UserRole
+}
+
+#[derive(Serialize)]
+pub struct AuthUrlResponse {
+    pub auth_url: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct AuthzResp {
+    pub code: String,
+    pub state: CsrfToken,
 }
 
 fn validate_account_role(value: &UserRole, _: &()) -> garde::Result {

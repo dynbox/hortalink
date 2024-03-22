@@ -1,14 +1,17 @@
-use axum::http::{header, Method};
 use axum::{Extension, Router};
+use axum::http::{header, Method};
 use axum_login::AuthManagerLayerBuilder;
 use axum_login::tower_sessions::{Expiry, SessionManagerLayer};
 use axum_login::tower_sessions::cookie::time::Duration;
 use sqlx::{Pool, Postgres};
 use tower_http::cors::CorsLayer;
 use tower_sessions_sqlx_store::PostgresStore;
+
 use app_core::database::SqlxManager;
 use common::settings::{AppSettings, Protocol};
+
 use crate::app::auth::AuthGate;
+use crate::app::provider::OAuthProvider;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -29,13 +32,17 @@ impl Server {
         Self {
             state: AppState {
                 settings,
-                pool: database.pool
+                pool: database.pool,
             }
         }
     }
 
     pub fn router(state: AppState) -> Router {
         let gate = AuthGate::new(state.pool.clone());
+        let provider = OAuthProvider::new(
+            &state.settings.secrets,
+            state.settings.web.rest.protocol_url()
+        );
 
         Router::new()
             .nest("/api", crate::api::router())
@@ -45,6 +52,7 @@ impl Server {
                     .build()
             )
             .layer(Extension(state))
+            .layer(Extension(provider))
     }
 
     pub async fn run(self) {

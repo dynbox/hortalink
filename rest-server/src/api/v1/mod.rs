@@ -3,6 +3,7 @@ mod sellers;
 mod customers;
 mod auth;
 mod products;
+mod oauth;
 
 use axum::Router;
 use axum_login::{login_required};
@@ -17,4 +18,5 @@ pub fn router() -> Router {
         .nest("/products", products::router())
         .layer(login_required!(AuthGate))
         .nest("/auth", auth::router())
+        .nest("/oauth", oauth::router())
 }
