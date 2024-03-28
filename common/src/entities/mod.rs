@@ -41,3 +41,24 @@ pub enum WeekDay {
     Friday = 6,
     Saturday = 7,
 }
+
+#[derive(IntoPrimitive, Deserialize_repr, Serialize_repr)]
+#[repr(i16)]
+pub enum ImageSize {
+    Size16 = 16,
+    Size32 = 32,
+    Size64 = 64,
+    Size128 = 128,
+    Size256 = 256,
+    Size512 = 512,
+    Size1024 = 1024,
+    Size2048 = 2048,
+    Size4096 = 4096,
+}
+
+impl ImageSize {
+    pub fn dimensions(self) -> (i16, i16) {
+        let size = self.into();
+        (size, size)
+    }
+}

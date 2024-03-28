@@ -7,16 +7,16 @@ use crate::json::error::ApiError;
 use crate::json::query::ImageSizeQuery;
 use crate::utils::image::ImageManager;
 
-pub async fn user_avatar(
-    Path((user_id, image)): Path<(i32, String)>,
+pub async fn product_photo(
+    Path((product_id, image)): Path<(i32, String)>,
     Query(query): Query<ImageSizeQuery>,
     Extension(state): Extension<AppState>,
 ) -> Result<Response, ApiError> {
     let parts: Vec<&str> = image.split(".").collect();
     let path = &format!(
-        "{}/avatars/{}/{}",
+        "{}/products/{}/{}",
         &state.settings.web.cdn.storage,
-        user_id,
+        product_id,
         parts.first()
             .ok_or(ApiError::NotFound("Nome do arquivo não encontrado".to_string()))?
     );

@@ -16,7 +16,7 @@ use crate::routes;
 #[derive(Clone)]
 pub struct AppState {
     pub settings: AppSettings,
-    pool: Pool<Postgres>
+    pub pool: Pool<Postgres>
 }
 
 pub struct Server {
@@ -38,13 +38,11 @@ impl Server {
     }
     
     pub fn router(state: AppState) -> Router {
-        let gate = AuthGate::new(state.pool.clone());
-        
         Router::new()
             .merge(routes::router())
             .layer(Self::configure_cors(&state))
             .layer(
-                AuthManagerLayerBuilder::new(gate, Self::configure_session(&state))
+                AuthManagerLayerBuilder::new(AuthGate, Self::configure_session(&state))
                     .build()
             )
             .layer(Extension(state))

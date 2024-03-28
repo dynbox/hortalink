@@ -1,1 +1,1 @@
-mod image;
+pub mod image;

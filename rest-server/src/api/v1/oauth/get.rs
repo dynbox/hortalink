@@ -41,7 +41,7 @@ pub async fn oauth_callback(
             .clone()
     } else {
         provider.get_token(code).await
-            .map_err(|_| ())?
+            .map_err(|_| ApiError::NotFound("Falha ao gerar token".to_string()))?
             .access_token()
             .secret()
             .clone()

@@ -4,7 +4,7 @@ mod app;
 pub mod routes;
 pub mod models;
 pub mod json;
-mod utils;
+pub mod utils;
 
 #[tokio::main]
 async fn main() {

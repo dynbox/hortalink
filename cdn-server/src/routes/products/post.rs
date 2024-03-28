@@ -6,13 +6,28 @@ use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::utils::image::ImageManager;
 
-pub async fn user_avatar(
-    Path(user_id): Path<i32>,
+pub async fn product_photo(
+    Path(product_id): Path<i32>,
     auth_session: AuthSession,
     Extension(state): Extension<AppState>,
     mut multipart: Multipart,
 ) -> Result<(), ApiError> {
-    if user_id != auth_session.user.unwrap().id {
+    let user_id = auth_session.user.unwrap().id;
+
+    let product_exists: bool = sqlx::query_scalar(
+        r#"
+            SELECT EXISTS(
+                SELECT 1 FROM seller_products
+                WHERE id = $1 AND seller_id = $2
+            )
+        "#
+    )
+        .bind(product_id)
+        .bind(user_id)
+        .fetch_one(&state.pool)
+        .await?;
+
+    if !product_exists {
         return Err(ApiError::Unauthorized("Você não pode fazer isso!".to_string()));
     }
 
@@ -21,7 +36,7 @@ pub async fn user_avatar(
             .ok_or(ApiError::NotFound("Formato de imagem não encontrado".to_string()))?
             .to_string();
 
-        let path = &format!("{}/avatars/{}", &state.settings.web.cdn.storage, user_id);
+        let path = &format!("{}/products/{}", &state.settings.web.cdn.storage, user_id);
         let path = std::path::Path::new(path);
 
         if !path.exists() {
@@ -29,7 +44,7 @@ pub async fn user_avatar(
         }
 
         let data = field.bytes().await?;
-        ImageManager::new(path).create_image(&format.split("/").last().unwrap(), data)
+        ImageManager::new(path).create_image(&format, data)
             .await?;
 
         return Ok(());

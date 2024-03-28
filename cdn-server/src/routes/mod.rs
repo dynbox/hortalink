@@ -1,10 +1,13 @@
 mod avatars;
-mod attachments;
+mod products;
 
 use axum::Router;
+use axum_login::login_required;
+use crate::app::auth::AuthGate;
 
 pub fn router() -> Router {
     Router::new()
         .nest("/avatars", avatars::router())
-        .nest("/attachments", attachments::router())
+        .nest("/products", products::router())
+        .route_layer(login_required!(AuthGate))
 }
