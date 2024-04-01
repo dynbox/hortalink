@@ -10,13 +10,13 @@ app_core = { path = "../core" }
 sqlx = { workspace = true }
 log = { workspace = true }
 env_logger = { workspace = true }
-tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros", "sync", "time"] }
 serde = { workspace = true }
 garde = { workspace = true }
 serde_json = { workspace = true }
 
-futures-util = { version = "0.3.30", default-features = false, features = ["sink"] }
 web-socket = { version = "0.7.0" }
 sha1 = { version = "0.11.0-pre.3" }
 base64 = { version = "0.22.0" }
 rmp-serde = { version = "1.1.2" }
+thiserror = { version = "1.0.57" }

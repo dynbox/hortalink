@@ -1,4 +1,5 @@
 use sha1::{Digest, Sha1};
+use crate::request::HttpRequest;
 
 pub trait Header {
     /// Format a single http header field
@@ -12,6 +13,15 @@ pub fn response(
     let key = accept_key_from(sec_ws_key);
     let headers: String = headers.into_iter().map(|f| Header::fmt(&f)).collect();
     format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {key}\r\n{headers}\r\n")
+}
+
+pub fn get_sec_key(req: &HttpRequest) -> Option<&String> {
+    if !req.headers.get("connection")?.eq_ignore_ascii_case("upgrade")
+        || !req.headers.get("upgrade")?.eq_ignore_ascii_case("websocket")
+    {
+        return None;
+    }
+    req.headers.get("sec-websocket-key")
 }
 
 fn accept_key_from(sec_ws_key: impl AsRef<[u8]>) -> String {

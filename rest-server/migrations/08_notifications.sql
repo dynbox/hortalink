@@ -1,13 +1,27 @@
-CREATE TABLE IF NOT EXISTS "notifications" (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES "users"(id),
-    title VARCHAR(64) NOT NULL,
-    content VARCHAR(256) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "read" BOOLEAN NOT NULL DEFAULT FALSE,
-    status SMALLINT NOT NULL,
-    type SMALLINT NOT NULL,
-    icon TEXT
+CREATE TABLE IF NOT EXISTS "notifications"
+(
+    id         SERIAL PRIMARY KEY,
+    user_id    INT REFERENCES "users" (id),
+    title      VARCHAR(64)  NOT NULL,
+    content    VARCHAR(256) NOT NULL,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "read"     BOOLEAN      NOT NULL DEFAULT FALSE,
+    type       SMALLINT     NOT NULL,
+    icon       VARCHAR(64)
 );
 
 CREATE INDEX user_notification ON "notifications" (user_id);
+
+CREATE OR REPLACE FUNCTION log_notification() RETURNS TRIGGER AS
+$$
+BEGIN
+    PERFORM pg_notify('notification_insert', row_to_json(NEW)::text);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER notification_insert_trigger
+    AFTER INSERT
+    ON "notifications"
+    FOR EACH ROW
+EXECUTE FUNCTION log_notification();
