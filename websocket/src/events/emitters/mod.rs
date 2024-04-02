@@ -15,30 +15,10 @@ pub mod notification;
 
 pub trait EmitterEvent {
     type Response;
+    type Data;
 
     async fn execute(
         connections: &Arc<Mutex<HashMap<i32, SocketSession>>>,
-        pool: &Pool<Postgres>,
-        data: String,
+        data: Self::Data,
     ) -> Result<Self::Response, SocketError>;
-}
-
-pub async fn listen_postgres(
-    database: &DatabaseSettings,
-    connections: Arc<Mutex<HashMap<i32, SocketSession>>>,
-    pool: Pool<Postgres>
-) -> Result<(), sqlx::Error> {
-    let mut listener = PgListener::connect(&database.url()).await?;
-    listener.listen("notification_insert").await?;
-
-    tokio::spawn(async move {
-        loop {
-            let notification = listener.recv().await.unwrap();
-            NotificationEvent::execute(&connections, &pool, notification.payload().to_string())
-                .await
-                .expect("TODO: panic message");
-        }
-    });
-
-    Ok(())
 }

@@ -8,7 +8,7 @@ use crate::json::event::SocketRequest;
 #[derive(Clone)]
 pub struct SocketSession {
     pub hb: Instant,
-    addr: SocketAddr,
+    pub addr: SocketAddr,
     pub frame: mpsc::UnboundedSender<SocketRequest>,
 }
 

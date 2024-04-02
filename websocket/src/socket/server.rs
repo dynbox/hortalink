@@ -8,18 +8,18 @@ use sqlx::postgres::PgListener;
 use tokio::io::{AsyncWriteExt, BufReader};
 use tokio::net::TcpListener;
 use tokio::sync::{mpsc, Mutex};
-use tokio::time::interval;
 use web_socket::{Event, WebSocket};
 
 use app_core::database::SqlxManager;
 use common::settings::{AppSettings, Protocol};
-use common::settings::database::DatabaseSettings;
 
-use crate::events::emitters::{EmitterEvent, listen_postgres};
-use crate::events::emitters::notification::{NotificationEvent};
-use crate::events::receivers::handle_event;
+use crate::events::emitters::{EmitterEvent};
+use crate::events::emitters::notification::NotificationEvent;
+use crate::events::receivers::{ReceiverEvent};
+use crate::events::receivers::heartbeat::HeartbeatEvent;
+use crate::events::receivers::identify::IdentifyEvent;
 use crate::handshake::{get_sec_key, response};
-use crate::json::event::SocketRequest;
+use crate::json::event::{EventData, SocketRequest};
 use crate::request::HttpRequest;
 use crate::socket::session::SocketSession;
 
@@ -50,74 +50,95 @@ impl SocketServer {
             format!("ws://{}", self.settings.websocket.url())
         );
 
-        listen_postgres(
-            &self.settings.database, 
-            Arc::clone(&self.identified_connections), 
-            self.pool.clone()
-        )
-            .await
-            .expect("TODO: panic message");
+        let ident = Arc::clone(&self.identified_connections);
 
-        let connections = Arc::clone(&self.connections);
+        let mut pg_listener = PgListener::connect(&self.settings.database.url()).await.unwrap();
+        pg_listener.listen("notification_insert").await.unwrap();
 
-        loop {
-            tokio::select! {
-                Ok((stream, addr)) = listener.accept() => {
-                    let (reader, mut writer) = stream.into_split();
-                    let mut reader = BufReader::new(reader);
+        tokio::spawn(async move {
+            loop {
+                let notification = pg_listener.recv().await.unwrap();
 
-                    let req = HttpRequest::parse(&mut reader).await?;
-                    
-                    if let Some(key) = get_sec_key(&req) {
-                        let res = response(key, [("x-agent", "web-socket")]);
-                        writer.write_all(res.as_bytes()).await?;
+                match notification.channel() {
+                    "notification_insert" => {
+                        NotificationEvent::execute(
+                            &ident,
+                            serde_json::from_str(notification.payload()).unwrap()
+                        ).await.expect("TODO: panic message");
+                    },
+                    _ => {},
+                }
+            }
+        });
+        
+        let pool = Arc::new(self.pool);
 
-                        trace!("[{addr}] successfully connected");
+        while let Ok((stream, addr)) = listener.accept().await {
+            let (reader, mut writer) = stream.into_split();
+            let mut reader = BufReader::new(reader);
 
-                        // Channel to send events between sockets
-                        let (tx, mut rx) = mpsc::unbounded_channel::<SocketRequest>();
+            let req = HttpRequest::parse(&mut reader).await?;
 
-                        let mut ws = WebSocket::server(writer);
-                        let mut session = SocketSession::new(addr, tx);
-                        
-                        connections.lock()
-                            .await
-                            .push(session.clone());
-                        
-                        tokio::spawn(async move {
-                            let mut socket = WebSocket::server(reader);
-                            let mut interval = tokio::time::interval(Duration::from_secs(10));
-                            
-                            loop {
-                                tokio::select! {
-                                    _ = interval.tick() => {
-                                        if Instant::now().duration_since(session.hb) > Duration::new(10, 0) {
-                                            trace!("[{addr}] client heartbeat failed, disconnecting!");
-                                            break
-                                        }
+            if let Some(key) = get_sec_key(&req) {
+                let res = response(key, [("x-agent", "web-socket")]);
+                writer.write_all(res.as_bytes()).await?;
 
-                                        println!("[{addr}] sending ping");
-                                        if let Err(e) = ws.send_ping("t").await {
-                                            warn!("[{addr}] failed to send ping message: {e}")
-                                        }
-                                    }
-                                    Ok(event) = socket.recv() => {
-                                        handle_event(&mut session, &event).await.expect("TODO: panic message");
-                                    }
+                trace!("[{addr}] successfully connected");
+
+                // Channel to send events between sockets
+                let (tx, mut rx) = mpsc::unbounded_channel::<SocketRequest>();
+
+                let mut ws = WebSocket::server(writer);
+                let mut session = SocketSession::new(addr, tx);
+
+                let connections = Arc::clone(&self.connections);
+                let ident = Arc::clone(&self.identified_connections);
+                let pool = Arc::clone(&pool);
+                
+                connections.lock()
+                    .await
+                    .push(session.clone());
+                
+                tokio::spawn(async move {
+                    let mut socket = WebSocket::server(reader);
+                    let mut interval = tokio::time::interval(Duration::from_secs(10));
+
+                    loop {
+                        tokio::select! {
+                            _ = interval.tick() => {
+                                if Instant::now().duration_since(session.hb) > Duration::new(10, 0) {
+                                    //trace!("[{addr}] client heartbeat failed, disconnecting!");
+                                    //break
+                                }
+                                
+                                if let Err(e) = ws.send_ping("t").await {
+                                    warn!("[{addr}] failed to send ping message: {e}")
                                 }
                             }
-                        });
-
-                        tokio::spawn(async move {
-                            while let Some(event) = rx.recv().await {
-                                match event {
-                                    _ => {},
-                                }
+                            Ok(event) = socket.recv() => {
+                                    match event {
+                                        Event::Data { data, .. } => {
+                                            let data = serde_json::from_slice::<SocketRequest>(&data).unwrap();
+                                
+                                            match data.op {
+                                                16 => IdentifyEvent::handle(&ident, &connections, data.d.unwrap(), &mut session, &pool).await,
+                                                _ => {},
+                                            };
+                                        }
+                                        Event::Pong(_) => HeartbeatEvent::execute(EventData::Heartbeat, &mut session, &pool).await.unwrap(),
+                                        Event::Error(_) | Event::Close { .. } => break,
+                                        _ => {}
+                                };
                             }
-                        });
+                            Some(event) = rx.recv() => {
+                                ws.send(serde_json::to_string(&event).unwrap().as_str()).await.unwrap()
+                            }
+                        }
                     }
-                },
+                });
             }
         }
+
+        Ok(())
     }
 }

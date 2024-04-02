@@ -18,6 +18,7 @@
             credentials: 'include',
             body: JSON.stringify({
                 email,
+                role: 1,
                 //phone,
                 password,
                 name

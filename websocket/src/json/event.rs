@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use crate::json::notification::UserNotification;
 
 #[derive(Serialize, Deserialize)]
 pub struct SocketRequest {
@@ -10,5 +11,9 @@ pub struct SocketRequest {
 #[serde(untagged)]
 pub enum EventData {
     #[serde(skip)]
-    Heartbeat
+    Heartbeat,
+    Notification(UserNotification),
+    Identify {
+        session: String
+    }
 }
