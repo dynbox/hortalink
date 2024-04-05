@@ -107,8 +107,8 @@ impl SocketServer {
                         tokio::select! {
                             _ = interval.tick() => {
                                 if Instant::now().duration_since(session.hb) > Duration::new(10, 0) {
-                                    //trace!("[{addr}] client heartbeat failed, disconnecting!");
-                                    //break
+                                    trace!("[{addr}] client heartbeat failed, disconnecting!");
+                                    break
                                 }
                                 
                                 if let Err(e) = ws.send_ping("t").await {
