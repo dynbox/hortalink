@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use sqlx::{Pool, Postgres};
 use tokio::sync::Mutex;
 
 use crate::events::emitters::EmitterEvent;

@@ -10,7 +10,6 @@ pub struct Notification {
     #[serde(serialize_with = "serialize_timestamp")]
     created_at: NaiveDateTime,
     read: bool,
-    status: i16,
     notification_type: i16,
     icon: Option<String>
 }

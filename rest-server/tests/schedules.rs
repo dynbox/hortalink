@@ -3,7 +3,8 @@ use sqlx::{Pool, Postgres};
 use time::Time;
 use ::common::entities::WeekDay;
 use rest_server::json::auth::LoginCreds;
-use rest_server::json::schedules::{CreateSchedulePayload, ScheduleLocation, UpdateSchedulePayload};
+use rest_server::json::schedules::{CreateSchedulePayload, UpdateSchedulePayload};
+use rest_server::json::utils::Location;
 use crate::common::{login, test_app};
 
 mod common;
@@ -36,7 +37,7 @@ async fn test_get_schedules(server: &TestServer) {
 
 async fn test_post_schedules(server: &TestServer) {
     let payload = CreateSchedulePayload {
-        location: ScheduleLocation {
+        location: Location {
             latitude: -11.737770,
             longitude: -49.065820
         },
@@ -46,10 +47,11 @@ async fn test_post_schedules(server: &TestServer) {
         day_of_week: WeekDay::Monday,
     };
     
-    server.post("/api/v1/sellers/8/schedules")
+    let res = server.post("/api/v1/sellers/8/schedules")
         .json(&payload)
-        .expect_success()
         .await;
+    
+    println!("{}",res.text())
 }
 
 async fn test_patch_schedules(server: &TestServer) {

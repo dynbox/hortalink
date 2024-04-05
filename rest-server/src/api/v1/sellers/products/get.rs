@@ -42,7 +42,7 @@ pub async fn product(
         "#
     )
         .bind(product_id)
-        .fetch_optional(&mut *tx)
+        .fetch_all(&mut *tx)
         .await?;
 
     Ok(Json(SellerProductResponse { product, schedule }))

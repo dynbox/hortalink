@@ -1,8 +1,10 @@
 use axum_test::TestServer;
 use sqlx::{Pool, Postgres};
 use sqlx::types::Decimal;
+
 use rest_server::json::auth::LoginCreds;
-use rest_server::json::products::{PatchSellerProduct, PostSellerProduct};
+use rest_server::json::products::{FilterProducts, PatchSellerProduct, PostSellerProduct};
+
 use crate::common::{login, test_app};
 
 mod common;
@@ -29,6 +31,25 @@ async fn test_get_product(server: &TestServer) {
     server.get("/api/v1/sellers/8/products/8")
         .expect_success()
         .await;
+
+    let query = FilterProducts {
+        max_price: None,
+        min_price: None,
+        min_stars: None,
+        product_type: None,
+        start_time: None,
+        day_of_week: None,
+        page: 1,
+        per_page: 10,
+        latitude: None,
+        longitude: None,
+    };
+
+    let res = server.get("/api/v1/products")
+        .add_query_params(query)
+        .await;
+
+    println!("{}", res.text())
 }
 
 async fn test_patch_product(server: &TestServer) {
@@ -39,12 +60,12 @@ async fn test_patch_product(server: &TestServer) {
         remove_schedules: Some(vec![5]),
         add_schedules: Some(vec![1, 2]),
     };
-    
+
     let res = server.patch("/api/v1/sellers/8/products/8")
         .json(&payload)
         .expect_success()
         .await;
-    
+
     println!("{}", res.text())
 }
 
@@ -56,7 +77,7 @@ async fn test_post_product(server: &TestServer) {
         photos: vec![String::new()],
         schedules: None,
     };
-    
+
     server.post("/api/v1/sellers/8/products")
         .json(&payload)
         .await;

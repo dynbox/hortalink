@@ -1,6 +1,9 @@
+#![allow(dead_code)]
+
 use axum_test::{TestServer, TestServerConfig};
 use sqlx::{Pool, Postgres};
-use rest_server::app::server::{Server, AppState};
+
+use rest_server::app::server::{AppState, Server};
 use rest_server::json::auth::LoginCreds;
 
 pub fn test_app(pool: Pool<Postgres>) -> TestServer {
@@ -11,7 +14,7 @@ pub fn test_app(pool: Pool<Postgres>) -> TestServer {
 
     TestServer::new_with_config(
         Server::router(AppState { settings: Default::default(), pool }),
-        config
+        config,
     )
         .unwrap()
 }

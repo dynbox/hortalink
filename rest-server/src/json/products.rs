@@ -2,6 +2,8 @@ use garde::Validate;
 use serde::{Deserialize, Serialize};
 use sqlx::types::Decimal;
 
+use common::entities::{StarRating, WeekDay};
+
 use crate::json::validate_price;
 use crate::models::products::SellerProduct;
 use crate::models::schedules::Schedule;
@@ -9,7 +11,7 @@ use crate::models::schedules::Schedule;
 #[derive(Serialize)]
 pub struct SellerProductResponse {
     pub product: SellerProduct,
-    pub schedule: Option<Schedule>,
+    pub schedule: Vec<Schedule>,
 }
 
 #[derive(Serialize, Deserialize, Validate)]
@@ -39,4 +41,28 @@ pub struct PatchSellerProduct {
     pub remove_schedules: Option<Vec<i32>>,
     #[garde(length(min = 1, max = 10))]
     pub add_schedules: Option<Vec<i32>>,
+}
+
+#[derive(Serialize, Deserialize, Validate)]
+pub struct FilterProducts {
+    #[garde(custom(validate_price))]
+    pub max_price: Option<Decimal>,
+    #[garde(custom(validate_price))]
+    pub min_price: Option<Decimal>,
+    #[garde(skip)]
+    pub min_stars: Option<StarRating>,
+    #[garde(range(min = 1, max = 100))]
+    pub product_type: Option<i32>,
+    #[garde(skip)]
+    pub start_time: Option<time::Time>,
+    #[garde(skip)]
+    pub day_of_week: Option<WeekDay>,
+    #[garde(range(min = 1, max = 100))]
+    pub page: i16,
+    #[garde(range(min = 5, max = 100))]
+    pub per_page: i16,
+    #[garde(range(min = - 90.0000000, max = 90.0000000))]
+    pub latitude: Option<f64>,
+    #[garde(range(min = - 180.0000000, max = 180.0000000))]
+    pub longitude: Option<f64>,
 }

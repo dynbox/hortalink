@@ -4,7 +4,6 @@ use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::users::{UserMeResponse, UserType};
-use crate::models::customers::CustomerUser;
 use crate::models::sellers::SellerUser;
 use crate::models::users::{ProtectedUser, ViewerUser};
 
@@ -28,19 +27,7 @@ pub async fn me(
 
     let mut infos = Vec::<UserType>::new();
     for role in login_user.roles {
-        if role == 3 {
-            let user = sqlx::query_as::<_, CustomerUser>(
-                r#"
-                    SELECT address FROM customers
-                    WHERE user_id = $1
-                "#
-            )
-                .bind(login_user.id)
-                .fetch_one(&mut *tx)
-                .await?;
-
-            infos.push(UserType::Customer(user))
-        } else if role == 2 {
+        if role == 2 {
             let user = sqlx::query_as::<_, ViewerUser>(
                 r#"
                     SELECT end_time FROM blacklist
@@ -62,7 +49,7 @@ pub async fn me(
                 .bind(login_user.id)
                 .fetch_one(&mut *tx)
                 .await?;
-            
+
             infos.push(UserType::Seller(user))
         }
     }

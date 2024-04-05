@@ -1,22 +1,21 @@
 use axum::{Extension, Router};
 use axum::http::{header, Method};
 use axum_login::AuthManagerLayerBuilder;
-use axum_login::tower_sessions::{Expiry, SessionManagerLayer};
-use axum_login::tower_sessions::cookie::time::Duration;
+use axum_login::tower_sessions::SessionManagerLayer;
 use sqlx::{Pool, Postgres};
 use tower_http::cors::CorsLayer;
 use tower_sessions_sqlx_store::PostgresStore;
+
 use app_core::database::SqlxManager;
-
 use common::settings::{AppSettings, Protocol};
-use crate::app::auth::AuthGate;
 
+use crate::app::auth::AuthGate;
 use crate::routes;
 
 #[derive(Clone)]
 pub struct AppState {
     pub settings: AppSettings,
-    pub pool: Pool<Postgres>
+    pub pool: Pool<Postgres>,
 }
 
 pub struct Server {
@@ -32,11 +31,11 @@ impl Server {
         Self {
             state: AppState {
                 settings,
-                pool: pool.pool
+                pool: pool.pool,
             }
         }
     }
-    
+
     pub fn router(state: AppState) -> Router {
         Router::new()
             .merge(routes::router())

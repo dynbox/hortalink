@@ -21,11 +21,7 @@
       "avatar": null,
       "phone": "63983524568"
     },
-    "infos": [
-      {
-        "address": "123 Main St, Boston, MA"
-      }
-    ]
+    "infos": []
   },
   "2": {
     "user": {
@@ -77,11 +73,7 @@
       "avatar": null,
       "phone": "63983429568"
     },
-    "infos": [
-      {
-        "address": "123 Main St, Boston, MA"
-      }
-    ]
+    "infos": []
   },
   "6": {
     "user": {
@@ -91,11 +83,7 @@
       "avatar": null,
       "phone": "63983424568"
     },
-    "infos": [
-      {
-        "address": "123 Main St, Boston, MA"
-      }
-    ]
+    "infos": []
   },
   "7": {
     "user": {
@@ -133,10 +121,6 @@
       "avatar": null,
       "phone": "63983424068"
     },
-    "infos": [
-      {
-        "address": "123 Main St, Boston, MA"
-      }
-    ]
+    "infos": []
   }
 }
