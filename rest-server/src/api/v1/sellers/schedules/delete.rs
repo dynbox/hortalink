@@ -7,33 +7,29 @@ use crate::json::error::ApiError;
 
 pub async fn schedule(
     Extension(state): Extension<AppState>,
-    Path((_, schedule_id)): Path<(i32, i32)>,
+    Path((seller_id, schedule_id)): Path<(i32, i32)>,
     auth_session: AuthSession,
 ) -> Result<(), ApiError> {
-    let login_user = auth_session.user.unwrap();
+    if auth_session.user.unwrap().id != seller_id {
+        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()))
+    }
+    
     let mut tx = state.pool.begin().await?;
 
-    let query = sqlx::query(r#"
+    sqlx::query(r#"
         DELETE FROM seller_schedules
-        WHERE schedule_id = $1 AND seller_id = $2
+        WHERE schedule_id = $1
     "#)
         .bind(schedule_id)
-        .bind(login_user.id)
         .execute(&mut *tx)
         .await?;
-
-    if query.rows_affected() == 0 {
-        tx.rollback().await?;
-
-        return Err(ApiError::Unauthorized("Somente o autor da agenda pode excluí-la".to_string()));
-    }
 
     sqlx::query(r#"
         DELETE FROM product_schedules
         WHERE schedule_id = $1
     "#)
         .bind(schedule_id)
-        .bind(login_user.id)
+        .bind(seller_id)
         .execute(&mut *tx)
         .await?;
 

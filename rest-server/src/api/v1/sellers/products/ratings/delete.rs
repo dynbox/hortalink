@@ -6,9 +6,15 @@ use crate::json::error::ApiError;
 
 pub async fn rating(
     Extension(state): Extension<AppState>,
-    Path((_, _, rating_id)): Path<(i32, i32, i32)>,
+    Path((seller_id, _, rating_id)): Path<(i32, i32, i32)>,
     auth_session: AuthSession,
 ) -> Result<(), ApiError> {
+    let login_user_id = auth_session.user.unwrap().id;
+
+    if login_user_id == seller_id {
+        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()))
+    }
+    
     sqlx::query(
         r#"
             DELETE FROM seller_product_ratings
@@ -16,7 +22,7 @@ pub async fn rating(
         "#
     )
         .bind(rating_id)
-        .bind(auth_session.user.unwrap().id)
+        .bind(login_user_id)
         .execute(&state.pool)
         .await?;
     

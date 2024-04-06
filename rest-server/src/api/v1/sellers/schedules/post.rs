@@ -1,4 +1,5 @@
 use axum::{Extension, Json};
+use axum::extract::Path;
 use axum::http::StatusCode;
 use axum_garde::WithValidation;
 
@@ -9,10 +10,14 @@ use crate::json::schedules::CreateSchedulePayload;
 
 pub async fn schedule(
     Extension(state): Extension<AppState>,
+    Path(seller_id): Path<i32>,
     auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<CreateSchedulePayload>>,
 ) -> Result<StatusCode, ApiError> {
-    let user_id = auth_session.user.unwrap().id;
+    if auth_session.user.unwrap().id != seller_id {
+        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()))
+    }
+    
     let payload = payload.into_inner();
     let mut tx = state.pool.begin().await?;
 
@@ -38,7 +43,7 @@ pub async fn schedule(
             VALUES ($1, $2)
         "#
     )
-        .bind(user_id)
+        .bind(seller_id)
         .bind(schedule_id)
         .execute(&mut *tx)
         .await?;

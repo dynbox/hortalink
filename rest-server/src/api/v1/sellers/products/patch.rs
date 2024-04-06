@@ -9,12 +9,15 @@ use crate::json::products::PatchSellerProduct;
 
 pub async fn product(
     Extension(state): Extension<AppState>,
-    Path((_, product_id)): Path<(i32, i32)>,
+    Path((seller_id, product_id)): Path<(i32, i32)>,
     auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<PatchSellerProduct>>,
 ) -> Result<(), ApiError> {
+    if auth_session.user.unwrap().id != seller_id {
+        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()))
+    }
+    
     let payload = payload.into_inner();
-    let user = auth_session.user.unwrap();
     let mut tx = state.pool.begin().await?;
 
     let query = sqlx::query(
@@ -30,7 +33,7 @@ pub async fn product(
         .bind(payload.quantity)
         .bind(payload.photos)
         .bind(product_id)
-        .bind(user.id)
+        .bind(seller_id)
         .execute(&mut *tx)
         .await?;
 

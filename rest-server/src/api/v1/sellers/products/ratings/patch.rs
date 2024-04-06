@@ -9,10 +9,16 @@ use crate::json::ratings::PatchSellerProductRating;
 
 pub async fn rating(
     Extension(state): Extension<AppState>,
-    Path((_, _, rating_id)): Path<(i32, i32, i32)>,
+    Path((seller_id, _, rating_id)): Path<(i32, i32, i32)>,
     auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<PatchSellerProductRating>>,
 ) -> Result<(), ApiError> {
+    let login_user_id = auth_session.user.unwrap().id;
+
+    if login_user_id == seller_id {
+        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()))
+    }
+
     let payload = payload.into_inner();
     
     sqlx::query(
@@ -26,7 +32,7 @@ pub async fn rating(
         .bind::<Option<i16>>(payload.rating.map(|it| it.into()))
         .bind(payload.content)
         .bind(rating_id)
-        .bind(auth_session.user.unwrap().id)
+        .bind(login_user_id)
         .execute(&state.pool)
         .await?;
 

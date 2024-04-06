@@ -9,32 +9,15 @@ use crate::json::schedules::UpdateSchedulePayload;
 
 pub async fn schedule(
     Extension(state): Extension<AppState>,
-    Path((_, schedule_id)): Path<(i32, i32)>,
+    Path((seller_id, schedule_id)): Path<(i32, i32)>,
     auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<UpdateSchedulePayload>>,
 ) -> Result<(), ApiError> {
-    let login_user = auth_session.user.unwrap();
-    let payload = payload.into_inner();
-    let mut tx = state.pool.begin().await?;
-
-    let is_author = sqlx::query_scalar::<_, bool>(
-        r#"
-            SELECT EXISTS (
-                SELECT 1 FROM seller_schedules
-                WHERE seller_id = $1 AND schedule_id = $2
-            )
-        "#
-    )
-        .bind(login_user.id)
-        .bind(schedule_id)
-        .fetch_one(&mut *tx)
-        .await?;
-
-    if !is_author {
-        tx.rollback().await?;
-
-        return Err(ApiError::Unauthorized("Somente o autor da agenda pode editá-la".to_string()));
+    if auth_session.user.unwrap().id != seller_id {
+        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()))
     }
+
+    let payload = payload.into_inner();
 
     sqlx::query(r#"
         UPDATE schedules
@@ -56,9 +39,8 @@ pub async fn schedule(
         .bind::<Option<i16>>(payload.day_of_week
             .map(|day| day.into()))
         .bind(schedule_id)
-        .execute(&mut *tx)
+        .execute(&state.pool)
         .await?;
 
-    tx.commit().await?;
     Ok(())
 }
