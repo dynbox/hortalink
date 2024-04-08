@@ -1,5 +1,7 @@
 use serde::Serialize;
+use sqlx::{Pool, Postgres};
 use sqlx::types::chrono::NaiveDateTime;
+use crate::json::error::ApiError;
 
 use crate::json::serialize_timestamp;
 use crate::models::users::PreviewUser;
@@ -14,4 +16,27 @@ pub struct ProductRatingInfo {
     content: String,
     #[sqlx(flatten)]
     user: PreviewUser
+}
+
+impl ProductRatingInfo {
+    pub async fn get_author(
+        pool: &Pool<Postgres>,
+        rating_id: i32,
+    ) -> Result<i32, ApiError> {
+        let user_id = sqlx::query_scalar::<_, i32>(
+            r#"
+                SELECT author_id FROM seller_product_ratings
+                WHERE id = $1
+            "#
+        )
+            .bind(rating_id)
+            .fetch_optional(pool)
+            .await?;
+
+        if user_id.is_none() {
+            return Err(ApiError::NotFound("Produto não encontrada".to_string()));
+        }
+
+        Ok(user_id.unwrap())
+    }
 }

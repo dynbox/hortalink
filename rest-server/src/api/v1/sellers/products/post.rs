@@ -36,7 +36,7 @@ pub async fn product(
         .await?;
 
     if let Some(schedule_ids) = payload.schedules {
-        let query = sqlx::query(
+        sqlx::query(
             r#"
                 INSERT INTO product_schedules (seller_product_id, schedule_id)
                 SELECT * FROM UNNEST ($1, $2)
@@ -46,12 +46,6 @@ pub async fn product(
             .bind(schedule_ids)
             .execute(&mut *tx)
             .await?;
-
-        if query.rows_affected() == 0 {
-            tx.rollback().await?;
-
-            return Err(ApiError::Database("Falha ao adicionar agenda ao produto".to_string()));
-        }
     }
 
     tx.commit().await?;

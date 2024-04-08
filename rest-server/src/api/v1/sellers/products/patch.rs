@@ -6,6 +6,7 @@ use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::products::PatchSellerProduct;
+use crate::models::products::SellerProduct;
 
 pub async fn product(
     Extension(state): Extension<AppState>,
@@ -13,14 +14,17 @@ pub async fn product(
     auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<PatchSellerProduct>>,
 ) -> Result<(), ApiError> {
-    if auth_session.user.unwrap().id != seller_id {
+    let author = SellerProduct::get_author(&state.pool, product_id)
+        .await?;
+
+    if auth_session.user.unwrap().id != seller_id || author != seller_id {
         return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()))
     }
     
     let payload = payload.into_inner();
     let mut tx = state.pool.begin().await?;
 
-    let query = sqlx::query(
+    sqlx::query(
         r#"
             UPDATE seller_products
             SET price = COALESCE($1, price), 
@@ -36,11 +40,6 @@ pub async fn product(
         .bind(seller_id)
         .execute(&mut *tx)
         .await?;
-
-    if query.rows_affected() == 0 {
-        tx.rollback().await?;
-        return Err(ApiError::Unauthorized("Somente o dono do produto pode editá-lo".to_string()));
-    }
 
     if let Some(remove_schedules) = payload.remove_schedules {
         sqlx::query(

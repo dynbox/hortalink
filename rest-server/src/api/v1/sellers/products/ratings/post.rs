@@ -23,7 +23,7 @@ pub async fn rating(
 
     sqlx::query(
         r#"
-            INSERT INTO seller_product_ratings (seller_product_id, customer_id, rating, content)
+            INSERT INTO seller_product_ratings (seller_product_id, author_id, rating, content)
             VALUES ($1, $2, $3, $4)
         "#
     )

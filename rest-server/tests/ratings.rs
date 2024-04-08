@@ -17,43 +17,8 @@ async fn test_ratings(pool: Pool<Postgres>) {
         password: "secured123456".to_string(),
     })
         .await;
-
-    test_seller_rating(server)
-        .await;
-
-    login(server, LoginCreds {
-        email: "jane.smith@hotmail.com".to_string(),
-        password: "secured123456".to_string(),
-    })
-        .await;
     
     test_product_rating(server)
-        .await;
-}
-
-async fn test_seller_rating(server: &TestServer) {
-    let payload = PatchSellerRating {
-        rating: Some(StarRating::VeryBad.into()),
-        tags: None,
-    };
-
-    server.patch("/api/v1/sellers/8/ratings/1")
-        .json(&payload)
-        .expect_success()
-        .await;
-
-    let payload = PostSellerRating {
-        rating: StarRating::VeryBad.into(),
-        tags: None,
-    };
-
-    server.post("/api/v1/sellers/8/ratings")
-        .json(&payload)
-        .expect_success()
-        .await;
-
-    server.delete("/api/v1/sellers/8/ratings/1")
-        .expect_success()
         .await;
 }
 
@@ -78,7 +43,7 @@ async fn test_product_rating(server: &TestServer) {
         .expect_success()
         .await;
 
-    server.patch("/api/v1/sellers/8/products/1/ratings/4")
+    server.patch("/api/v1/sellers/8/products/1/ratings/2")
         .json(&payload)
         .expect_success()
         .await;

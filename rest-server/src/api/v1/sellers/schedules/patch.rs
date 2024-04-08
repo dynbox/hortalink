@@ -6,6 +6,7 @@ use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::schedules::UpdateSchedulePayload;
+use crate::models::schedules::Schedule;
 
 pub async fn schedule(
     Extension(state): Extension<AppState>,
@@ -13,7 +14,10 @@ pub async fn schedule(
     auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<UpdateSchedulePayload>>,
 ) -> Result<(), ApiError> {
-    if auth_session.user.unwrap().id != seller_id {
+    let author = Schedule::get_author(&state.pool, schedule_id)
+        .await?;
+    
+    if auth_session.user.unwrap().id != seller_id || seller_id != author {
         return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()))
     }
 

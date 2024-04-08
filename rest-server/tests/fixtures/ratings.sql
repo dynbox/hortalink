@@ -6,7 +6,7 @@ VALUES (2, 3, 5, ARRAY [1, 2]),
        (10, 8, 4, ARRAY [1, 3]),
        (6, 5, 5, ARRAY [2, 4]);
 
-INSERT INTO "seller_product_ratings" (seller_product_id, customer_id, rating, content)
+INSERT INTO "seller_product_ratings" (seller_product_id, author_id, rating, content)
 VALUES (1, 6, 5, 'Great product, would buy again.'),
        (8, 2, 4, 'Good quality, but a bit overpriced.'),
        (3, 7, 3, 'Could be better.'),
