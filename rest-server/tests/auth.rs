@@ -48,6 +48,16 @@ async fn test_login(server: &TestServer) {
         .json(&payload)
         .expect_success()
         .await;
+
+    let payload = LoginCreds {
+        email: "aaaaa@gmail.com".to_string(),
+        password: "secured123456".to_string(),
+    };
+
+    server.post("/api/v1/auth/login")
+        .json(&payload)
+        .expect_failure()
+        .await;
 }
 
 async fn test_logout(server: &mut TestServer) {
