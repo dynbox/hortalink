@@ -11,5 +11,5 @@ pub struct PublicSeller {
     name: String,
     avatar: Option<String>,
     bio: Option<String>,
-    rating: Option<f64>
+    //rating: Option<f64>
 }

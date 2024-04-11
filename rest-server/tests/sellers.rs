@@ -19,7 +19,7 @@ async fn test_sellers(pool: Pool<Postgres>) {
         .await;
 }
 
-async fn test_get_seller(server: &TestServer) {
+async fn test_get_seller(server: &TestServer) { 
     server.get("/api/v1/sellers/8")
         .expect_success()
         .await;

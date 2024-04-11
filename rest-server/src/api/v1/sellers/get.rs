@@ -15,11 +15,9 @@ pub async fn seller(
     let user = sqlx::query_as::<_, PublicSeller>(
         r#"
             SELECT s.user_id AS id, u.avatar, 
-                u.name, s.bio,
-                PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY sr.rating) AS rating
+                u.name, s.bio
             FROM sellers s
             JOIN users u ON s.user_id = u.id
-            LEFT JOIN seller_rating sr ON s.user_id = sr.seller_id
             WHERE s.user_id = $1
             GROUP BY s.user_id, u.avatar, u.name, s.bio;
         "#
