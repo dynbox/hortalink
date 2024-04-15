@@ -47,11 +47,9 @@ async fn test_post_schedules(server: &TestServer) {
         day_of_week: WeekDay::Monday,
     };
     
-    let res = server.post("/api/v1/sellers/8/schedules")
+    server.post("/api/v1/sellers/8/schedules")
         .json(&payload)
         .await;
-    
-    println!("{}",res.text())
 }
 
 async fn test_patch_schedules(server: &TestServer) {
@@ -70,8 +68,6 @@ async fn test_patch_schedules(server: &TestServer) {
 }
 
 async fn test_delete_schedules(server: &TestServer) {
-    let res = server.delete("/api/v1/sellers/8/schedules/5")
+    server.delete("/api/v1/sellers/8/schedules/5")
         .await;
-    
-    println!("{}", res.text())
 }

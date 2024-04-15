@@ -1,10 +1,10 @@
 use std::path::Path;
-use std::time::SystemTime;
 
 use axum::body::Bytes;
 use image::{GenericImageView, ImageFormat};
 use image::imageops::FilterType;
 use image::io::Reader;
+use image_hasher::{Hasher, HasherConfig};
 
 use common::entities::ImageSize;
 
@@ -12,6 +12,7 @@ use crate::json::error::ApiError;
 
 pub struct ImageManager<Q: AsRef<Path>> {
     path: Q,
+    hasher: Hasher,
 }
 
 impl<Q> ImageManager<Q>
@@ -19,7 +20,8 @@ impl<Q> ImageManager<Q>
 {
     pub fn new(path: Q) -> Self {
         Self {
-            path
+            path,
+            hasher: HasherConfig::new().to_hasher(),
         }
     }
 
@@ -29,10 +31,10 @@ impl<Q> ImageManager<Q>
             .with_guessed_format()?
             .decode()?
             .resize(dimensions.0 as u32, dimensions.1 as u32, FilterType::Lanczos3);
-        
+
         let mut buffer = std::io::Cursor::new(Vec::new());
         image.write_to(&mut buffer, ImageFormat::Png)?;
-        
+
         Ok(buffer.into_inner())
     }
 
@@ -46,18 +48,13 @@ impl<Q> ImageManager<Q>
         let image = image.decode()?;
         let dimensions = image.dimensions();
         let image = image.resize(
-            dimensions.0 / 3, 
-            dimensions.1 / 3, 
-            FilterType::Gaussian
+            dimensions.0 / 3,
+            dimensions.1 / 3,
+            FilterType::Gaussian,
         );
 
         image.save_with_format(
-            self.path.as_ref().join(
-                SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)
-                    .unwrap()
-                    .as_millis()
-                    .to_string()
-            ),
+            self.path.as_ref().join(self.hasher.hash_image(&image).to_base64()),
             format,
         )?;
 

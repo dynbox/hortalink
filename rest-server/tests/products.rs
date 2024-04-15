@@ -45,11 +45,9 @@ async fn test_get_product(server: &TestServer) {
         longitude: None,
     };
 
-    let res = server.get("/api/v1/products")
+    server.get("/api/v1/products")
         .add_query_params(query)
         .await;
-
-    println!("{}", res.text())
 }
 
 async fn test_patch_product(server: &TestServer) {
@@ -61,12 +59,10 @@ async fn test_patch_product(server: &TestServer) {
         add_schedules: Some(vec![1, 2]),
     };
 
-    let res = server.patch("/api/v1/sellers/8/products/8")
+    server.patch("/api/v1/sellers/8/products/8")
         .json(&payload)
         .expect_success()
         .await;
-
-    println!("{}", res.text())
 }
 
 async fn test_post_product(server: &TestServer) {
