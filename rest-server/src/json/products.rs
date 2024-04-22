@@ -25,8 +25,8 @@ pub struct PostSellerProduct {
     pub quantity: Option<i16>,
     #[garde(length(min = 1, max = 5))]
     pub photos: Vec<String>,
-    #[garde(length(min = 1, max = 10))]
-    pub schedules: Option<Vec<i32>>,
+    #[garde(skip)]
+    pub schedule_id: Option<i32>,
 }
 
 #[derive(Serialize, Deserialize, Validate)]
@@ -37,10 +37,8 @@ pub struct PatchSellerProduct {
     pub quantity: Option<i16>,
     #[garde(length(min = 1, max = 5))]
     pub photos: Option<Vec<String>>,
-    #[garde(length(min = 1, max = 10))]
-    pub remove_schedules: Option<Vec<i32>>,
-    #[garde(length(min = 1, max = 10))]
-    pub add_schedules: Option<Vec<i32>>,
+    #[garde(skip)]
+    pub schedule_id: Option<i32>,
 }
 
 #[derive(Serialize, Deserialize, Validate)]

@@ -55,8 +55,7 @@ async fn test_patch_product(server: &TestServer) {
         price: Some(Decimal::new(11, 1)),
         quantity: None,
         photos: None,
-        remove_schedules: Some(vec![5]),
-        add_schedules: Some(vec![1, 2]),
+        schedule_id: Some(2),
     };
 
     server.patch("/api/v1/sellers/8/products/8")
@@ -71,7 +70,7 @@ async fn test_post_product(server: &TestServer) {
         price: Some(Decimal::new(11, 1)),
         quantity: None,
         photos: vec![String::new()],
-        schedules: None,
+        schedule_id: Some(2),
     };
 
     server.post("/api/v1/sellers/8/products")

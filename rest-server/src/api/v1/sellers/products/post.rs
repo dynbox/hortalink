@@ -14,16 +14,16 @@ pub async fn product(
     WithValidation(payload): WithValidation<Json<PostSellerProduct>>,
 ) -> Result<(), ApiError> {
     if auth_session.user.unwrap().id != seller_id {
-        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()))
+        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()));
     }
-    
+
     let payload = payload.into_inner();
     let mut tx = state.pool.begin().await?;
 
-    let product_id = sqlx::query_scalar::<_, i32>(
+    sqlx::query_scalar::<_, i32>(
         r#"
-            INSERT INTO seller_products (product_id, seller_id, price, quantity, photos)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO seller_products (product_id, seller_id, price, quantity, photos, schedule_id)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id
         "#
     )
@@ -32,21 +32,9 @@ pub async fn product(
         .bind(payload.price)
         .bind(payload.quantity)
         .bind(payload.photos)
+        .bind(payload.schedule_id)
         .fetch_one(&mut *tx)
         .await?;
-
-    if let Some(schedule_ids) = payload.schedules {
-        sqlx::query(
-            r#"
-                INSERT INTO product_schedules (seller_product_id, schedule_id)
-                SELECT * FROM UNNEST ($1, $2)
-            "#
-        )
-            .bind(vec![product_id].repeat(schedule_ids.len()))
-            .bind(schedule_ids)
-            .execute(&mut *tx)
-            .await?;
-    }
 
     tx.commit().await?;
     Ok(())
