@@ -42,8 +42,8 @@ impl<Q> ImageManager<Q>
         let format = ImageFormat::from_extension(origin_format)
             .ok_or(ApiError::NotFound("Formato de imagem não encontrado".to_string()))?;
 
-        let mut image = Reader::new(std::io::Cursor::new(data));
-        image.set_format(format);
+        let image = Reader::new(std::io::Cursor::new(data))
+            .with_guessed_format()?;
 
         let image = image.decode()?;
         let dimensions = image.dimensions();

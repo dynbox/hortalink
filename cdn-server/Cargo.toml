@@ -7,7 +7,7 @@ edition.workspace = true
 common = { path = "../common" }
 app_core = { path = "../core" }
 
-axum = { workspace = true, features = ["multipart", "json", "query"] }
+axum = { version = "0.7.5", features = ["multipart"] }
 axum-login = { workspace = true }
 sqlx = { workspace = true }
 env_logger = { workspace = true }
