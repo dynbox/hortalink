@@ -1,6 +1,8 @@
 use axum::{Extension, Json};
 use axum_garde::WithValidation;
 
+use common::entities::UserRole;
+
 use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::auth::{Credentials, LoginCreds, SignCreds};
@@ -38,11 +40,32 @@ pub async fn sign_in(
     )
         .bind(payload.name)
         .bind(payload.email)
-        .bind(vec![payload.role as i16])
+        .bind(vec![payload.role.clone() as i16])
         .bind(payload.avatar)
         .bind(password_auth::generate_hash(&payload.password))
         .fetch_one(&state.pool)
         .await?;
+
+    if payload.role == UserRole::Seller {
+        sqlx::query(
+            r#"
+                INSERT INTO sellers (user_id) VALUES ($1)
+            "#
+        )
+            .bind(user.id)
+            .execute(&state.pool)
+            .await?;
+    } else {
+        sqlx::query(
+            r#"
+                INSERT INTO customers (user_id) VALUES ($1)
+            "#
+        )
+            .bind(user.id)
+            .execute(&state.pool)
+            .await?;
+    }
+
 
     auth_session.login(&user).await?;
     Ok(())

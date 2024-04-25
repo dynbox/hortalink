@@ -11,7 +11,7 @@ pub enum StarRating {
     VeryGood = 5,
 }
 
-#[derive(TryFromPrimitive, IntoPrimitive, Deserialize_repr, Serialize_repr)]
+#[derive(TryFromPrimitive, IntoPrimitive, Deserialize_repr, Serialize_repr, Eq, PartialEq)]
 #[derive(Clone, Debug)]
 #[repr(i16)]
 pub enum UserRole {

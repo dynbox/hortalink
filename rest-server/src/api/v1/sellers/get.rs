@@ -5,14 +5,14 @@ use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::sellers::SellerResponse;
 use crate::models::products::SellerProduct;
-use crate::models::sellers::SellerUser;
+use crate::models::sellers::PublicSeller;
 
 pub async fn seller(
     Extension(state): Extension<AppState>,
     Path(seller_id): Path<i32>,
 ) -> Result<Json<SellerResponse>, ApiError> {
     let mut tx = state.pool.begin().await?;
-    let seller = sqlx::query_as::<_, SellerUser>(
+    let seller = sqlx::query_as::<_, PublicSeller>(
         r#"
             SELECT s.user_id AS id, u.avatar, 
                 u.name, s.bio

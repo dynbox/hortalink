@@ -1,9 +1,10 @@
 use serde::Serialize;
+
 use crate::models::products::SellerProduct;
-use crate::models::sellers::SellerUser;
+use crate::models::sellers::PublicSeller;
 
 #[derive(Serialize)]
 pub struct SellerResponse {
-    pub seller: SellerUser,
-    pub products: Vec<SellerProduct>
+    pub seller: PublicSeller,
+    pub products: Vec<SellerProduct>,
 }
