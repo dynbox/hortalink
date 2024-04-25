@@ -9,7 +9,7 @@ use crate::common::{login, test_app};
 
 mod common;
 
-#[sqlx::test(fixtures("users", "sellers", "customers", "products", "ratings", "schedules"))]
+#[sqlx::test(fixtures("users", "sellers", "customers", "schedules", "products", "ratings"))]
 async fn test_products(pool: Pool<Postgres>) {
     let server = &mut test_app(pool);
 
@@ -40,14 +40,16 @@ async fn test_get_product(server: &TestServer) {
         start_time: None,
         day_of_week: None,
         page: 1,
-        per_page: 10,
-        latitude: None,
-        longitude: None,
+        per_page: 5,
+        latitude: Some(0.0),
+        longitude: Some(0.0),
     };
 
-    server.get("/api/v1/products")
+    let res = server.get("/api/v1/products")
         .add_query_params(query)
         .await;
+
+    println!("{}", res.text())
 }
 
 async fn test_patch_product(server: &TestServer) {

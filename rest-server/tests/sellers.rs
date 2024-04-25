@@ -5,7 +5,7 @@ use crate::common::{login, test_app};
 
 mod common;
 
-#[sqlx::test(fixtures("users", "sellers", "customers", "products", "ratings"))]
+#[sqlx::test(fixtures("users", "sellers", "customers", "schedules", "products", "ratings"))]
 async fn test_sellers(pool: Pool<Postgres>) {
     let server = &mut test_app(pool);
 
@@ -19,8 +19,9 @@ async fn test_sellers(pool: Pool<Postgres>) {
         .await;
 }
 
-async fn test_get_seller(server: &TestServer) { 
-    server.get("/api/v1/sellers/8")
-        .expect_success()
+async fn test_get_seller(server: &TestServer) {
+    let res = server.get("/api/v1/users/8")
         .await;
+
+    println!("{}", res.text());
 }

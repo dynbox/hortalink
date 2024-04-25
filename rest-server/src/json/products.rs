@@ -37,7 +37,7 @@ pub struct PatchSellerProduct {
     pub quantity: Option<i16>,
     #[garde(length(min = 1, max = 5))]
     pub photos: Option<Vec<String>>,
-    #[garde(skip)]
+    #[garde(range(min = 1))]
     pub schedule_id: Option<i32>,
 }
 

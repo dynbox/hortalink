@@ -30,7 +30,7 @@ pub async fn product(
             SET price = COALESCE($1, price), 
                 quantity = COALESCE($2, quantity), 
                 photos = COALESCE($3, photos),
-                schedule_id = COALESCE($4, schedule_id)
+                schedule_id = $4
             WHERE product_id = $5
         "#
     )
