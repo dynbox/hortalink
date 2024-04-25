@@ -12,9 +12,9 @@ pub async fn user_avatar(
     Extension(state): Extension<AppState>,
     mut multipart: Multipart,
 ) -> Result<(), ApiError> {
-    /*if user_id != auth_session.user.unwrap().id {
+    if user_id != auth_session.user.unwrap().id {
         return Err(ApiError::Unauthorized("Você não pode fazer isso!".to_string()));
-    }*/
+    }
 
     while let Some(field) = multipart.next_field().await? {
         let format = field.content_type()
