@@ -2,8 +2,8 @@ use serde::Serialize;
 use sqlx::{Pool, Postgres};
 use sqlx::types::chrono::NaiveDateTime;
 use sqlx::types::Decimal;
-use crate::json::error::ApiError;
 
+use crate::json::error::ApiError;
 use crate::json::serialize_timestamp;
 
 #[derive(sqlx::FromRow, Serialize)]

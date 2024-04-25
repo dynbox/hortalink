@@ -20,7 +20,7 @@ serde = { workspace = true }
 password-auth = { version = "1.0.0" }
 thiserror = { version = "1.0.57" }
 image = { version = "0.25.0" }
-fast_image_resize = { version = "3.0.4" }
+image_hasher = { version = "2.0.0" }
 
 [dev-dependencies]
 axum-test = { workspace = true }

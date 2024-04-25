@@ -29,42 +29,18 @@ pub async fn product(
             UPDATE seller_products
             SET price = COALESCE($1, price), 
                 quantity = COALESCE($2, quantity), 
-                photos = COALESCE($3, photos)
-            WHERE product_id = $4 AND seller_id = $5
+                photos = COALESCE($3, photos),
+                schedule_id = $4
+            WHERE product_id = $5
         "#
     )
         .bind(payload.price)
         .bind(payload.quantity)
         .bind(payload.photos)
+        .bind(payload.schedule_id)
         .bind(product_id)
-        .bind(seller_id)
         .execute(&mut *tx)
         .await?;
-
-    if let Some(remove_schedules) = payload.remove_schedules {
-        sqlx::query(
-            r#"
-                DELETE FROM product_schedules
-                WHERE schedule_id = ANY($1)
-            "#
-        )
-            .bind(remove_schedules)
-            .execute(&mut *tx)
-            .await?;
-    }
-    
-    if let Some(add_schedules) = payload.add_schedules {
-        sqlx::query(
-            r#"
-                INSERT INTO product_schedules (seller_product_id, schedule_id)
-                SELECT * FROM UNNEST ($1, $2)
-            "#
-        )
-            .bind(vec![product_id].repeat(add_schedules.len()))
-            .bind(add_schedules)
-            .execute(&mut *tx)
-            .await?;
-    }
 
     Ok(())
 }

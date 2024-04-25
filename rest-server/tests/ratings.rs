@@ -1,9 +1,11 @@
 use axum_test::TestServer;
 use sqlx::{Pool, Postgres};
+
 use ::common::entities::StarRating;
 use rest_server::json::auth::LoginCreds;
-use rest_server::json::ratings::{PatchSellerRating, PostSellerProductRating, PostSellerRating};
+use rest_server::json::ratings::PostSellerProductRating;
 use rest_server::json::utils::Pagination;
+
 use crate::common::{login, test_app};
 
 mod common;
@@ -17,7 +19,7 @@ async fn test_ratings(pool: Pool<Postgres>) {
         password: "secured123456".to_string(),
     })
         .await;
-    
+
     test_product_rating(server)
         .await;
 }
@@ -27,17 +29,17 @@ async fn test_product_rating(server: &TestServer) {
         page: 1,
         per_page: 50,
     };
-    
+
     server.get("/api/v1/sellers/8/products/8/ratings")
         .add_query_params(query)
         .expect_success()
         .await;
-    
+
     let payload = PostSellerProductRating {
         rating: StarRating::VeryBad,
         content: Some("ooooh my god".to_string()),
     };
-    
+
     server.post("/api/v1/sellers/8/products/1/ratings")
         .json(&payload)
         .expect_success()

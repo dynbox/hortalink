@@ -26,12 +26,9 @@ impl Schedule {
     ) -> Result<i32, ApiError> {
         let user_id = sqlx::query_scalar::<_, i32>(
             r#"
-                SELECT seller_id FROM seller_schedules
-                WHERE schedule_id = $1
-                UNION ALL
-                SELECT sp.seller_id FROM product_schedules ps
-                JOIN seller_products sp ON ps.seller_product_id = sp.id
-                WHERE ps.schedule_id = $1
+                SELECT seller_id
+                FROM schedules
+                WHERE id = $1
             "#
         )
             .bind(schedule_id)

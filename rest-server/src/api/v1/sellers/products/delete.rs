@@ -22,17 +22,6 @@ pub async fn product(
 
     sqlx::query(
         r#"
-            DELETE FROM product_schedules
-            WHERE seller_product_id = $1
-        "#
-    )
-        .bind(product_id)
-        .bind(seller_id)
-        .execute(&mut *tx)
-        .await?;
-
-    sqlx::query(
-        r#"
             DELETE FROM seller_products
             WHERE id = $1 AND seller_id = $2
         "#

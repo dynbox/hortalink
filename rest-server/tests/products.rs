@@ -9,7 +9,7 @@ use crate::common::{login, test_app};
 
 mod common;
 
-#[sqlx::test(fixtures("users", "sellers", "customers", "products", "ratings", "schedules"))]
+#[sqlx::test(fixtures("users", "sellers", "customers", "schedules", "products", "ratings"))]
 async fn test_products(pool: Pool<Postgres>) {
     let server = &mut test_app(pool);
 
@@ -40,9 +40,9 @@ async fn test_get_product(server: &TestServer) {
         start_time: None,
         day_of_week: None,
         page: 1,
-        per_page: 10,
-        latitude: None,
-        longitude: None,
+        per_page: 5,
+        latitude: Some(0.0),
+        longitude: Some(0.0),
     };
 
     let res = server.get("/api/v1/products")
@@ -57,16 +57,13 @@ async fn test_patch_product(server: &TestServer) {
         price: Some(Decimal::new(11, 1)),
         quantity: None,
         photos: None,
-        remove_schedules: Some(vec![5]),
-        add_schedules: Some(vec![1, 2]),
+        schedule_id: Some(2),
     };
 
-    let res = server.patch("/api/v1/sellers/8/products/8")
+    server.patch("/api/v1/sellers/8/products/8")
         .json(&payload)
         .expect_success()
         .await;
-
-    println!("{}", res.text())
 }
 
 async fn test_post_product(server: &TestServer) {
@@ -75,7 +72,7 @@ async fn test_post_product(server: &TestServer) {
         price: Some(Decimal::new(11, 1)),
         quantity: None,
         photos: vec![String::new()],
-        schedules: None,
+        schedule_id: Some(2),
     };
 
     server.post("/api/v1/sellers/8/products")

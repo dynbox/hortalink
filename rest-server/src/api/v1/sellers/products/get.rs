@@ -33,12 +33,10 @@ pub async fn product(
 
     let schedule = sqlx::query_as::<_, Schedule>(
         r#"
-            SELECT schedules.id, schedules.address, 
-                schedules.start_time, schedules.end_time, 
-                schedules.day_of_week
-            FROM schedules
-            INNER JOIN product_schedules ON schedules.id = product_schedules.schedule_id
-            WHERE product_schedules.seller_product_id = $1
+            SELECT s.id, s.address, s.start_time, s.end_time, s.day_of_week
+            FROM seller_products sp
+            JOIN schedules s ON sp.schedule_id = s.id
+            WHERE sp.id = $1
         "#
     )
         .bind(product_id)
