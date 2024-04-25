@@ -6,7 +6,7 @@ use crate::common::{login, test_app};
 
 mod common;
 
-#[sqlx::test(fixtures("users", "customers", "sellers", "products", "cart"))]
+#[sqlx::test(fixtures("users", "customers", "sellers", "schedules", "products", "cart"))]
 async fn test_cart(pool: Pool<Postgres>) {
     let server = &mut test_app(pool);
     
