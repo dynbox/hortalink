@@ -17,7 +17,8 @@ pub async fn me(
     let mut payload = payload.into_inner();
 
     if let Some(avatar) = &payload.avatar {
-        let path = Path::new(&format!("{}/avatars/{login_user}", state.settings.web.cdn.storage));
+        let path = &format!("{}/avatars/{login_user}", state.settings.web.cdn.storage);
+        let path = Path::new(path);
         
         if !path.join(avatar).exists() {
             payload.avatar = None
