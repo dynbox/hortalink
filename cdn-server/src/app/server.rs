@@ -41,7 +41,7 @@ impl Server {
             .merge(routes::router())
             .layer(Self::configure_cors(&state))
             .layer(
-                AuthManagerLayerBuilder::new(AuthGate, Self::configure_session(&state))
+                AuthManagerLayerBuilder::new(AuthGate::new(state.pool.clone()), Self::configure_session(&state))
                     .build()
             )
             .layer(Extension(state))

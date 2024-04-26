@@ -1,5 +1,6 @@
 <script lang="ts">
     import {onMount} from 'svelte';
+    import defaultPicture from "$lib/assets/default-pricture.svg";
 
     let originalData: any = {};
     let avatar: string | null = null;
@@ -7,6 +8,12 @@
     let name: string | null = null;
     let phone: string | null = null;
     let email: string | null = null;
+
+    $: if (avatar) {
+        avatar_url = `http://localhost:5767/avatars/${originalData.user.id}/${avatar}.png?size=128`;
+    } else {
+        avatar_url = defaultPicture;
+    }
 
     onMount(async () => {
         try {
@@ -20,11 +27,6 @@
                 originalData = await response.json();
 
                 avatar = originalData.user.avatar || null;
-
-                if (avatar != null) {
-                    avatar_url = `http://localhost:5767/avatars/${originalData.user.id}/${originalData.user.avatar}.png?size=128`
-                }
-
                 name = originalData.user.name || null;
                 phone = originalData.user.phone || null;
                 email = originalData.user.email || null;
@@ -59,13 +61,39 @@
             console.error('There was a problem with the fetch operation: ', error);
         }
     }
+
+    async function handleFileChange(event: Event) {
+        const fileInput = event.target as HTMLInputElement;
+        if (!fileInput.files) return;
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        try {
+            const response = await fetch(`http://localhost:5767/avatars/${originalData.user.id}`, {
+                credentials: 'include',
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            } else {
+                avatar = await response.text();
+            }
+        } catch (error) {
+            console.error('There was a problem with the fetch operation: ', error);
+        }
+    }
 </script>
 
 <div class="component-elements">
     <form on:submit={handleSubmit}>
         <img src={avatar_url} alt="Avatar">
         <label for="avatar" style="padding-bottom: 10px">Editar foto</label>
-        <input type="file" name="avatar" id="avatar"/>
+        <input type="file" name="avatar" id="avatar" on:change={handleFileChange}/>
 
         <label for="name">Nome:</label>
         <input bind:value={name} type="text" name="name" id="name"/>

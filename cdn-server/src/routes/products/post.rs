@@ -11,7 +11,7 @@ pub async fn product_photo(
     auth_session: AuthSession,
     Extension(state): Extension<AppState>,
     mut multipart: Multipart,
-) -> Result<(), ApiError> {
+) -> Result<String, ApiError> {
     let user_id = auth_session.user.unwrap().id;
 
     let product_exists: bool = sqlx::query_scalar(
@@ -44,10 +44,10 @@ pub async fn product_photo(
         }
 
         let data = field.bytes().await?;
-        ImageManager::new(path).create_image(&format, data)
+        let hash = ImageManager::new(path).create_image(&format, data)
             .await?;
 
-        return Ok(());
+        return Ok(hash);
     }
 
     Err(ApiError::NotFound("Imagem não encontrada".to_string()))

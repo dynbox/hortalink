@@ -17,8 +17,22 @@ pub async fn me(
     let mut payload = payload.into_inner();
 
     if let Some(avatar) = &payload.avatar {
-        if !Path::new(&format!("{}/avatars/{login_user}/{avatar}", state.settings.web.cdn.storage)).exists() {
+        let path = Path::new(&format!("{}/avatars/{login_user}", state.settings.web.cdn.storage));
+        
+        if !path.join(avatar).exists() {
             payload.avatar = None
+        } else {
+            if let Ok(entries) = std::fs::read_dir(path) {
+                for entry in entries {
+                    if let Ok(entry) = entry {
+                        if entry.path().file_name().unwrap().to_str().unwrap() != avatar {
+                            if let Err(e) = std::fs::remove_file(entry.path()) {
+                                eprintln!("Failed to remove file: {}", e);
+                            }
+                        }
+                    }
+                }
+            }
         }
     };
 
