@@ -38,7 +38,7 @@ impl<Q> ImageManager<Q>
         Ok(buffer.into_inner())
     }
 
-    pub async fn create_image(&mut self, origin_format: &str, data: Bytes) -> Result<(), ApiError> {
+    pub async fn create_image(&mut self, origin_format: &str, data: Bytes) -> Result<String, ApiError> {
         let format = ImageFormat::from_extension(origin_format)
             .ok_or(ApiError::NotFound("Formato de imagem não encontrado".to_string()))?;
 
@@ -53,11 +53,12 @@ impl<Q> ImageManager<Q>
             FilterType::Gaussian,
         );
 
+        let hash = self.hasher.hash_image(&image).to_base64();
         image.save_with_format(
-            self.path.as_ref().join(self.hasher.hash_image(&image).to_base64()),
+            self.path.as_ref().join(&hash),
             format,
         )?;
 
-        Ok(())
+        Ok(hash)
     }
 }

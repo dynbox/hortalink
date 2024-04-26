@@ -1,11 +1,14 @@
 <script lang="ts">
-    import type { EventHandler } from "svelte/elements";
+    import type {EventHandler} from "svelte/elements";
+    import ExternalOptions from "./ExternalOptions.svelte";
+    import {fade} from 'svelte/transition';
 
-    let email: string = '';
-    let phone: string = '';
-    let password: string = '';
-    let accountType: string = '';
-    let name: string = '';
+    let password: string | null = null;
+    let confirmPassword: string | null = null;
+
+    let email: string | null = null;
+    let accountType: number | null = null;
+    let name: string | null = null;
 
     const handleSignup: EventHandler<Event, HTMLFormElement> = async (event) => {
         event.preventDefault();
@@ -18,8 +21,7 @@
             credentials: 'include',
             body: JSON.stringify({
                 email,
-                role: 1,
-                //phone,
+                role: accountType,
                 password,
                 name
             })
@@ -29,26 +31,73 @@
             window.location.href = '/';
         }
     }
+
+    let componentRendered = "first"
+
+    function changeComponent(component: string) {
+        componentRendered = ""
+        setTimeout(() => {
+            componentRendered = component
+        }, 300)
+    }
 </script>
 
-<form on:submit|preventDefault={handleSignup}>
-    <input bind:value={email} name="email" type="email" placeholder="E-mail:" />
-    <input bind:value={phone} name="phone" type="number" placeholder="Número de telefone:" />
-    <input bind:value={password} name="password" type="password" placeholder="Senha:" />
-    <label for="account-type">Tipo de conta:</label>
+{#if componentRendered === "first"}
+    <form action="" transition:fade={{duration: 300 }} on:submit|preventDefault={() => changeComponent("second")}>
+        <input bind:value={email} name="email" type="email" placeholder="E-mail:" required />
+        <input bind:value={password} name="password" type="password" placeholder="Senha:" required />
+        <input bind:value={confirmPassword} type="password" name="confirmPassword" placeholder="Confirme a senha:" required />
 
-    <div class="account-type">
-        <label for="cliente">
-            <input bind:group={accountType} type="radio" name="account-type" id="cliente" value="cliente" />
-            Cliente
-        </label>
+        <button>Próximo</button>
 
-        <label for="vendedor">
-            <input bind:group={accountType} type="radio" name="account-type" id="vendedor" value="vendedor" />
-            Vendedor
-        </label>
-    </div>
+        <ExternalOptions/>
+    </form>
+{:else}
+    {#if componentRendered === "second"}
+        <form action="" on:submit|preventDefault={handleSignup}>
+            <input bind:value={name} name="name" type="text" placeholder="Nome:"/>
 
-    <input bind:value={name} name="name" type="text" placeholder="Nome:" />
-    <button type="submit">Cadastrar</button>
-</form>
+            <label for="account-type" style="padding-top: 10px">Eu sou:</label>
+            <div class="account-type">
+                <label for="client">
+                    <input bind:group={accountType} type="radio" name="account-type" id="client" value="3"/>
+                    Cliente
+                </label>
+
+                <label for="seller">
+                    <input bind:group={accountType} type="radio" name="account-type" id="seller" value="4"/>
+                    Vendedor
+                </label>
+            </div>
+
+            <button>Cadastrar</button>
+        </form>
+    {/if}
+{/if}
+
+<style>
+    .account-type {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        width: 100%;
+    }
+
+    .account-type label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: background-color 150ms;
+    }
+
+    .account-type label:hover {
+        background-color: #f0f0f0;
+    }
+
+    .account-type input[type="radio"] {
+        margin-right: 10px;
+    }
+</style>

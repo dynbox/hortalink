@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { EventHandler } from "svelte/elements";
+    import ExternalOptions from "./ExternalOptions.svelte";
 
     let email: string = '';
     let password: string = '';
@@ -26,8 +27,9 @@
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
-    <input bind:value={email} name="email" type="email" placeholder="Email ou número de telefone:" />
-    <input bind:value={password} name="password" type="password" placeholder="Senha:" />
+    <input bind:value={email} name="email" type="email" placeholder="Email ou número de telefone:" required />
+    <input bind:value={password} name="password" type="password" placeholder="Senha:" required />
     <button type="submit">Entrar</button>
+    <ExternalOptions/>
 </form>
 <p>Esqueceu sua senha? <a href=" ">Clique aqui!</a></p>

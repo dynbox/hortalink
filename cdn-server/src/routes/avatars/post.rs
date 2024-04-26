@@ -11,7 +11,7 @@ pub async fn user_avatar(
     auth_session: AuthSession,
     Extension(state): Extension<AppState>,
     mut multipart: Multipart,
-) -> Result<(), ApiError> {
+) -> Result<String, ApiError> {
     if user_id != auth_session.user.unwrap().id {
         return Err(ApiError::Unauthorized("Você não pode fazer isso!".to_string()));
     }
@@ -29,10 +29,10 @@ pub async fn user_avatar(
         }
 
         let data = field.bytes().await?;
-        ImageManager::new(path).create_image(&format.split("/").last().unwrap(), data)
+        let hash = ImageManager::new(path).create_image(&format.split("/").last().unwrap(), data)
             .await?;
 
-        return Ok(());
+        return Ok(hash);
     }
 
     Err(ApiError::NotFound("Imagem não encontrada".to_string()))

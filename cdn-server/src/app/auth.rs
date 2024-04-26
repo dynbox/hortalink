@@ -2,12 +2,21 @@ use std::collections::HashSet;
 
 use axum::async_trait;
 use axum_login::{AuthnBackend, AuthzBackend, UserId};
+use sqlx::{Pool, Postgres};
 
 use crate::json::error::ApiError;
 use crate::models::users::LoginUser;
 
 #[derive(Clone)]
-pub struct AuthGate;
+pub struct AuthGate {
+    db: Pool<Postgres>,
+}
+
+impl AuthGate {
+    pub fn new(db: Pool<Postgres>) -> Self {
+        Self { db }
+    }
+}
 
 #[async_trait]
 impl AuthnBackend for AuthGate {
@@ -19,8 +28,20 @@ impl AuthnBackend for AuthGate {
         Ok(None)
     }
 
-    async fn get_user(&self, _: &UserId<Self>) -> Result<Option<Self::User>, Self::Error> {
-        Ok(None)
+    async fn get_user(&self, user_id: &UserId<Self>) -> Result<Option<Self::User>, Self::Error> {
+        let user = sqlx::query_as(
+            r#"
+                SELECT
+                    id, password,
+                    roles, access_token
+                FROM users WHERE id = $1
+            "#
+        )
+            .bind(user_id)
+            .fetch_optional(&self.db)
+            .await?;
+
+        Ok(user)
     }
 }
 

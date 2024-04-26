@@ -60,21 +60,6 @@ input:focus {
     border: 1px solid #4fa14f;
 }
 
-.account-type {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.account-type label {
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: 150ms;
-}
-
 form > input, form > button{
     width: 100%;
 }

@@ -10,7 +10,7 @@ pub struct ProtectedUser {
     email: String,
     name: String,
     avatar: Option<String>,
-    phone: String,
+    phone: Option<String>,
 }
 
 #[derive(sqlx::FromRow, Serialize)]
