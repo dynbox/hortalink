@@ -1,10 +1,11 @@
 <script lang="ts">
     import "$lib/css/seller/sellerprofile.css";
-    import { onMount } from "svelte";
-    import { page } from "$app/stores";
+    import {onMount} from "svelte";
+    import {page} from "$app/stores";
 
     let seller: any = {};
     let products: any = [];
+    let avatar_url: string | null = null
 
     onMount(async () => {
         try {
@@ -21,6 +22,11 @@
                 let data = await response.json();
 
                 seller = data.seller;
+
+                if (seller.avatar != null) {
+                    avatar_url = `http://localhost:5767/avatars/${seller.id}/${seller.avatar}.png?size=128`
+                }
+
                 products = data.products;
             }
         } catch (error) {
@@ -30,49 +36,11 @@
             );
         }
     });
-
-    function fakeonamount() {
-        //não consegui arrumar minha db local (┬┬﹏┬┬)
-        seller = {
-            id: 8,
-            name: "Sherlock Holmes",
-            avatar: null,
-            bio: null,
-        };
-        products = [
-            {
-                id: 3,
-                product: { id: 3, name: "Product 3" },
-                photos: ["photo5.jpg", "photo6.jpg"],
-                quantity: 20,
-                price: "100.00",
-                rating: 4.0,
-            },
-            {
-                id: 8,
-                product: { id: 8, name: "Product 8" },
-                photos: ["photo15.jpg", "photo16.jpg"],
-                quantity: 40,
-                price: "150.00",
-                rating: 3.0,
-            },
-            {
-                id: 10,
-                product: { id: 10, name: "Product 10" },
-                photos: ["photo19.jpg", "photo20.jpg"],
-                quantity: 50,
-                price: "200.00",
-                rating: null,
-            },
-        ];
-    }
-    fakeonamount();
 </script>
 <main>
     <div class="profile-section">
         <div class="avatar-container">
-            <div></div>
-            <!--tag who will contain the avatar in their background-image css-->
+            <img src={avatar_url} alt="Avatar">
         </div>
         <div class="user-info-container">
             <div>
@@ -83,10 +51,10 @@
         </div>
     </div>
     <div class="products-section">
-        {#each products as { id, product, photos, price, rating, quantity }}
+        {#each products as {id, product, photos, price, rating, quantity}}
             <div class="product-square-container">
                 <div class="product-square">
-                    <div class="img-container"></div>
+                    <img src={`http://localhost:5767/products/${id}/${photos[0]}.png?size=128`} alt="Foto">
                     <div class="product-data">
                         <span class="product-name">
                             {product.name}
@@ -97,8 +65,8 @@
                             <span>*</span>
                             {/each}
                         </span>
-                        <span class="product-quantity">{quantity}</span>
-                    </div>
+                            <span class="product-quantity">{quantity}</span>
+                        </div>
                     </div>
                 </div>
             </div>

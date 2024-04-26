@@ -54,7 +54,7 @@ pub async fn reserve_product(
     sqlx::query(
         r#"
             UPDATE cart
-            SET status = 1,
+            SET status = 1
             WHERE id = $1
         "#
     )

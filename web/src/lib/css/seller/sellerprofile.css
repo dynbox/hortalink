@@ -1,9 +1,9 @@
-.profile-section, .products-section{
+.profile-section, .products-section {
     max-width: 425px;
     margin: 0 auto;
 }
 
-.profile-section{
+.profile-section {
     width: 100%;
     display: flex;
     border-bottom: 1px solid #a5c0a5;
@@ -17,10 +17,9 @@
     aspect-ratio: 1/1;
 }
 
-.avatar-container div {
+.avatar-container img {
     width: 80%;
     aspect-ratio: 1/1;
-    background-color: #aaa;
     border-radius: 100%;
 }
 
@@ -44,18 +43,17 @@
 .product-square-container {
     width: 50%;
     padding: 0.5rem;
-}  
+}
 
-.product-square{
+.product-square {
     background-color: hsl(120, 40%, 35%);
     border-radius: 1rem;
-}  
+}
 
-.product-square .img-container {
+.product-square img {
     width: 100%;
     aspect-ratio: 1/1;
     border-radius: 1rem;
-    background-color: #aaa;
 }
 
 .product-data {
@@ -67,7 +65,6 @@
 }
 
 
-
 .product-data div {
     width: 100%;
     display: flex;
@@ -75,6 +72,6 @@
     justify-content: space-between;
 }
 
-.product-price{
+.product-price {
     font-size: x-large;
 }

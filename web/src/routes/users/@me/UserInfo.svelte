@@ -3,8 +3,9 @@
 
     let originalData: any = {};
     let avatar: string | null = null;
+    let avatar_url: string | null = null
     let name: string | null = null;
-    let phone: number | null = null;
+    let phone: string | null = null;
     let email: string | null = null;
 
     onMount(async () => {
@@ -19,6 +20,11 @@
                 originalData = await response.json();
 
                 avatar = originalData.user.avatar || null;
+
+                if (avatar != null) {
+                    avatar_url = `http://localhost:5767/avatars/${originalData.user.id}/${originalData.user.avatar}.png?size=128`
+                }
+
                 name = originalData.user.name || null;
                 phone = originalData.user.phone || null;
                 email = originalData.user.email || null;
@@ -33,15 +39,15 @@
 
         const modifiedFields: any = {};
 
-        if (avatar !== originalData.avatar) modifiedFields.avatar = avatar;
-        if (name !== originalData.name) modifiedFields.name = name;
-        if (phone !== originalData.phone) modifiedFields.phone = phone;
-        if (email !== originalData.email) modifiedFields.email = email;
+        if (avatar !== originalData.user.avatar) modifiedFields.avatar = avatar;
+        if (name !== originalData.user.name) modifiedFields.name = name;
+        if (phone !== originalData.user.phone) modifiedFields.phone = phone;
+        if (email !== originalData.user.email) modifiedFields.email = email;
 
         if (Object.keys(modifiedFields).length == 0) return;
 
         try {
-            await fetch('http://localhost:5443/api/users/@me', {
+            await fetch('http://localhost:5443/api/v1/users/@me', {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {
@@ -57,9 +63,8 @@
 
 <div class="component-elements">
     <form on:submit={handleSubmit}>
-
-        <img src={avatar} alt="">
-        <label for="avatar">Editar foto</label>
+        <img src={avatar_url} alt="Avatar">
+        <label for="avatar" style="padding-bottom: 10px">Editar foto</label>
         <input type="file" name="avatar" id="avatar"/>
 
         <label for="name">Nome:</label>
@@ -69,9 +74,7 @@
         <label for="email">Email:</label>
         <input bind:value={email} type="email" name="email" id="email"/>
 
-        <button type="submit">
-            Salvar
-        </button>
+        <button type="submit">Salvar</button>
     </form>
 </div>
 

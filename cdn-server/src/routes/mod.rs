@@ -9,5 +9,4 @@ pub fn router() -> Router {
     Router::new()
         .nest("/avatars", avatars::router())
         .nest("/products", products::router())
-        .route_layer(login_required!(AuthGate))
 }
