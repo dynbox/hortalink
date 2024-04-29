@@ -2,6 +2,7 @@
     import type {EventHandler} from "svelte/elements";
     import ExternalOptions from "./ExternalOptions.svelte";
     import {fade} from 'svelte/transition';
+    import defaultProfile from "$lib/assets/default-pricture.svg"
 
     let password: string | null = null;
     let confirmPassword: string | null = null;
@@ -21,7 +22,7 @@
             credentials: 'include',
             body: JSON.stringify({
                 email,
-                role: accountType,
+                role: Number(accountType),
                 password,
                 name
             })
@@ -55,17 +56,21 @@
 {:else}
     {#if componentRendered === "second"}
         <form action="" on:submit|preventDefault={handleSignup}>
+            <div class="profile-container">
+                <img src={defaultProfile} alt="Avatar">
+            </div>
+
             <input bind:value={name} name="name" type="text" placeholder="Nome:"/>
 
             <label for="account-type" style="padding-top: 10px">Eu sou:</label>
             <div class="account-type">
                 <label for="client">
-                    <input bind:group={accountType} type="radio" name="account-type" id="client" value="3"/>
+                    <input bind:group={accountType} type="radio" name="account-type" id="client" value=3/>
                     Cliente
                 </label>
 
                 <label for="seller">
-                    <input bind:group={accountType} type="radio" name="account-type" id="seller" value="4"/>
+                    <input bind:group={accountType} type="radio" name="account-type" id="seller" value=4/>
                     Vendedor
                 </label>
             </div>
@@ -99,5 +104,18 @@
 
     .account-type input[type="radio"] {
         margin-right: 10px;
+    }
+
+    .profile-container {
+        width: 50%;
+        display: grid;
+        place-items: center;
+        aspect-ratio: 1/1;
+    }
+
+    .profile-container img {
+        width: 80%;
+        aspect-ratio: 1/1;
+        border-radius: 100%;
     }
 </style>

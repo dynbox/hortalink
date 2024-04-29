@@ -1,5 +1,6 @@
 <script lang="ts">
     import "$lib/css/seller/sellerprofile.css";
+    import defaultPicture from "$lib/assets/default-pricture.svg"
     import {onMount} from "svelte";
     import {page} from "$app/stores";
 
@@ -25,6 +26,8 @@
 
                 if (seller.avatar != null) {
                     avatar_url = `http://localhost:5767/avatars/${seller.id}/${seller.avatar}.png?size=128`
+                } else {
+                    avatar_url = defaultPicture
                 }
 
                 products = data.products;
@@ -54,7 +57,7 @@
         {#each products as {id, product, photos, price, rating, quantity}}
             <div class="product-square-container">
                 <div class="product-square">
-                    <img src={`http://localhost:5767/products/${id}/${photos[0]}.png?size=128`} alt="Foto">
+                    <img src={`http://localhost:5767/products/${id}/${photos[0]}.png?size=512`} alt="Foto">
                     <div class="product-data">
                         <span class="product-name">
                             {product.name}

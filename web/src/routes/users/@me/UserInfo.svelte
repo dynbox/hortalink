@@ -129,7 +129,6 @@
     img {
         width: 30%;
         border-radius: 30%;
-        background-color: #ddd;
     }
 
     input[type="file"] {
