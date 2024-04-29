@@ -8,10 +8,16 @@
     let products: any = [];
     let avatar_url: string | null = null
 
+    $: if (seller.avatar) {
+        avatar_url = `http://localhost:5767/avatars/${seller.id}/${seller.avatar}.png?size=128`;
+    } else {
+        avatar_url = defaultPicture;
+    }
+
     onMount(async () => {
         try {
             const response = await fetch(
-                "http://localhost:5443/api/v1/sellers/" + $page.params.id,
+                "http://localhost:5443/api/v1/sellers/" + $page.params.seller_id,
                 {
                     credentials: "include",
                 },
@@ -23,13 +29,6 @@
                 let data = await response.json();
 
                 seller = data.seller;
-
-                if (seller.avatar != null) {
-                    avatar_url = `http://localhost:5767/avatars/${seller.id}/${seller.avatar}.png?size=128`
-                } else {
-                    avatar_url = defaultPicture
-                }
-
                 products = data.products;
             }
         } catch (error) {
@@ -40,6 +39,7 @@
         }
     });
 </script>
+
 <main>
     <div class="profile-section">
         <div class="avatar-container">
