@@ -1,10 +1,10 @@
 use axum::Extension;
 use axum::extract::{Multipart, Path};
+use app_core::image::ImageManager;
 
 use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
-use crate::utils::image::ImageManager;
 
 pub async fn user_avatar(
     Path(user_id): Path<i32>,

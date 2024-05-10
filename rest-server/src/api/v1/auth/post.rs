@@ -1,7 +1,11 @@
 use axum::{Extension, Json};
+use axum::http::StatusCode;
+use axum::response::Redirect;
 use axum_garde::WithValidation;
+use axum_login::tower_sessions::Session;
 
 use common::entities::UserRole;
+use common::settings::Protocol;
 
 use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
@@ -26,25 +30,65 @@ pub async fn login(
 
 pub async fn sign_in(
     Extension(state): Extension<AppState>,
+    session: Session,
     mut auth_session: AuthSession,
     WithValidation(payload): WithValidation<Json<SignCreds>>,
-) -> Result<(), ApiError> {
+) -> Result<Redirect, ApiError> {
     let payload = payload.into_inner();
 
     let user = sqlx::query_as::<_, LoginUser>(
         r#"
-            INSERT INTO users (name, email, roles, avatar, password)
-            VALUES ($1, $2, $3, $4, $5)
-            RETURNING id, password, roles, access_token
+            SELECT
+                id, password,
+                roles, access_token
+            FROM USERS
+            WHERE email = $1
         "#
     )
-        .bind(payload.name)
-        .bind(payload.email)
-        .bind(vec![payload.role.clone() as i16])
-        .bind(payload.avatar)
-        .bind(password_auth::generate_hash(&payload.password))
-        .fetch_one(&state.pool)
+        .bind(&payload.email)
+        .fetch_optional(&state.pool)
         .await?;
+
+    if let Some(user) = user {
+        auth_session.login(&user).await?;
+        return Ok(Redirect::to(&format!("{}", state.settings.web.client.protocol_url())))
+    }
+    
+    let oauth_token = session.remove::<String>("oauth.token").await;
+
+    let user = if let Ok(Some(oauth_token)) = oauth_token {
+        sqlx::query_as(
+            r#"
+                INSERT INTO users (email, name, access_token, roles)
+                VALUES ($1, $2, $3, $4, $5)
+                ON CONFLICT(email) DO UPDATE
+                SET access_token = excluded.access_token
+                RETURNING
+                    id, password,
+                    roles, access_token
+            "#,
+        )
+            .bind(payload.email)
+            .bind(payload.name)
+            .bind(oauth_token)
+            .bind(vec![payload.role.clone() as i16])
+            .fetch_one(&state.pool)
+            .await?
+    } else {
+        sqlx::query_as::<_, LoginUser>(
+            r#"
+                INSERT INTO users (name, email, roles, password)
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING id, password, roles, access_token
+            "#
+        )
+            .bind(payload.name)
+            .bind(payload.email)
+            .bind(vec![payload.role.clone() as i16])
+            .bind(password_auth::generate_hash(&payload.password.unwrap()))
+            .fetch_one(&state.pool)
+            .await?
+    };
 
     if payload.role == UserRole::Seller {
         sqlx::query(
@@ -66,7 +110,6 @@ pub async fn sign_in(
             .await?;
     }
 
-
     auth_session.login(&user).await?;
-    Ok(())
+    Ok(Redirect::to(&format!("{}", state.settings.web.client.protocol_url())))
 }

@@ -1,14 +1,13 @@
 use std::path::Path;
-
 use axum::body::Bytes;
-use image::{GenericImageView, ImageFormat};
+
+use image::{GenericImageView, ImageError, ImageFormat};
+use image::error::{ImageFormatHint, UnsupportedError, UnsupportedErrorKind};
 use image::imageops::FilterType;
 use image::io::Reader;
 use image_hasher::{Hasher, HasherConfig};
 
 use common::entities::ImageSize;
-
-use crate::json::error::ApiError;
 
 pub struct ImageManager<Q: AsRef<Path>> {
     path: Q,
@@ -25,7 +24,7 @@ impl<Q> ImageManager<Q>
         }
     }
 
-    pub async fn get_image(&self, size: ImageSize) -> Result<Vec<u8>, ApiError> {
+    pub async fn get_image(&self, size: ImageSize) -> Result<Vec<u8>, ImageError> {
         let dimensions = size.dimensions();
         let image = Reader::open(&self.path)?
             .with_guessed_format()?
@@ -38,9 +37,12 @@ impl<Q> ImageManager<Q>
         Ok(buffer.into_inner())
     }
 
-    pub async fn create_image(&mut self, origin_format: &str, data: Bytes) -> Result<String, ApiError> {
+    pub async fn create_image(&mut self, origin_format: &str, data: Bytes) -> Result<String, ImageError> {
         let format = ImageFormat::from_extension(origin_format)
-            .ok_or(ApiError::NotFound("Formato de imagem não encontrado".to_string()))?;
+            .ok_or(ImageError::Unsupported(UnsupportedError::from_format_and_kind(
+                ImageFormatHint::Unknown,
+                UnsupportedErrorKind::Format(ImageFormatHint::Unknown),
+            )))?;
 
         let image = Reader::new(std::io::Cursor::new(data))
             .with_guessed_format()?;

@@ -23,10 +23,11 @@ pub struct LoginCreds {
     pub password: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct UserInfo {
     pub email: String,
-    pub name: String
+    pub name: String,
+    pub picture: Option<String>
 }
 
 #[derive(Deserialize, Serialize, Validate)]
@@ -36,7 +37,7 @@ pub struct SignCreds {
     #[garde(email)]
     pub email: String,
     #[garde(length(min=8, max=64))]
-    pub password: String,
+    pub password: Option<String>,
     #[garde(skip)]
     pub avatar: Option<String>,
     #[garde(custom(validate_account_role))]
@@ -50,8 +51,8 @@ pub struct AuthUrlResponse {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct AuthzResp {
-    pub code: String,
     pub state: CsrfToken,
+    pub code: String,
 }
 
 fn validate_account_role(value: &UserRole, _: &()) -> garde::Result {

@@ -3,11 +3,11 @@ use axum::Extension;
 use axum::extract::{Path, Query};
 use axum::http::StatusCode;
 use axum::response::Response;
+use app_core::image::ImageManager;
 
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::query::ImageSizeQuery;
-use crate::utils::image::ImageManager;
 
 pub async fn user_avatar(
     Path((user_id, image)): Path<(i32, String)>,

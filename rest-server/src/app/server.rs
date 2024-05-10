@@ -92,6 +92,5 @@ impl Server {
             .with_name("session_id")
             .with_expiry(Expiry::OnInactivity(Duration::days(10)))
             .with_domain(state.settings.web.rest.host.clone())
-            .with_secure(false)
     }
 }

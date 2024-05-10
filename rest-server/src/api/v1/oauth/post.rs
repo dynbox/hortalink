@@ -9,7 +9,7 @@ pub async fn oauth(
     Extension(providers): Extension<OAuthProvider>,
     Path(oauth_type): Path<String>,
 ) -> Result<Json<AuthUrlResponse>, ApiError> {
-    let (auth_url, _) = providers.get_provider(&oauth_type)
+    let ((auth_url, _),) = providers.get_provider(&oauth_type)
         .auth_url();
 
     let response = AuthUrlResponse {
