@@ -1,3 +1,4 @@
+use axum::extract::multipart::MultipartError;
 use axum::http::StatusCode;
 use axum::Json;
 use axum::response::{IntoResponse, Response};
@@ -53,6 +54,12 @@ impl From<axum_login::Error<AuthGate>> for ApiError {
 impl From<ImageError> for ApiError {
     fn from(value: ImageError) -> Self {
         ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, value.to_string())
+    }
+}
+
+impl From<MultipartError> for ApiError {
+    fn from(value: MultipartError) -> Self {
+        ApiError::Custom(value.status(), value.body_text())
     }
 }
 

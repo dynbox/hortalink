@@ -63,20 +63,4 @@ impl<Q> ImageManager<Q>
 
         Ok(hash)
     }
-    
-    pub async fn load(&self, buffer: &[u8]) -> Result<String, ImageError> {
-        let image = image::load_from_memory(buffer)?;
-
-        let dimensions = image.dimensions();
-        let image = image.resize(
-            dimensions.0 / 3,
-            dimensions.1 / 3,
-            FilterType::Gaussian,
-        );
-
-        let hash = self.hasher.hash_image(&image).to_base64();
-        image.save(self.path.as_ref().join(&hash))?;
-
-        Ok(hash)
-    }
 }

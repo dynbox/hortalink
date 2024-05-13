@@ -21,11 +21,11 @@ tower-sessions-sqlx-store = { workspace = true }
 axum-login = { workspace = true }
 
 reqwest = { version = "0.12.4", default-features = false, features = ["json"] }
+axum_typed_multipart = { version = "0.11.1" }
 thiserror = { version = "1.0.57" }
 password-auth = { version = "1.0.0" }
 time = { version = "0.3.34" }
 oauth2 = { version = "5.0.0-alpha.4", default-features = false, features = ["reqwest", "rustls-tls"] }
-base64 = {  version = "0.22.1" }
 image = { version = "0.25.1" }
 
 [dev-dependencies]

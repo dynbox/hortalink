@@ -3,6 +3,8 @@ use axum::http::StatusCode;
 use axum::response::Redirect;
 use axum_garde::WithValidation;
 use axum_login::tower_sessions::Session;
+use axum_typed_multipart::TypedMultipart;
+use garde::Validate;
 
 use app_core::image::ImageManager;
 use common::entities::UserRole;
@@ -33,9 +35,12 @@ pub async fn sign_in(
     Extension(state): Extension<AppState>,
     session: Session,
     mut auth_session: AuthSession,
-    WithValidation(payload): WithValidation<Json<SignCreds>>,
+    TypedMultipart(payload): TypedMultipart<SignCreds>,
 ) -> Result<Redirect, ApiError> {
-    let payload = payload.into_inner();
+    if let Err(e) = payload.validate(&()) {
+        return Err(ApiError::Custom(StatusCode::BAD_REQUEST, format!("Campos inválidos: {e}")));
+    }
+
     let mut tx = state.pool.begin().await?;
 
     let user = sqlx::query_as::<_, LoginUser>(
@@ -60,7 +65,7 @@ pub async fn sign_in(
         sqlx::query_as(
             r#"
                 INSERT INTO users (email, name, access_token, roles)
-                VALUES ($1, $2, $3, $4, $5)
+                VALUES ($1, $2, $3, $4)
                 ON CONFLICT(email) DO UPDATE
                 SET access_token = excluded.access_token
                 RETURNING
@@ -78,19 +83,22 @@ pub async fn sign_in(
         sqlx::query_as::<_, LoginUser>(
             r#"
                 INSERT INTO users (name, email, roles, password)
-                VALUES ($1, $2, $3, $4, $5)
+                VALUES ($1, $2, $3, $4)
                 RETURNING id, password, roles, access_token
             "#
         )
             .bind(payload.name)
             .bind(payload.email)
             .bind(vec![payload.role.clone() as i16])
-            .bind(password_auth::generate_hash(&payload.password.unwrap()))
+            .bind(password_auth::generate_hash(
+                &payload.password
+                    .ok_or(ApiError::Custom(StatusCode::BAD_REQUEST, "Uma senha deve ser fornecida".to_string()))?
+            ))
             .fetch_one(&mut *tx)
             .await?
     };
 
-    if payload.role == UserRole::Seller {
+    if payload.role == 4 {
         sqlx::query(
             r#"
                 INSERT INTO sellers (user_id) VALUES ($1)
@@ -110,9 +118,11 @@ pub async fn sign_in(
             .await?;
     }
 
-    if let Some(avatar) = payload.avatar {
-        let decoded_bytes = base64::Engine::decode(&base64::prelude::BASE64_STANDARD, &avatar)
-            .map_err(|e| ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, format!("Falha ao decodificar imagem: {e}")))?;
+    if let Some(avatar) = payload.image {
+        let format = avatar.metadata.content_type
+            .ok_or(ApiError::NotFound("Formato de imagem não encontrado".to_string()))?
+            .to_string();
+
         let path = &format!("{}/avatars/{}", &state.settings.web.cdn.storage, user.id);
         let path = std::path::Path::new(path);
 
@@ -120,9 +130,8 @@ pub async fn sign_in(
             std::fs::create_dir(path)
                 .map_err(|e| ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, format!("Falha ao criar repositório: {e}")))?;
         }
-
-        let hash = ImageManager::new(path).load(&decoded_bytes).await?;
-
+        
+        let hash = ImageManager::new(path).create_image(&format, avatar.contents).await?;
         sqlx::query(
             r#"
                 UPDATE users SET avatar = $1 WHERE id = $2

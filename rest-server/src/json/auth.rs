@@ -1,3 +1,5 @@
+use axum::body::Bytes;
+use axum_typed_multipart::{FieldData, TryFromMultipart};
 use garde::Validate;
 use oauth2::CsrfToken;
 use serde::{Deserialize, Serialize};
@@ -30,7 +32,7 @@ pub struct UserInfo {
     pub picture: Option<String>
 }
 
-#[derive(Deserialize, Serialize, Validate)]
+#[derive(Deserialize, Serialize, Validate, TryFromMultipart)]
 pub struct SignCreds {
     #[garde(skip)]
     pub name: String,
@@ -38,10 +40,12 @@ pub struct SignCreds {
     pub email: String,
     #[garde(length(min=8, max=64))]
     pub password: Option<String>,
+    #[garde(range(min = 3, max = 5))]
+    pub role: i32,
     #[garde(skip)]
-    pub avatar: Option<String>,
-    #[garde(custom(validate_account_role))]
-    pub role: UserRole
+    #[serde(skip)]
+    #[form_data(limit = "15MiB")]
+    pub image: Option<FieldData<Bytes>>,
 }
 
 #[derive(Serialize)]
@@ -53,11 +57,4 @@ pub struct AuthUrlResponse {
 pub struct AuthzResp {
     pub state: CsrfToken,
     pub code: String,
-}
-
-fn validate_account_role(value: &UserRole, _: &()) -> garde::Result {
-    match value {
-        UserRole::Customer | UserRole::Seller => Ok(()),
-        _ => Err(garde::Error::new("Invalid account role")),
-    }
 }

@@ -1,7 +1,9 @@
+use axum_test::multipart::{MultipartForm, Part};
 use axum_test::TestServer;
 use sqlx::{Pool, Postgres};
-use ::common::entities::UserRole;
-use rest_server::json::auth::{LoginCreds, SignCreds};
+
+use rest_server::json::auth::LoginCreds;
+
 use crate::common::test_app;
 
 mod common;
@@ -19,21 +21,24 @@ async fn test_auth(pool: Pool<Postgres>) {
 }
 
 async fn test_sign_in(server: &TestServer) {
-    let payload = SignCreds {
-        name: "Luis Fernando".to_string(),
-        email: "baskerbyte@gmail.com".to_string(),
-        password: Some("secured123456".to_string()),
-        avatar: None,
-        role: UserRole::Customer,
-    };
+    let multipart = MultipartForm::new()
+        .add_part("name", Part::text("Luis Fernando"))
+        .add_part("email", Part::text("baskerbyte@gmail.com"))
+        .add_part("password", Part::text("secured123456"))
+        .add_part("role", Part::text("4"));
 
     server.post("/api/v1/auth/sign-in")
-        .json(&payload)
-        .expect_success()
+        .multipart(multipart)
         .await;
 
+    let multipart = MultipartForm::new()
+        .add_part("name", Part::text("Luis Fernando"))
+        .add_part("email", Part::text("baskerbyte@gmail.com"))
+        .add_part("password", Part::text("secured123456"))
+        .add_part("role", Part::text("3"));
+
     server.post("/api/v1/auth/sign-in")
-        .json(&payload)
+        .multipart(multipart)
         .expect_failure()
         .await;
 }
