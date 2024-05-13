@@ -4,6 +4,7 @@ use axum::response::Redirect;
 use axum_garde::WithValidation;
 use axum_login::tower_sessions::Session;
 
+use app_core::image::ImageManager;
 use common::entities::UserRole;
 use common::settings::Protocol;
 
@@ -35,6 +36,7 @@ pub async fn sign_in(
     WithValidation(payload): WithValidation<Json<SignCreds>>,
 ) -> Result<Redirect, ApiError> {
     let payload = payload.into_inner();
+    let mut tx = state.pool.begin().await?;
 
     let user = sqlx::query_as::<_, LoginUser>(
         r#"
@@ -51,12 +53,10 @@ pub async fn sign_in(
 
     if let Some(user) = user {
         auth_session.login(&user).await?;
-        return Ok(Redirect::to(&format!("{}", state.settings.web.client.protocol_url())))
+        return Ok(Redirect::to(&format!("{}", state.settings.web.client.protocol_url())));
     }
-    
-    let oauth_token = session.remove::<String>("oauth.token").await;
 
-    let user = if let Ok(Some(oauth_token)) = oauth_token {
+    let user = if let Ok(Some(oauth_token)) = session.remove::<String>("oauth.token").await {
         sqlx::query_as(
             r#"
                 INSERT INTO users (email, name, access_token, roles)
@@ -72,7 +72,7 @@ pub async fn sign_in(
             .bind(payload.name)
             .bind(oauth_token)
             .bind(vec![payload.role.clone() as i16])
-            .fetch_one(&state.pool)
+            .fetch_one(&mut *tx)
             .await?
     } else {
         sqlx::query_as::<_, LoginUser>(
@@ -86,7 +86,7 @@ pub async fn sign_in(
             .bind(payload.email)
             .bind(vec![payload.role.clone() as i16])
             .bind(password_auth::generate_hash(&payload.password.unwrap()))
-            .fetch_one(&state.pool)
+            .fetch_one(&mut *tx)
             .await?
     };
 
@@ -97,7 +97,7 @@ pub async fn sign_in(
             "#
         )
             .bind(user.id)
-            .execute(&state.pool)
+            .execute(&mut *tx)
             .await?;
     } else {
         sqlx::query(
@@ -106,10 +106,35 @@ pub async fn sign_in(
             "#
         )
             .bind(user.id)
-            .execute(&state.pool)
+            .execute(&mut *tx)
             .await?;
     }
 
+    if let Some(avatar) = payload.avatar {
+        let decoded_bytes = base64::Engine::decode(&base64::prelude::BASE64_STANDARD, &avatar)
+            .map_err(|e| ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, format!("Falha ao decodificar imagem: {e}")))?;
+        let path = &format!("{}/avatars/{}", &state.settings.web.cdn.storage, user.id);
+        let path = std::path::Path::new(path);
+
+        if !path.exists() {
+            std::fs::create_dir(path)
+                .map_err(|e| ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, format!("Falha ao criar repositório: {e}")))?;
+        }
+
+        let hash = ImageManager::new(path).load(&decoded_bytes).await?;
+
+        sqlx::query(
+            r#"
+                UPDATE users SET avatar = $1 WHERE id = $2
+            "#
+        )
+            .bind(hash)
+            .bind(user.id)
+            .execute(&mut *tx)
+            .await?;
+    }
+
+    tx.commit().await?;
     auth_session.login(&user).await?;
     Ok(Redirect::to(&format!("{}", state.settings.web.client.protocol_url())))
 }

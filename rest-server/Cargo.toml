@@ -25,6 +25,8 @@ thiserror = { version = "1.0.57" }
 password-auth = { version = "1.0.0" }
 time = { version = "0.3.34" }
 oauth2 = { version = "5.0.0-alpha.4", default-features = false, features = ["reqwest", "rustls-tls"] }
+base64 = {  version = "0.22.1" }
+image = { version = "0.25.1" }
 
 [dev-dependencies]
 axum-test = { workspace = true }

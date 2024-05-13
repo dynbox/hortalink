@@ -1,6 +1,7 @@
 use axum::http::StatusCode;
 use axum::Json;
 use axum::response::{IntoResponse, Response};
+use image::ImageError;
 use serde::{Serialize, Serializer};
 use crate::app::auth::AuthGate;
 
@@ -46,6 +47,12 @@ impl From<sqlx::Error> for ApiError {
 impl From<axum_login::Error<AuthGate>> for ApiError {
     fn from(value: axum_login::Error<AuthGate>) -> Self {
         ApiError::Database(format!("Falha no banco de dados: {}", value))
+    }
+}
+
+impl From<ImageError> for ApiError {
+    fn from(value: ImageError) -> Self {
+        ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, value.to_string())
     }
 }
 
