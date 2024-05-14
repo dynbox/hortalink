@@ -29,6 +29,7 @@ async fn test_sign_in(server: &TestServer) {
 
     server.post("/api/v1/auth/sign-in")
         .multipart(multipart)
+        
         .await;
 
     let multipart = MultipartForm::new()

@@ -7,7 +7,6 @@ use axum_typed_multipart::TypedMultipart;
 use garde::Validate;
 
 use app_core::image::ImageManager;
-use common::entities::UserRole;
 use common::settings::Protocol;
 
 use crate::app::auth::AuthSession;
@@ -130,7 +129,7 @@ pub async fn sign_in(
             std::fs::create_dir(path)
                 .map_err(|e| ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, format!("Falha ao criar repositório: {e}")))?;
         }
-        
+
         let hash = ImageManager::new(path).create_image(&format, avatar.contents).await?;
         sqlx::query(
             r#"

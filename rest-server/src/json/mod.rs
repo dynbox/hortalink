@@ -18,7 +18,7 @@ pub fn serialize_timestamp<S>(naive_datetime: &NaiveDateTime, serializer: S) -> 
     where
         S: Serializer,
 {
-    let timestamp = naive_datetime.timestamp();
+    let timestamp = naive_datetime.and_utc().timestamp();
     serializer.serialize_i64(timestamp)
 }
 

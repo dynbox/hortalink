@@ -3,7 +3,6 @@ use axum_typed_multipart::{FieldData, TryFromMultipart};
 use garde::Validate;
 use oauth2::CsrfToken;
 use serde::{Deserialize, Serialize};
-use common::entities::UserRole;
 
 #[derive(Debug, Clone, Deserialize)]
 pub enum Credentials {
@@ -21,7 +20,7 @@ pub struct OAuthCreds {
 pub struct LoginCreds {
     #[garde(email)]
     pub email: String,
-    #[garde(length(min=8, max=64))]
+    #[garde(length(min = 8, max = 64))]
     pub password: String,
 }
 
@@ -29,21 +28,20 @@ pub struct LoginCreds {
 pub struct UserInfo {
     pub email: String,
     pub name: String,
-    pub picture: Option<String>
+    pub picture: Option<String>,
 }
 
-#[derive(Deserialize, Serialize, Validate, TryFromMultipart)]
+#[derive(Validate, TryFromMultipart)]
 pub struct SignCreds {
     #[garde(skip)]
     pub name: String,
     #[garde(email)]
     pub email: String,
-    #[garde(length(min=8, max=64))]
+    #[garde(length(min = 8, max = 64))]
     pub password: Option<String>,
-    #[garde(range(min = 3, max = 5))]
+    #[garde(range(min = 3, max = 6))]
     pub role: i32,
     #[garde(skip)]
-    #[serde(skip)]
     #[form_data(limit = "15MiB")]
     pub image: Option<FieldData<Bytes>>,
 }
