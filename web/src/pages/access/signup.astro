@@ -1,0 +1,197 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SigninOptions from "../../components/page/access/SigninOptions.astro";
+import getSession from "../../util/getSession";
+
+import "../../style/pages/access.scss";
+
+import DefaultProfile from "../../assets/default-pricture.svg";
+import { Image, getImage } from "astro:assets";
+
+const url = new URL(Astro.request.url)
+const oauth_type = url.searchParams.get("oauth_type")
+
+let session = null
+const session_id = Astro.cookies.get("session_id")
+let profileSrc = null
+
+if(oauth_type && session_id?.value) {
+    session = await getSession(oauth_type, session_id.value)
+    const picture = session.picture ? await getImage({ src: session.picture, width: 137, height: 137, quality: 90 }) : null
+
+    if(picture) {
+        profileSrc = picture.src
+    }
+}
+
+export const prerender = false
+---
+
+<BaseLayout>
+    <Fragment slot="head">
+        <title>Hortalink: signup</title>
+    </Fragment>
+    <Fragment slot="body">
+        <form id="form-1">
+            <label for="user-email">Email</label>
+            <input type="text" id="user-email" name="email" placeholder="email@example.com" aria-label="Escolha um email para sua nova conta.">
+            
+            <label for="user-password">Senha</label>
+            <input type="password" id="user-password" name="password" aria-label="Escolha uma senha segura para sua nova conta.">
+
+            <label for="confirm-user-password">Confirmar senha</label>
+            <input type="password" id="confirm-user-password" name="confirm-password" aria-label="Confirme a sua nova senha.">
+            
+            <button type="submit">Próximo</button>
+        </form>
+        <p class="alt-text" id="or-text">Ou então</p>
+        <SigninOptions />
+        
+        <form id="form-2" style="display: none">
+            <Image
+                src={profileSrc ? profileSrc : DefaultProfile}
+                alt="Foto padrão de perfil"
+                width={137}
+                height={137}
+                loading="eager"
+            />
+            <label for="user-name">Nome</label>
+            <input type="text" id="user-name" name="name" value={session ? session.name : ""}/>
+
+            <p class="alt-text" style="font-size: 1.2em; margin-top: 6px; margin-bottom: 6px;">Eu sou:</p>
+            
+            <section class="radio-container">
+                <div class="radio-item">
+                    <input type="radio" name="account-type" id="client-account" value="3" />
+                    <label for="client-account" class="notransform">Cliente</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="seller-account" name="account-type" value="4" />
+                    <label for="seller-account" class="notransform">Vendedor</label>
+                </div>
+            </section>
+            <button type="submit" style="margin-top: 0">Cadastrar</button>
+        </form>
+    </Fragment>
+</BaseLayout>
+
+<script define:vars={{ session }}>
+    const form = document.querySelector("#form-1")
+    let formSubmitButton = document.querySelector("#form-1 button[type=submit]")
+    
+    let originalButtonColor = formSubmitButton.style.color
+    let originalButtonText = formSubmitButton.innerText
+
+    const secondForm = document.querySelector("#form-2")
+
+    const global_form = new FormData()
+
+    if(session) {
+        global_form.append("email", session.email)
+        global_form.append("password", "null")
+
+        form.style.display = "none"
+
+        formSubmitButton = document.querySelector("#form-2 button[type=submit]")
+
+        hideAlternativeLogins()
+        secondForm.style.display = "flex"
+    }
+
+    form.addEventListener("submit", (data) => {
+        data.preventDefault()
+
+        const formdata = new FormData(form)
+        const email = formdata.get("email")
+        const password = formdata.get("password")
+        const confirmPassword = formdata.get("confirm-password")
+
+        if(!email) {
+            return displayErrorMessage("Campo de email ausente")
+        }
+
+        if(!password) {
+            return displayErrorMessage("Campo de senha ausente")
+        }
+
+        if(password !== confirmPassword) {
+            return displayErrorMessage("Senhas não coincidem.")
+        }
+
+        if(password.toString().length < 8) {
+            return displayErrorMessage("A senha ter mais de 8 caracteres")
+        }
+
+        global_form.append("email", email)
+        global_form.append("password", password)
+
+        formSubmitButton = document.querySelector("#form-2 button[type=submit]")
+
+        originalButtonColor = formSubmitButton.style.color
+        originalButtonText = formSubmitButton.innerText
+
+        hideAlternativeLogins()
+        form.style.display = "none"
+        secondForm.style.display = "flex"
+    })
+
+    secondForm.addEventListener("submit", (e) => {
+        e.preventDefault()
+
+        const formdata = new FormData(secondForm)
+        const name = formdata.get("name")
+        const account_type = formdata.get("account-type")
+
+        if(!name) {
+            return displayErrorMessage("Campo de nome ausente.")
+        }
+
+        if(!account_type) {
+            return displayErrorMessage("Selecione qual o tipo de conta.")
+        }
+
+        global_form.append("name", name)
+        global_form.append("role", account_type)
+
+        fetch("http://localhost:5443/api/v1/auth/sign-in", {
+            method: "POST",
+            body: global_form
+        }).then(request => {
+            const ok = request.ok
+
+            request.json().then(data => {
+                window.location.replace("/")
+            }).catch(error => {
+                window.href.replace("/")
+            })
+        })
+    })
+
+    function hideAlternativeLogins() {
+        document.querySelector(".signin-options").style.display = "none"
+        document.querySelector("#or-text").style.display = "none"
+    }
+
+    function displayErrorMessage(message) {
+        formSubmitButton.style.backgroundColor = "red"
+        formSubmitButton.innerText = message
+
+        const removeTimeout = setTimeout(() => {
+            resetButtonStatus()
+            formSubmitButton.onmouseout = null
+        }, 5000)
+
+        const removeOnHoverTimeout = setTimeout(() => {
+            formSubmitButton.onmouseover = () => {
+                resetButtonStatus()
+                formSubmitButton.onmouseover = null
+                clearTimeout(removeTimeout)
+            }
+        }, 2000)
+    }
+
+    function resetButtonStatus() {
+        formSubmitButton.style.backgroundColor = originalButtonColor
+        formSubmitButton.innerText = originalButtonText
+    }
+</script>

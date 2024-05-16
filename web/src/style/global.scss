@@ -1,0 +1,22 @@
+@use "colors";
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: colors.$light;
+    color: colors.$dark;
+}
+
+#site-container {
+    min-height: calc(100vh - 50px);
+}
+/*
+    site-container é necessário para delimitar a caixa onde ficará todo o conteúdo do site, excluindo navbar e footer. Assim é possível fazer com que o footer fique sempre no final da página independente do tamanho do conteúdo.
+*/

@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import Hortalink from "../assets/hortalink.png";
+import "../style/pages/home.scss";
+---
+
+<BaseLayout>
+    <Fragment slot="head">
+        <title>Hortalink2</title>
+    </Fragment>
+
+    <Fragment slot="body">
+        <header>
+            <Image 
+                src={Hortalink}
+                width={450}
+                alt="Logotipo com a caligrafia escrito 'Hortalink' com uma folha atrás."
+            />
+        </header>
+        <section class="buttons">
+            <a href="/access/sigin" class="colored">Entrar</a>
+            <a href="/access/signup">Criar conta</a>
+        </section>
+    </Fragment>
+    
+</BaseLayout>
