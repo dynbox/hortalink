@@ -88,7 +88,6 @@ export const prerender = false
 
     if(session) {
         global_form.append("email", session.email)
-        global_form.append("password", "null")
 
         form.style.display = "none"
 
@@ -155,14 +154,15 @@ export const prerender = false
 
         fetch("http://localhost:5443/api/v1/auth/sign-in", {
             method: "POST",
-            body: global_form
+            body: global_form,
+            credentials: "include"
         }).then(request => {
             const ok = request.ok
 
             request.json().then(data => {
-                window.location.replace("/")
+                console.log(data)
             }).catch(error => {
-                window.href.replace("/")
+                console.error(error)
             })
         })
     })
