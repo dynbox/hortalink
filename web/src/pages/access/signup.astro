@@ -72,10 +72,16 @@ export const prerender = false
             </section>
             <button type="submit" style="margin-top: 0">Cadastrar</button>
         </form>
+
+        <section id="loading-session" style="display: none">
+            <div class="loader" />
+            <p>Carregando informações...</p>
+        </section>
     </Fragment>
 </BaseLayout>
 
-<script define:vars={{ session }}>
+<script define:vars={{ session, oauth_type }}>
+
     const form = document.querySelector("#form-1")
     let formSubmitButton = document.querySelector("#form-1 button[type=submit]")
     
@@ -84,92 +90,126 @@ export const prerender = false
 
     const secondForm = document.querySelector("#form-2")
 
+    const loadingMessage = document.querySelector("#loading-session")
+
     const global_form = new FormData()
 
-    if(session) {
-        global_form.append("email", session.email)
+    async function wrap() {
+        if(!session && oauth_type) {
+            form.style.display = "none"
+            secondForm.style.display = "none"
+            loadingMessage.style.display = "block"
 
-        form.style.display = "none"
+            hideAlternativeLogins()
 
-        formSubmitButton = document.querySelector("#form-2 button[type=submit]")
-
-        hideAlternativeLogins()
-        secondForm.style.display = "flex"
-    }
-
-    form.addEventListener("submit", (data) => {
-        data.preventDefault()
-
-        const formdata = new FormData(form)
-        const email = formdata.get("email")
-        const password = formdata.get("password")
-        const confirmPassword = formdata.get("confirm-password")
-
-        if(!email) {
-            return displayErrorMessage("Campo de email ausente")
-        }
-
-        if(!password) {
-            return displayErrorMessage("Campo de senha ausente")
-        }
-
-        if(password !== confirmPassword) {
-            return displayErrorMessage("Senhas não coincidem.")
-        }
-
-        if(password.toString().length < 8) {
-            return displayErrorMessage("A senha ter mais de 8 caracteres")
-        }
-
-        global_form.append("email", email)
-        global_form.append("password", password)
-
-        formSubmitButton = document.querySelector("#form-2 button[type=submit]")
-
-        originalButtonColor = formSubmitButton.style.color
-        originalButtonText = formSubmitButton.innerText
-
-        hideAlternativeLogins()
-        form.style.display = "none"
-        secondForm.style.display = "flex"
-    })
-
-    secondForm.addEventListener("submit", (e) => {
-        e.preventDefault()
-
-        const formdata = new FormData(secondForm)
-        const name = formdata.get("name")
-        const account_type = formdata.get("account-type")
-
-        if(!name) {
-            return displayErrorMessage("Campo de nome ausente.")
-        }
-
-        if(!account_type) {
-            return displayErrorMessage("Selecione qual o tipo de conta.")
-        }
-
-        global_form.append("name", name)
-        global_form.append("role", account_type)
-
-        fetch("http://localhost:5443/api/v1/auth/sign-in", {
-            method: "POST",
-            body: global_form,
-            credentials: "include"
-        }).then(request => {
+            const request = await fetch(`http://localhost:5443/api/v1/oauth/${oauth_type}`, {
+                credentials: "include"
+            })
             const ok = request.ok
+            
+            if(ok) {
+                return window.location.reload()
+            } else {
+                form.style.display = "flex"
+                secondForm.style.display = "none"
+                loadingMessage.style.display = "none"
 
-            request.json().then(data => {
-                console.log(data)
-            }).catch(error => {
-                console.error(error)
+                unhideAlternativeLogins()
+            }
+        }
+
+        if(session) {
+            global_form.append("email", session.email)
+
+            form.style.display = "none"
+
+            formSubmitButton = document.querySelector("#form-2 button[type=submit]")
+
+            hideAlternativeLogins()
+            secondForm.style.display = "flex"
+        }
+
+        form.addEventListener("submit", (data) => {
+            data.preventDefault()
+
+            const formdata = new FormData(form)
+            const email = formdata.get("email")
+            const password = formdata.get("password")
+            const confirmPassword = formdata.get("confirm-password")
+
+            if(!email) {
+                return displayErrorMessage("Campo de email ausente")
+            }
+
+            if(!password) {
+                return displayErrorMessage("Campo de senha ausente")
+            }
+
+            if(password !== confirmPassword) {
+                return displayErrorMessage("Senhas não coincidem.")
+            }
+
+            if(password.toString().length < 8) {
+                return displayErrorMessage("A senha ter mais de 8 caracteres")
+            }
+
+            global_form.append("email", email)
+            global_form.append("password", password)
+
+            formSubmitButton = document.querySelector("#form-2 button[type=submit]")
+
+            originalButtonColor = formSubmitButton.style.color
+            originalButtonText = formSubmitButton.innerText
+
+            hideAlternativeLogins()
+            form.style.display = "none"
+            secondForm.style.display = "flex"
+        })
+
+        secondForm.addEventListener("submit", (e) => {
+            e.preventDefault()
+
+            const formdata = new FormData(secondForm)
+            const name = formdata.get("name")
+            const account_type = formdata.get("account-type")
+
+            if(!name) {
+                return displayErrorMessage("Campo de nome ausente.")
+            }
+
+            if(!account_type) {
+                return displayErrorMessage("Selecione qual o tipo de conta.")
+            }
+
+            global_form.append("name", name)
+            global_form.append("role", account_type)
+
+            fetch("http://localhost:5443/api/v1/auth/sign-in", {
+                method: "POST",
+                body: global_form,
+                credentials: "include"
+            }).then(request => {
+                const ok = request.ok
+
+                request.json().then(data => {
+                    console.log(data)
+                }).catch(error => {
+                    console.error(error)
+                })
             })
         })
-    })
+    }
+
+    wrap()
 
     function hideAlternativeLogins() {
         document.querySelector(".signin-options").style.display = "none"
         document.querySelector("#or-text").style.display = "none"
+    }
+
+    function unhideAlternativeLogins() {
+        document.querySelector(".signin-options").style.display = "flex"
+        document.querySelector("#or-text").style.display = "block"
     }
 
     function displayErrorMessage(message) {
