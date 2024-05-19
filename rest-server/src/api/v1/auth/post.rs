@@ -35,7 +35,7 @@ pub async fn sign_in(
     session: Session,
     mut auth_session: AuthSession,
     TypedMultipart(payload): TypedMultipart<SignCreds>,
-) -> Result<Redirect, ApiError> {
+) -> Result<StatusCode, ApiError> {
     if let Err(e) = payload.validate(&()) {
         return Err(ApiError::Custom(StatusCode::BAD_REQUEST, format!("Campos inválidos: {e}")));
     }
@@ -57,7 +57,7 @@ pub async fn sign_in(
 
     if let Some(user) = user {
         auth_session.login(&user).await?;
-        return Ok(Redirect::to(&format!("{}", state.settings.web.client.protocol_url())));
+        return Ok(StatusCode::CREATED);
     }
 
     let user = if let Ok(Some(oauth_token)) = session.remove::<String>("oauth.token").await {
@@ -144,5 +144,5 @@ pub async fn sign_in(
 
     tx.commit().await?;
     auth_session.login(&user).await?;
-    Ok(Redirect::to(&format!("{}", state.settings.web.client.protocol_url())))
+    Ok(StatusCode::CREATED)
 }

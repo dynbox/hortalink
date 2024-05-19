@@ -57,7 +57,7 @@ pub async fn oauth_callback(
         .bind(user_info.email)
         .fetch_optional(&state.pool)
         .await?;
-    
+
     if let Some(user) = user {
         auth_session.login(&user).await?;
         Ok(Redirect::to(&format!("{}", state.settings.web.client.protocol_url())))

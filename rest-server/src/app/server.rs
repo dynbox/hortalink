@@ -75,6 +75,7 @@ impl Server {
             ])
             .allow_headers([
                 header::AUTHORIZATION, header::CONTENT_TYPE,
+                header::ACCESS_CONTROL_ALLOW_ORIGIN
             ])
             .allow_methods([
                 Method::GET, Method::PUT,
@@ -90,7 +91,7 @@ impl Server {
         SessionManagerLayer::new(session_store)
             .with_secure(false)
             .with_name("session_id")
-            .with_expiry(Expiry::OnInactivity(Duration::days(10)))
+            .with_expiry(Expiry::OnInactivity(Duration::days(20)))
             .with_domain(state.settings.web.rest.host.clone())
     }
 }
