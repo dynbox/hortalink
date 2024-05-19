@@ -5,6 +5,7 @@ use axum_garde::WithValidation;
 use axum_login::tower_sessions::Session;
 use axum_typed_multipart::TypedMultipart;
 use garde::Validate;
+use password_auth::verify_password;
 
 use app_core::image::ImageManager;
 use common::settings::Protocol;
@@ -42,24 +43,6 @@ pub async fn sign_in(
 
     let mut tx = state.pool.begin().await?;
 
-    let user = sqlx::query_as::<_, LoginUser>(
-        r#"
-            SELECT
-                id, password,
-                roles, access_token
-            FROM USERS
-            WHERE email = $1
-        "#
-    )
-        .bind(&payload.email)
-        .fetch_optional(&state.pool)
-        .await?;
-
-    if let Some(user) = user {
-        auth_session.login(&user).await?;
-        return Ok(StatusCode::CREATED);
-    }
-
     let user = if let Ok(Some(oauth_token)) = session.remove::<String>("oauth.token").await {
         sqlx::query_as(
             r#"
@@ -79,6 +62,33 @@ pub async fn sign_in(
             .fetch_one(&mut *tx)
             .await?
     } else {
+        let password = payload.password
+            .ok_or(ApiError::Custom(StatusCode::BAD_REQUEST, "Uma senha deve ser fornecida".to_string()))?;
+        
+        let user = sqlx::query_as::<_, LoginUser>(
+            r#"
+            SELECT
+                id, password,
+                roles, access_token
+            FROM USERS
+            WHERE email = $1
+        "#
+        )
+            .bind(&payload.email)
+            .fetch_optional(&state.pool)
+            .await?;
+
+        if let Some(user) = user {
+            if let Some(pass) = user.password {
+                return if verify_password(password, &pass).ok().is_some() {
+                    auth_session.login(&user).await?;
+                    Ok(StatusCode::CREATED)
+                } else {
+                    Err(ApiError::Custom(StatusCode::CONFLICT, "Conta já existe".to_string()))
+                }
+            }
+        }
+        
         sqlx::query_as::<_, LoginUser>(
             r#"
                 INSERT INTO users (name, email, roles, password)
@@ -89,10 +99,7 @@ pub async fn sign_in(
             .bind(payload.name)
             .bind(payload.email)
             .bind(vec![payload.role.clone() as i16])
-            .bind(password_auth::generate_hash(
-                &payload.password
-                    .ok_or(ApiError::Custom(StatusCode::BAD_REQUEST, "Uma senha deve ser fornecida".to_string()))?
-            ))
+            .bind(password_auth::generate_hash(password))
             .fetch_one(&mut *tx)
             .await?
     };
