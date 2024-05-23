@@ -1,6 +1,5 @@
 use axum::{Extension, Json};
 use axum::http::StatusCode;
-use axum::response::Redirect;
 use axum_garde::WithValidation;
 use axum_login::tower_sessions::Session;
 use axum_typed_multipart::TypedMultipart;
@@ -8,7 +7,6 @@ use garde::Validate;
 use password_auth::verify_password;
 
 use app_core::image::ImageManager;
-use common::settings::Protocol;
 
 use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
@@ -64,7 +62,7 @@ pub async fn sign_in(
     } else {
         let password = payload.password
             .ok_or(ApiError::Custom(StatusCode::BAD_REQUEST, "Uma senha deve ser fornecida".to_string()))?;
-        
+
         let user = sqlx::query_as::<_, LoginUser>(
             r#"
             SELECT
@@ -80,15 +78,17 @@ pub async fn sign_in(
 
         if let Some(user) = user {
             if let Some(pass) = &user.password {
+                return if verify_password(password, pass).ok().is_some() {
+            if let Some(pass) = &user.password {
                 return if verify_password(password, &pass).ok().is_some() {
                     auth_session.login(&user).await?;
                     Ok(StatusCode::CREATED)
                 } else {
                     Err(ApiError::Custom(StatusCode::CONFLICT, "Conta já existe".to_string()))
-                }
+                };
             }
         }
-        
+
         sqlx::query_as::<_, LoginUser>(
             r#"
                 INSERT INTO users (name, email, roles, password)
