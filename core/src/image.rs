@@ -44,8 +44,8 @@ impl<Q> ImageManager<Q>
                 UnsupportedErrorKind::Format(ImageFormatHint::Unknown),
             )))?;
 
-        let image = Reader::new(std::io::Cursor::new(data))
-            .with_guessed_format()?;
+        let mut image = Reader::new(std::io::Cursor::new(data));
+        image.set_format(format.clone());
 
         let image = image.decode()?;
         let dimensions = image.dimensions();

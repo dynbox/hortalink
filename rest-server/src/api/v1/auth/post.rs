@@ -79,7 +79,7 @@ pub async fn sign_in(
             .await?;
 
         if let Some(user) = user {
-            if let Some(pass) = user.password {
+            if let Some(pass) = &user.password {
                 return if verify_password(password, &pass).ok().is_some() {
                     auth_session.login(&user).await?;
                     Ok(StatusCode::CREATED)
@@ -126,10 +126,16 @@ pub async fn sign_in(
 
     if let Some(avatar) = payload.image {
         let format = avatar.metadata.content_type
-            .ok_or(ApiError::NotFound("Formato de imagem não encontrado".to_string()))?
-            .to_string();
+        .ok_or(ApiError::NotFound("Formato de imagem não encontrado".to_string()))?
+        .to_string();
+        let format = format
+        .split('/')
+        .last().unwrap();
+
+        println!("{format}");
 
         let path = &format!("{}/avatars/{}", &state.settings.web.cdn.storage, user.id);
+        println!("{}", path);
         let path = std::path::Path::new(path);
 
         if !path.exists() {
