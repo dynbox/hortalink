@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 import Hortalink from "../assets/hortalink.png";
+import getSession from "../util/getSession";
 import "../style/pages/home.scss";
 ---
 
@@ -24,4 +25,11 @@ import "../style/pages/home.scss";
         </section>
     </Fragment>
     
+    <script>
+        fetch(`http://localhost:5443/api/v1/users/@me`, {
+            credentials: "include"
+        }).then(request => {
+            request.json().then((data) => console.log(data))
+        })
+    </script>
 </BaseLayout>
