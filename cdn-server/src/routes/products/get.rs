@@ -43,7 +43,7 @@ pub async fn product_photo(
                 "Content-Disposition",
                 format!("attachment; filename=\"{}\"", filename),
             )
-            .body(Body::from(ImageManager::new(path).get_image(query.size).await?))
+            .body(Body::from(ImageManager::new(path).get_image(query.size, extension).await?))
             .unwrap()
     )
 }
