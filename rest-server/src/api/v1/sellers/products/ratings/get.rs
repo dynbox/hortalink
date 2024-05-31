@@ -16,9 +16,9 @@ pub async fn ratings(
 
     let ratings = sqlx::query_as::<_, ProductRatingInfo>(
         r#"
-            SELECT 
+            SELECT
                 s.id, s.author_id, s.created_at, c.id AS user_id,
-                s.was_edited, s.rating, s.content, c.name AS user_name, 
+                s.was_edited, s.rating, s.content, c.name AS user_name,
                 c.avatar AS user_avatar
             FROM seller_product_ratings s
             JOIN users c ON s.author_id = c.id

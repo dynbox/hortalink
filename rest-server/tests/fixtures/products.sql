@@ -10,14 +10,26 @@ VALUES ('Product 1', 'photo1.jpg', ARRAY ['alias1', 'alias2']),
        ('Product 9', 'photo9.jpg', ARRAY ['alias17', 'alias18']),
        ('Product 10', 'photo10.jpg', ARRAY ['alias19', 'alias20']);
 
-INSERT INTO seller_products (product_id, seller_id, price, quantity, photos, schedule_id)
-VALUES (1, 3, 99.99, 10, ARRAY ['photo1.jpg', 'photo2.jpg'], 1),
-       (2, 9, 50.00, 5, ARRAY ['photo3.jpg', 'photo4.jpg'], 1),
-       (3, 8, 100.00, 20, ARRAY ['photo5.jpg', 'photo6.jpg'], 2),
-       (4, 4, 75.00, 15, ARRAY ['photo7.jpg', 'photo8.jpg'], 3),
-       (5, 5, 85.00, 25, ARRAY ['photo9.jpg', 'photo10.jpg'], 4),
-       (6, 4, 90.00, 30, ARRAY ['photo11.jpg', 'photo12.jpg'], 5),
-       (7, 9, 120.00, 35, ARRAY ['photo13.jpg', 'photo14.jpg'], 3),
-       (8, 8, 150.00, 40, ARRAY ['photo15.jpg', 'photo16.jpg'], 1),
-       (9, 9, 175.00, 45, ARRAY ['photo17.jpg', 'photo18.jpg'], 3),
-       (10, 8, 200.00, 50, ARRAY ['photo19.jpg', 'photo20.jpg'], 2);
+INSERT INTO seller_products (product_id, seller_id, price, quantity, photos)
+VALUES (1, 3, 99.99, 10, ARRAY ['photo1.jpg', 'photo2.jpg']),
+       (2, 9, 50.00, 5, ARRAY ['photo3.jpg', 'photo4.jpg']),
+       (3, 8, 100.00, 20, ARRAY ['photo5.jpg', 'photo6.jpg']),
+       (4, 4, 75.00, 15, ARRAY ['photo7.jpg', 'photo8.jpg']),
+       (5, 5, 85.00, 25, ARRAY ['photo9.jpg', 'photo10.jpg']),
+       (6, 4, 90.00, 30, ARRAY ['photo11.jpg', 'photo12.jpg']),
+       (7, 9, 120.00, 35, ARRAY ['photo13.jpg', 'photo14.jpg']),
+       (8, 8, 150.00, 40, ARRAY ['photo15.jpg', 'photo16.jpg']),
+       (9, 9, 175.00, 45, ARRAY ['photo17.jpg', 'photo18.jpg']),
+       (10, 8, 200.00, 50, ARRAY ['photo19.jpg', 'photo20.jpg']);
+
+INSERT INTO products_schedules (seller_product_id, schedule_id)
+VALUES (1, 1),
+       (2, 1),
+       (3, 2),
+       (4, 3),
+       (5, 4),
+       (6, 5),
+       (7, 3),
+       (8, 1),
+       (9, 1),
+       (10, 2)

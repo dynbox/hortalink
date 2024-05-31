@@ -4,7 +4,7 @@ use crate::json::serialize_timestamp;
 
 #[derive(sqlx::FromRow, Serialize)]
 pub struct Notification {
-    id: i32,
+    id: i64,
     title: String,
     content: String,
     #[serde(serialize_with = "serialize_timestamp")]

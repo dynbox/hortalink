@@ -37,8 +37,10 @@ pub struct PatchSellerProduct {
     pub quantity: Option<i16>,
     #[garde(length(min = 1, max = 5))]
     pub photos: Option<Vec<String>>,
-    #[garde(range(min = 1))]
-    pub schedule_id: Option<i32>,
+    #[garde(skip)]
+    pub add_schedules: Option<Vec<i32>>,
+    #[garde(skip)]
+    pub remove_schedules: Option<Vec<i32>>,
 }
 
 #[derive(Serialize, Deserialize, Validate)]

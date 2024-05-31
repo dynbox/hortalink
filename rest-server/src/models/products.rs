@@ -8,13 +8,27 @@ use crate::json::serialize_timestamp;
 
 #[derive(sqlx::FromRow, Serialize)]
 pub struct SellerProduct {
-    id: i32,
+    id: i64,
     #[sqlx(flatten)]
     product: Product,
     photos: Vec<String>,
     quantity: Option<i16>,
     price: Decimal,
     rating: Option<f64>,
+    rating_quantity: Option<i32>,
+    unit: Option<i32>
+}
+
+#[derive(sqlx::FromRow, Serialize)]
+pub struct SellerProductPreview {
+    id: i64,
+    #[sqlx(flatten)]
+    product: Product,
+    price: Decimal,
+    rating: Option<f64>,
+    rating_quantity: Option<i32>,
+    photos: Vec<String>,
+    dist: Option<f64>
 }
 
 #[derive(sqlx::FromRow, Serialize)]
@@ -26,7 +40,7 @@ pub struct Product {
 
 #[derive(sqlx::FromRow, Serialize)]
 pub struct ProductComment {
-    id: i32,
+    id: i64,
     author_id: i32,
     #[serde(serialize_with = "serialize_timestamp")]
     created_at: NaiveDateTime,

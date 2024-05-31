@@ -18,9 +18,9 @@ pub async fn product(
         .await?;
 
     if auth_session.user.unwrap().id != seller_id || author != seller_id {
-        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()))
+        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()));
     }
-    
+
     let payload = payload.into_inner();
     let mut tx = state.pool.begin().await?;
 
@@ -29,18 +29,44 @@ pub async fn product(
             UPDATE seller_products
             SET price = COALESCE($1, price), 
                 quantity = COALESCE($2, quantity), 
-                photos = COALESCE($3, photos),
-                schedule_id = $4
-            WHERE product_id = $5
+                photos = COALESCE($3, photos)
+            WHERE product_id = $4
         "#
     )
         .bind(payload.price)
         .bind(payload.quantity)
         .bind(payload.photos)
-        .bind(payload.schedule_id)
         .bind(product_id)
         .execute(&mut *tx)
         .await?;
+
+    if let Some(remove_schedules) = payload.remove_schedules {
+        sqlx::query(
+            r#"
+                DELETE FROM products_schedules
+                WHERE seller_product_id = $1 AND schedule_id IN $2;
+            "#
+        )
+            .bind(product_id)
+            .bind(remove_schedules)
+            .execute(&mut *tx)
+            .await?;
+    }
+
+    if let Some(add_schedules) = payload.add_schedules {
+        for schedule in add_schedules {
+            sqlx::query(
+                r#"
+                INSERT INTO products_schedules (seller_product_id, schedule_id)
+                VALUES ($1, $2)
+            "#
+            )
+                .bind(product_id)
+                .bind(schedule)
+                .execute(&mut *tx)
+                .await?;
+        }
+    }
 
     Ok(())
 }

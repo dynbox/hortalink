@@ -1,6 +1,5 @@
 use serde::Serialize;
 use sqlx::{Pool, Postgres};
-use sqlx::types::chrono::NaiveDateTime;
 use sqlx::types::Decimal;
 
 use crate::json::error::ApiError;
@@ -8,11 +7,11 @@ use crate::json::error::ApiError;
 #[derive(sqlx::FromRow, Serialize)]
 pub struct Order {
     #[sqlx(rename = "order_id")]
-    id: i32,
+    id: i64,
     #[sqlx(flatten)]
     customer: UserPreview,
     amount: i32,
-    withdrawn: NaiveDateTime,
+    withdrawn: i64,
     #[sqlx(flatten)]
     product: ProductPreview,
 }
@@ -28,7 +27,7 @@ struct UserPreview {
 #[derive(sqlx::FromRow, Serialize)]
 struct ProductPreview {
     #[sqlx(rename = "product_id")]
-    id: i32,
+    id: i64,
     #[sqlx(rename = "product_name")]
     name: String,
     price: Decimal,

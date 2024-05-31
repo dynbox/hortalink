@@ -8,7 +8,7 @@ use crate::models::users::PreviewUser;
 
 #[derive(Serialize, sqlx::FromRow)]
 pub struct ProductRatingInfo {
-    id: i32,
+    id: i64,
     #[serde(serialize_with = "serialize_timestamp")]
     created_at: NaiveDateTime,
     was_edited: bool,

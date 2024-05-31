@@ -1,3 +1,4 @@
+use axum::http::StatusCode;
 use axum_test::multipart::{MultipartForm, Part};
 use axum_test::TestServer;
 use sqlx::{Pool, Postgres};
@@ -29,8 +30,8 @@ async fn test_sign_in(server: &TestServer) {
 
     server.post("/api/v1/auth/sign-in")
         .multipart(multipart)
-        
-        .await;
+        .await
+        .assert_status(StatusCode::CREATED);
 
     let multipart = MultipartForm::new()
         .add_part("name", Part::text("Luis Fernando"))
@@ -40,8 +41,8 @@ async fn test_sign_in(server: &TestServer) {
 
     server.post("/api/v1/auth/sign-in")
         .multipart(multipart)
-        .expect_failure()
-        .await;
+        .await
+        .assert_status(StatusCode::CREATED);
 }
 
 async fn test_login(server: &TestServer) {

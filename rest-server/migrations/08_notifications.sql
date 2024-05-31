@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "notifications"
 (
-    id         SERIAL PRIMARY KEY,
+    id         BIGSERIAL PRIMARY KEY,
     user_id    INT REFERENCES "users" (id),
     title      VARCHAR(64)  NOT NULL,
     content    VARCHAR(256) NOT NULL,

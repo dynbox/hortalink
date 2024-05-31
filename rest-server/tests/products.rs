@@ -45,11 +45,10 @@ async fn test_get_product(server: &TestServer) {
         longitude: Some(0.0),
     };
 
-    let res = server.get("/api/v1/products")
+    server.get("/api/v1/products")
         .add_query_params(query)
+        .expect_success()
         .await;
-
-    println!("{}", res.text())
 }
 
 async fn test_patch_product(server: &TestServer) {
@@ -57,7 +56,8 @@ async fn test_patch_product(server: &TestServer) {
         price: Some(Decimal::new(11, 1)),
         quantity: None,
         photos: None,
-        schedule_id: Some(2),
+        add_schedules: None,
+        remove_schedules: None,
     };
 
     server.patch("/api/v1/sellers/8/products/8")
