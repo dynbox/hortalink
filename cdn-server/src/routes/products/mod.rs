@@ -1,10 +1,5 @@
 use axum::Router;
-use axum::routing::{delete, get, post};
-use axum_login::permission_required;
-
-use common::entities::UserRole;
-
-use crate::app::auth::AuthGate;
+use axum::routing::get;
 
 mod get;
 

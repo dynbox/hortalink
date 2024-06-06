@@ -1,8 +1,5 @@
 use axum::Router;
-use axum::routing::{delete, get};
-use axum_login::login_required;
-
-use crate::app::auth::AuthGate;
+use axum::routing::get;
 
 mod get;
 
