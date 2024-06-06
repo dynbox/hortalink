@@ -138,7 +138,7 @@ pub async fn sign_in(
                 .map_err(|e| ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, format!("Falha ao criar repositório: {e}")))?;
         }
 
-        let hash = ImageManager::new(path).create_image(&format, avatar.contents).await?;
+        let hash = ImageManager::new(path).create_image(&format, avatar.contents, 400).await?;
         sqlx::query(
             r#"
                 UPDATE users SET avatar = $1 WHERE id = $2

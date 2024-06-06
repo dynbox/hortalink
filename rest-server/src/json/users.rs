@@ -1,20 +1,23 @@
+use axum::body::Bytes;
+use axum_typed_multipart::{FieldData, TryFromMultipart};
 use garde::Validate;
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{Serialize, Serializer};
 
 use crate::models::customers::CustomerUser;
 use crate::models::sellers::SellerUser;
 use crate::models::users::{ProtectedUser, ViewerUser};
 
-#[derive(Serialize, Deserialize, Validate)]
+#[derive(Validate, TryFromMultipart)]
 pub struct PatchUserMe {
-    #[garde(length(min = 3, max = 25))]
-    pub avatar: Option<String>,
+    #[garde(skip)]
+    #[form_data(limit = "15MiB")]
+    pub image: Option<FieldData<Bytes>>,
     #[garde(length(min = 5, max = 64))]
     pub name: Option<String>,
     #[garde(length(min = 11, max = 11))]
     pub phone: Option<String>,
     #[garde(email)]
-    pub email: Option<String>
+    pub email: Option<String>,
 }
 
 #[derive(Serialize)]

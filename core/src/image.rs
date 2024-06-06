@@ -43,7 +43,7 @@ impl<Q> ImageManager<Q>
         Ok(buffer.into_inner())
     }
 
-    pub async fn create_image(&mut self, origin_format: &str, data: Bytes) -> Result<String, ImageError> {
+    pub async fn create_image(&mut self, origin_format: &str, data: Bytes, thumb: u32) -> Result<String, ImageError> {
         let format = ImageFormat::from_extension(origin_format)
             .ok_or(ImageError::Unsupported(UnsupportedError::from_format_and_kind(
                 ImageFormatHint::Unknown,
@@ -54,7 +54,7 @@ impl<Q> ImageManager<Q>
             .with_guessed_format()?;
 
         let image = image.decode()?;
-        let image = image.thumbnail(400, 400);
+        let image = image.thumbnail(thumb, thumb);
 
         let hash = self.hasher.hash_image(&image).to_base64();
         image.save_with_format(
