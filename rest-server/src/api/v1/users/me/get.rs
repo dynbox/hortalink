@@ -16,7 +16,7 @@ pub async fn me(
 
     let protected_user = sqlx::query_as::<_, ProtectedUser>(
         r#"
-            SELECT id, name, avatar, phone, email
+            SELECT id, name, avatar, phone, email, roles
             FROM users
             WHERE id = $1
         "#
