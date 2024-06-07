@@ -6,7 +6,7 @@ import getSession from "../util/getSession";
 import "../style/pages/home.scss";
 ---
 
-<BaseLayout>
+<BaseLayout page="home">
     <Fragment slot="head">
         <title>Hortalink2</title>
     </Fragment>
@@ -20,7 +20,7 @@ import "../style/pages/home.scss";
             />
         </header>
         <section class="buttons">
-            <a href="/access/sigin" class="colored">Entrar</a>
+            <a href="/access/signin" class="colored">Entrar</a>
             <a href="/access/signup">Criar conta</a>
         </section>
     </Fragment>

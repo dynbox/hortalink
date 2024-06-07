@@ -28,11 +28,12 @@ if(oauth_type && session_id?.value) {
 export const prerender = false
 ---
 
-<BaseLayout>
+<BaseLayout page="user">
     <Fragment slot="head">
         <title>Hortalink: signup</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" integrity="sha512-0SPWAwpC/17yYyZ/4HSllgaK7/gg9OlVozq8K7rf3J8LvCjYEEIfzzpnA2/SSjpGIunCSD18r3UhvDcu/xncWA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     </Fragment>
+    
     <Fragment slot="body">
         <form id="form-1">
             <label for="user-email">Email</label>
