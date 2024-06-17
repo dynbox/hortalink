@@ -12,7 +12,7 @@ pub async fn products(
     let cart_products = sqlx::query_as::<_, Order>(
         r#"
             SELECT c.id AS order_id, c.withdrawn, c.amount, 
-                sp.price, u.name, u.avatar, sp.id AS product_id, p.photo,
+                sp.price, u.name, u.avatar, sp.id AS product_id, sp.photos,
                 sp.seller_id AS user_id, p.name AS product_name
             FROM cart c
             JOIN "seller_products" sp ON sp.id = c.seller_product_id

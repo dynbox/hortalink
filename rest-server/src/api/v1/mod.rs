@@ -16,7 +16,7 @@ pub fn router() -> Router {
         .nest("/customers", customers::router())
         .nest("/users", users::router())
         .nest("/products", products::router())
-        //.layer(login_required!(AuthGate))
+        .layer(login_required!(AuthGate))
         .nest("/auth", auth::router())
         .nest("/oauth", oauth::router())
 }

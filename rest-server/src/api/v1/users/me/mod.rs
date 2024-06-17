@@ -3,6 +3,7 @@ mod orders;
 mod cart;
 mod get;
 mod patch;
+mod home;
 
 use axum::Router;
 use axum::routing::get;
@@ -15,4 +16,5 @@ pub fn router() -> Router {
         .route("/", get(get::me)
             .patch(patch::me)
         )
+        .nest("/home", home::router())
 }

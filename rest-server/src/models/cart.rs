@@ -31,7 +31,7 @@ struct ProductPreview {
     #[sqlx(rename = "product_name")]
     name: String,
     price: Decimal,
-    photo: Option<String>,
+    photos: Option<Vec<String>>,
 }
 
 impl Order {
