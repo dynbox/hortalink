@@ -7,7 +7,7 @@ edition.workspace = true
 common = { path = "../common" }
 app_core = { path = "../core" }
 
-axum = { workspace = true }
+axum = { version = "0.7.5", features = ["query", "json"] }
 env_logger = { workspace = true }
 log = { workspace = true }
 tokio = { workspace = true }

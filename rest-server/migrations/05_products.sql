@@ -1,9 +1,15 @@
-CREATE TABLE IF NOT EXISTS "products"
+CREATE TABLE IF NOT EXISTS "products_categories"
 (
     id    SERIAL PRIMARY KEY,
-    name  VARCHAR(32)  NOT NULL,
-    photo VARCHAR(256) NOT NULL,
-    alias VARCHAR(256)[]
+    name  VARCHAR(32)  NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "products"
+(
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(32)  NOT NULL,
+    alias       VARCHAR(256)[],
+    category    INT REFERENCES "products_categories" (id)
 );
 
 CREATE TABLE IF NOT EXISTS "seller_products"
