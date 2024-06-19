@@ -16,7 +16,7 @@ pub async fn filter_products(
         r#"
             SELECT s.id, p.id AS product_id, p.name,
                s.photos, s.price,
-               COALESCE(s.rating_sum / NULLIF(s.rating_quantity, 0), NULL) AS rating,
+               COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                s.rating_quantity
         "#
     );

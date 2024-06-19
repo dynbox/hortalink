@@ -28,6 +28,7 @@ pub struct SellerProductPreview {
     rating: Option<f64>,
     rating_quantity: Option<i32>,
     photos: Vec<String>,
+    #[sqlx(skip)]
     dist: Option<f64>
 }
 

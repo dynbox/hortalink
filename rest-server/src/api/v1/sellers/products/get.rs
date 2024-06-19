@@ -1,6 +1,7 @@
 use axum::{Extension, Json};
 use axum::extract::Path;
 
+use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::products::SellerProductResponse;
@@ -9,6 +10,7 @@ use crate::models::schedules::Schedule;
 
 pub async fn product(
     Extension(state): Extension<AppState>,
+    auth_session: AuthSession,
     Path((_, product_id)): Path<(i32, i32)>,
 ) -> Result<Json<SellerProductResponse>, ApiError> {
     let mut tx = state.pool.begin().await?;
@@ -17,7 +19,7 @@ pub async fn product(
         r#"
             SELECT s.id, p.id AS product_id, p.name, 
                 s.photos, s.quantity, s.price,
-                COALESCE(s.rating_sum / NULLIF(s.rating_quantity, 0), NULL) AS rating,
+                COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                 s.rating_quantity, s.unit
             FROM seller_products s
             JOIN products p ON s.product_id = p.id
@@ -43,6 +45,25 @@ pub async fn product(
         .bind(product_id)
         .fetch_all(&mut *tx)
         .await?;
+
+    if let Some(user) = auth_session.user {
+        if user.roles.contains(&3) {
+            sqlx::query(
+                r#"
+                INSERT INTO products_seen_recently (seller_product_id, customer)
+                VALUES ($1, $2) 
+                ON CONFLICT ON CONSTRAINT unique_product_customer
+                DO UPDATE SET viewed_at = CURRENT_TIMESTAMP;
+            "#
+            )
+                .bind(product_id)
+                .bind(user.id)
+                .execute(&mut *tx)
+                .await?;
+        }
+    };
+    
+    tx.commit().await?;
 
     Ok(Json(SellerProductResponse { product, schedule }))
 }

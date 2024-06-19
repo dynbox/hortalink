@@ -1,15 +1,15 @@
 CREATE TABLE IF NOT EXISTS "products_categories"
 (
-    id    SERIAL PRIMARY KEY,
-    name  VARCHAR(32)  NOT NULL
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(32) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "products"
 (
-    id          SERIAL PRIMARY KEY,
-    name        VARCHAR(32)  NOT NULL,
-    alias       VARCHAR(256)[],
-    category    INT REFERENCES "products_categories" (id)
+    id       SERIAL PRIMARY KEY,
+    name     VARCHAR(32) NOT NULL,
+    alias    VARCHAR(256)[],
+    category INT REFERENCES "products_categories" (id)
 );
 
 CREATE TABLE IF NOT EXISTS "seller_products"
@@ -31,9 +31,20 @@ CREATE INDEX seller_product_price ON "seller_products" (price);
 CREATE TABLE IF NOT EXISTS "products_schedules"
 (
     id                BIGSERIAL PRIMARY KEY,
-    seller_product_id BIGINT REFERENCES "seller_products"(id),
-    schedule_id       BIGINT REFERENCES "schedules"(id),
+    seller_product_id BIGINT REFERENCES "seller_products" (id),
+    schedule_id       BIGINT REFERENCES "schedules" (id),
     UNIQUE (seller_product_id, schedule_id)
 );
 
-CREATE INDEX seller_schedule_product_id ON "products_schedules"(seller_product_id);
+CREATE INDEX seller_schedule_product_id ON "products_schedules" (seller_product_id);
+
+CREATE TABLE IF NOT EXISTS "products_seen_recently"
+(
+    id                BIGSERIAL PRIMARY KEY,
+    seller_product_id BIGINT REFERENCES "seller_products" (id),
+    customer          INT REFERENCES "customers" (user_id),
+    viewed_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_product_customer UNIQUE (seller_product_id, customer)
+);
+
+CREATE INDEX customer_product_seen ON "products_seen_recently" (customer);
