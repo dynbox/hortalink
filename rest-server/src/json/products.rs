@@ -1,3 +1,5 @@
+use axum::body::Bytes;
+use axum_typed_multipart::{FieldData, TryFromMultipart};
 use garde::Validate;
 use serde::{Deserialize, Serialize};
 use sqlx::types::Decimal;
@@ -14,19 +16,22 @@ pub struct SellerProductResponse {
     pub schedule: Vec<Schedule>,
 }
 
-#[derive(Serialize, Deserialize, Validate)]
+#[derive(TryFromMultipart, Validate)]
 pub struct PostSellerProduct {
     #[garde(range(min = 0))]
     pub product_id: i32,
     #[garde(required)]
-    #[garde(custom(validate_price))]
-    pub price: Option<Decimal>,
+    #[garde(range(min = 0.1))]
+    pub price: Option<f64>,
     #[garde(range(min = 1))]
     pub quantity: Option<i16>,
+    #[form_data(limit = "25MiB")]
     #[garde(length(min = 1, max = 5))]
-    pub photos: Vec<String>,
+    pub photos: Vec<FieldData<Bytes>>,
     #[garde(skip)]
-    pub schedule_id: Option<i32>,
+    pub schedule_id: Vec<i32>,
+    #[garde(range(min = 0.0))]
+    pub unit: f64
 }
 
 #[derive(Serialize, Deserialize, Validate)]

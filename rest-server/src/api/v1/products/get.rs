@@ -5,7 +5,7 @@ use axum_garde::WithValidation;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::products::FilterProducts;
-use crate::models::products::SellerProductPreview;
+use crate::models::products::{ResourceProduct, SellerProductPreview};
 
 pub async fn filter_products(
     Extension(state): Extension<AppState>,
@@ -68,4 +68,21 @@ pub async fn filter_products(
         .await?;
 
     Ok(Json(products))
+}
+
+pub async fn products(
+    Extension(state): Extension<AppState>
+) -> Result<Json<Vec<ResourceProduct>>, ApiError> {
+    let query = sqlx::query_as::<_, ResourceProduct>(
+        r#"
+            SELECT p.id AS product_id, p.name AS product_name, p.alias,
+                pc.name AS category_name, pc.id AS category_id 
+            FROM products p
+            JOIN products_categories pc ON p.category = pc.id;
+        "#
+    )
+        .fetch_all(&state.pool)
+        .await?;
+    
+    Ok(Json(query))
 }

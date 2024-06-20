@@ -50,6 +50,15 @@ pub struct ProductComment {
     content: Option<String>,
 }
 
+#[derive(sqlx::FromRow, Serialize)]
+pub struct ResourceProduct {
+    product_id: i32,
+    product_name: String,
+    alias: Vec<String>,
+    category_name: String,
+    category_id: i32
+}
+
 impl SellerProduct {
     pub async fn get_author(
         pool: &Pool<Postgres>,

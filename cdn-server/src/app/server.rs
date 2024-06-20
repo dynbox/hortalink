@@ -88,7 +88,7 @@ fn process_directory(path: &Path, destination: &Path) {
     }
 
     if !destination.exists() {
-        std::fs::create_dir(destination);
+        std::fs::create_dir(destination).unwrap();
     }
 
     log::info!("Loading images from {:?}", path);

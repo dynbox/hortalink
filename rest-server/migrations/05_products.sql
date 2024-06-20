@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS "seller_products"
     product_id      INT REFERENCES "products" (id),
     seller_id       INT REFERENCES "sellers" (user_id),
     price           NUMERIC(7, 2)  NOT NULL,
-    unit            SMALLINT,
-    quantity        SMALLINT,
+    unit            REAL NOT NULL,
+    quantity        SMALLINT NOT NULL,
     photos          VARCHAR(256)[] NOT NULL,
     rating_sum      INT DEFAULT NULL,
     rating_quantity INT DEFAULT NULL
