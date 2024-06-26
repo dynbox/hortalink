@@ -17,20 +17,20 @@ pub async fn product(
     auth_session: AuthSession,
     TypedMultipart(payload): TypedMultipart<PostSellerProduct>,
 ) -> Result<(), ApiError> {
-    if auth_session.user.unwrap().id != seller_id {
-        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()));
-    }
-
     if let Err(e) = payload.validate(&()) {
         return Err(ApiError::Custom(StatusCode::BAD_REQUEST, format!("Campos inválidos: {e}")));
+    }
+    
+    if auth_session.user.unwrap().id != seller_id {
+        return Err(ApiError::Unauthorized("Você não pode fazer isso".to_string()));
     }
 
     let mut tx = state.pool.begin().await?;
 
     let id = sqlx::query_scalar::<_, i32>(
         r#"
-            INSERT INTO seller_products (product_id, seller_id, price, quantity, unit)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO seller_products (product_id, seller_id, price, quantity, unit, unit_quantity)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id
         "#
     )
@@ -39,8 +39,22 @@ pub async fn product(
         .bind(payload.price)
         .bind(payload.quantity)
         .bind(payload.unit)
+        .bind(payload.unit_quantity)
         .fetch_one(&mut *tx)
         .await?;
+
+    for schedule_id in payload.schedules_id {
+        sqlx::query(
+            r#"
+                INSERT INTO products_schedules (seller_product_id, schedule_id)
+                VALUES ($1, $2)
+            "#
+        )
+            .bind(id)
+            .bind(schedule_id)
+            .execute(&mut *tx)
+            .await?;
+    }
 
     let mut hashes = Vec::new();
 
@@ -73,7 +87,7 @@ pub async fn product(
         .bind(id)
         .execute(&mut *tx)
         .await?;
-    
+
     tx.commit().await?;
     Ok(())
 }

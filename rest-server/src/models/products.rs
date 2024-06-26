@@ -5,6 +5,7 @@ use sqlx::types::Decimal;
 
 use crate::json::error::ApiError;
 use crate::json::serialize_timestamp;
+use crate::json::serialize_unit;
 
 #[derive(sqlx::FromRow, Serialize)]
 pub struct SellerProduct {
@@ -16,7 +17,9 @@ pub struct SellerProduct {
     price: Decimal,
     rating: Option<f64>,
     rating_quantity: Option<i32>,
-    unit: Option<i32>
+    #[serde(serialize_with = "serialize_unit")]
+    unit: i16,
+    unit_quantity: f64
 }
 
 #[derive(sqlx::FromRow, Serialize)]
@@ -28,8 +31,9 @@ pub struct SellerProductPreview {
     rating: Option<f64>,
     rating_quantity: Option<i32>,
     photos: Vec<String>,
-    #[sqlx(skip)]
-    dist: Option<f64>
+    dist: Option<f64>,
+    #[serde(serialize_with = "serialize_unit")]
+    unit: i16,
 }
 
 #[derive(sqlx::FromRow, Serialize)]
@@ -75,7 +79,7 @@ impl SellerProduct {
             .await?;
 
         if user_id.is_none() {
-            return Err(ApiError::NotFound("Produto não encontrada".to_string()));
+            return Err(ApiError::NotFound("Produto não encontrado".to_string()));
         }
 
         Ok(user_id.unwrap())

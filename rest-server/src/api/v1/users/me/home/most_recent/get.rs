@@ -6,13 +6,13 @@ use sqlx::{Pool, Postgres};
 use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
-use crate::json::utils::Pagination;
+use crate::json::utils::HomePage;
 use crate::models::products::SellerProductPreview;
 
 pub async fn viewed_recently(
     Extension(state): Extension<AppState>,
     auth_session: AuthSession,
-    WithValidation(query): WithValidation<Query<Pagination>>,
+    WithValidation(query): WithValidation<Query<HomePage>>,
 ) -> Result<Json<Vec<SellerProductPreview>>, ApiError> {
     let user = auth_session.user.unwrap();
 
@@ -21,7 +21,7 @@ pub async fn viewed_recently(
 
 pub async fn fetch(
     id: i32,
-    query: Pagination,
+    query: HomePage,
     pool: &Pool<Postgres>,
 ) -> Result<Vec<SellerProductPreview>, ApiError> {
     let seen_recently = sqlx::query_as::<_, SellerProductPreview>(
@@ -29,15 +29,20 @@ pub async fn fetch(
                 SELECT sp.id, p.id AS product_id, p.name,
                     sp.photos, sp.price,
                     COALESCE(sp.rating_sum / NULLIF(sp.rating_quantity, 0), NULL) AS rating,
-                    sp.rating_quantity
+                    sp.rating_quantity, sp.unit, 
+                    ST_Distance(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4326)) AS dist
                 FROM products_seen_recently sr
                 LEFT JOIN seller_products sp ON sp.id = sr.seller_product_id
                 JOIN products p ON sp.product_id = p.id
-                WHERE sr.customer = $1
+                JOIN products_schedules ps ON ps.seller_product_id = sp.id
+                JOIN schedules s ON s.id = ps.schedule_id
+                WHERE sr.customer = $3
                 ORDER BY sr.viewed_at DESC
-                LIMIT $2 OFFSET $3
+                LIMIT $4 OFFSET $5
             "#
     )
+        .bind(query.longitude)
+        .bind(query.latitude)
         .bind(id)
         .bind(query.per_page)
         .bind((query.page - 1) * query.per_page)

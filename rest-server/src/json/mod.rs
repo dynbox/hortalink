@@ -1,7 +1,9 @@
+use serde::ser::Error;
 use serde::Serializer;
 use sqlx::types::chrono::NaiveDateTime;
 use sqlx::types::Decimal;
 use sqlx::types::time::Time;
+use common::entities::UnitMass;
 
 pub mod auth;
 pub mod error;
@@ -38,4 +40,18 @@ pub fn validate_price(value: &Option<Decimal>, _: &()) -> garde::Result {
     }
 
     Ok(())
+}
+
+pub fn serialize_unit<S>(unit: &i16, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let unit = match UnitMass::try_from(*unit) {
+        Ok(unit) => unit,
+        Err(_) => {
+            return Err(S::Error::custom("Falha ao identificar unidade de medida"));
+        }
+    };
+
+    serializer.serialize_str(&unit.to_string())
 }

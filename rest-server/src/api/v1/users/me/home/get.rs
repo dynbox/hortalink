@@ -1,29 +1,38 @@
 use axum::{Extension, Json};
+use axum::extract::Query;
+use axum_garde::WithValidation;
 
 use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::home::Home;
-use crate::json::utils::Pagination;
+use crate::json::utils::{HomePage, Location};
 use crate::models::users::PreviewUser;
 
 pub async fn home(
     Extension(state): Extension<AppState>,
     auth_session: AuthSession,
+    WithValidation(query): WithValidation<Query<Location>>,
 ) -> Result<Json<Home>, ApiError> {
     let user = auth_session.user.as_ref().unwrap();
+    let query = HomePage {
+        longitude: query.longitude,
+        latitude: query.latitude,
+        page: 1,
+        per_page: 9
+    };
 
     if user.roles.contains(&3) {
-        let recents = super::most_recent::get::fetch(
+        let recent = super::most_recent::get::fetch(
             user.id,
-            Pagination { page: 1, per_page: 9 },
+            query.clone(),
             &state.pool,
         )
             .await?;
 
         let more_orders = super::more_orders::get::fetch(
             user.id,
-            Pagination { page: 1, per_page: 9 },
+            query.clone(),
             &state.pool,
         )
             .await?;
@@ -45,7 +54,7 @@ pub async fn home(
             .await?;
 
         return Ok(Json(Home {
-            recents: Some(recents),
+            recents: Some(recent),
             more_orders: Some(more_orders),
             recommendations: Some(recommendations),
         }));

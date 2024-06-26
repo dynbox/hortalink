@@ -1,3 +1,4 @@
+use std::fmt::Formatter;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
@@ -56,9 +57,29 @@ pub enum ImageSize {
     Size4096 = 4096,
 }
 
+#[derive(TryFromPrimitive, Deserialize_repr, Serialize_repr, Debug)]
+#[repr(i16)]
+pub enum UnitMass {
+    Kg = 0,
+    Hg = 1,
+    Dag = 2,
+    G = 3,
+    Cg = 4,
+    Mg = 5
+}
+
 impl ImageSize {
     pub fn dimensions(self) -> (i16, i16) {
         let size = self.into();
         (size, size)
+    }
+}
+
+impl std::fmt::Display for UnitMass {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let string = format!("{:?}", self)
+            .to_lowercase();
+        
+        write!(f, "{string}")
     }
 }

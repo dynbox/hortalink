@@ -6,12 +6,12 @@ use sqlx::{Pool, Postgres};
 use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
-use crate::json::utils::Pagination;
+use crate::json::utils::HomePage;
 use crate::models::products::SellerProductPreview;
 
 pub async fn more_orders(
     Extension(state): Extension<AppState>,
-    WithValidation(query): WithValidation<Query<Pagination>>,
+    WithValidation(query): WithValidation<Query<HomePage>>,
     auth_session: AuthSession,
 ) -> Result<Json<Vec<SellerProductPreview>>, ApiError> {
     let user = auth_session.user.unwrap();
@@ -21,7 +21,7 @@ pub async fn more_orders(
 
 pub async fn fetch(
     id: i32,
-    query: Pagination,
+    query: HomePage,
     pool: &Pool<Postgres>,
 ) -> Result<Vec<SellerProductPreview>, ApiError> {
     let more_orders = sqlx::query_as::<_, SellerProductPreview>(
@@ -29,16 +29,21 @@ pub async fn fetch(
             SELECT sp.id, p.id AS product_id, p.name,
                 sp.photos, sp.price,
                 COALESCE(sp.rating_sum / NULLIF(sp.rating_quantity, 0), NULL) AS rating,
-                sp.rating_quantity
+                sp.rating_quantity, sp.unit,
+                ST_Distance(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4326)) AS dist
             FROM cart c
             LEFT JOIN seller_products sp ON c.seller_product_id = sp.id
             JOIN products p ON sp.product_id = p.id
+            JOIN products_schedules ps ON ps.seller_product_id = sp.id
+            JOIN schedules s ON s.id = ps.schedule_id
             WHERE status = 2
-            GROUP BY sp.id, p.id
+            GROUP BY sp.id, p.id, s.geolocation
             ORDER BY COUNT(*) DESC
             LIMIT $2 OFFSET $3
         "#
     )
+        .bind(query.longitude)
+        .bind(query.latitude)
         .bind(id)
         .bind(query.per_page)
         .bind((query.page - 1) * query.per_page)

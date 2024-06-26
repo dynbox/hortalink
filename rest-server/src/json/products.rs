@@ -20,32 +20,40 @@ pub struct SellerProductResponse {
 pub struct PostSellerProduct {
     #[garde(range(min = 0))]
     pub product_id: i32,
-    #[garde(required)]
     #[garde(range(min = 0.1))]
-    pub price: Option<f64>,
+    pub price: f64,
     #[garde(range(min = 1))]
     pub quantity: Option<i16>,
     #[form_data(limit = "25MiB")]
     #[garde(length(min = 1, max = 5))]
     pub photos: Vec<FieldData<Bytes>>,
-    #[garde(skip)]
-    pub schedule_id: Vec<i32>,
+    #[garde(length(max = 5))]
+    pub schedules_id: Vec<i32>,
+    #[garde(range(min = 0, max = 5))]
+    pub unit: i16,
     #[garde(range(min = 0.0))]
-    pub unit: f64
+    pub unit_quantity: f64
 }
 
-#[derive(Serialize, Deserialize, Validate)]
+#[derive(TryFromMultipart, Validate)]
 pub struct PatchSellerProduct {
-    #[garde(custom(validate_price))]
-    pub price: Option<Decimal>,
+    #[garde(range(min = 0.1))]
+    pub price: Option<f64>,
     #[garde(range(min = 1))]
     pub quantity: Option<i16>,
-    #[garde(length(min = 1, max = 5))]
-    pub photos: Option<Vec<String>>,
+    #[garde(range(min = 0, max = 5))]
+    pub unit: i16,
+    #[garde(range(min = 0.0))]
+    pub unit_quantity: f64,
+    #[form_data(limit = "25MiB")]
     #[garde(skip)]
-    pub add_schedules: Option<Vec<i32>>,
+    pub add_photos: Vec<FieldData<Bytes>>,
     #[garde(skip)]
-    pub remove_schedules: Option<Vec<i32>>,
+    pub remove_photos: Vec<String>,
+    #[garde(skip)]
+    pub add_schedules: Vec<i32>,
+    #[garde(skip)]
+    pub remove_schedules: Vec<i32>,
 }
 
 #[derive(Serialize, Deserialize, Validate)]
