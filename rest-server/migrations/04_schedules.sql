@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE TABLE IF NOT EXISTS "schedules"
 (
     id          BIGSERIAL PRIMARY KEY,
-    geolocation GEOMETRY(Point, 4326)  NOT NULL,
+    geolocation GEOMETRY(Point, 4674)  NOT NULL,
     address     VARCHAR(256)           NOT NULL,
     start_time  TIME WITHOUT TIME ZONE NOT NULL,
     end_time    TIME WITHOUT TIME ZONE NOT NULL,

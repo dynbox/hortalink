@@ -61,7 +61,7 @@ pub async fn filter_products(
     }
 
     if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
-        sql_query.push_str(&format!("AND ST_DWithin(sc.geolocation, ST_MakePoint({longitude}, {latitude})::geography, 45000) "));
+        sql_query.push_str(&format!("AND ST_DWithin(sc.geolocation, ST_MakePoint({longitude}, {latitude})::geometry, 45000) "));
     }
 
     sql_query.push_str(&format!("LIMIT {} OFFSET {}", query.per_page, (query.page - 1) * query.per_page));

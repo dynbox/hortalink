@@ -28,9 +28,12 @@ pub async fn fetch(
         r#"
             SELECT sp.id, p.id AS product_id, p.name,
                 sp.photos, sp.price,
-                COALESCE(sp.rating_sum / NULLIF(sp.rating_quantity, 0), NULL) AS rating,
+                COALESCE(CAST(sp.rating_sum AS FLOAT) / CAST(NULLIF(sp.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                 sp.rating_quantity, sp.unit,
-                ST_Distance(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4326)) AS dist
+                CASE
+                    WHEN $1 IS NULL OR $2 IS NULL THEN NULL
+                    ELSE ST_Distance(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674))
+                END AS dist
             FROM cart c
             LEFT JOIN seller_products sp ON c.seller_product_id = sp.id
             JOIN products p ON sp.product_id = p.id
