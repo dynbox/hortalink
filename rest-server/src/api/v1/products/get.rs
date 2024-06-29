@@ -15,7 +15,7 @@ pub async fn filter_products(
     let mut sql_query = String::from(
         r#"
             SELECT s.id, p.id AS product_id, p.name,
-               s.photos, s.price, s.unit
+               s.photos, s.price, s.unit,
                COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                s.rating_quantity
         "#

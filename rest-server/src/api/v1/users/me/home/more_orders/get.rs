@@ -39,7 +39,7 @@ pub async fn fetch(
             WHERE status = 2
             GROUP BY sp.id, p.id, s.geolocation
             ORDER BY COUNT(*) DESC
-            LIMIT $2 OFFSET $3
+            LIMIT $3 OFFSET $4
         "#
     )
         .bind(query.longitude)

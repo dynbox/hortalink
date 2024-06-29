@@ -1,5 +1,5 @@
 INSERT INTO "products_categories" (name)
-VALUES ('Hortaliças fruto'), ('Hortaliças tuberosas'), ('Hortaliças herbáceas');
+VALUES ('Frutas'), ('Raízes'), ('Folhas');
 
 INSERT INTO "products" (name, alias, category)
 VALUES
@@ -37,3 +37,16 @@ VALUES (1, 1),
        (8, 1),
        (9, 1),
        (10, 2);
+
+INSERT INTO "products_seen_recently" (seller_product_id, customer)
+VALUES
+    (1, 6),
+    (2, 6),
+    (3, 6),
+    (4, 6),
+    (5, 6),
+    (6, 6),
+    (7, 6),
+    (8, 6),
+    (9, 6),
+    (10, 6);
