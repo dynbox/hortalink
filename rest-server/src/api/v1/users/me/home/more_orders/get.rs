@@ -30,10 +30,10 @@ pub async fn fetch(
                 sp.photos, sp.price,
                 COALESCE(CAST(sp.rating_sum AS FLOAT) / CAST(NULLIF(sp.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                 sp.rating_quantity, sp.unit,
-                CASE
+                (CASE
                     WHEN $1 IS NULL OR $2 IS NULL THEN NULL
                     ELSE ST_Distance(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674))
-                END AS dist
+                END) AS dist
             FROM cart c
             LEFT JOIN seller_products sp ON c.seller_product_id = sp.id
             JOIN products p ON sp.product_id = p.id
@@ -47,7 +47,6 @@ pub async fn fetch(
     )
         .bind(query.longitude)
         .bind(query.latitude)
-        .bind(id)
         .bind(query.per_page)
         .bind((query.page - 1) * query.per_page)
         .fetch_all(pool)

@@ -30,10 +30,10 @@ pub async fn fetch(
                     sp.photos, sp.price,
                     COALESCE(CAST(sp.rating_sum AS FLOAT) / CAST(NULLIF(sp.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                     sp.rating_quantity, sp.unit,
-                    CASE
+                    (CASE
                         WHEN $1 IS NULL OR $2 IS NULL THEN NULL
                         ELSE ST_Distance(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674))
-                    END AS dist
+                    END) AS dist
                 FROM products_seen_recently sr
                 LEFT JOIN seller_products sp ON sp.id = sr.seller_product_id
                 JOIN products p ON sp.product_id = p.id
@@ -41,7 +41,7 @@ pub async fn fetch(
                 JOIN schedules s ON s.id = ps.schedule_id
                 WHERE sr.customer = $3
                 ORDER BY sr.viewed_at DESC
-                LIMIT $4 OFFSET $5
+                LIMIT $4 OFFSET $5;
             "#
     )
         .bind(query.longitude)

@@ -42,7 +42,7 @@ pub async fn schedule(
     "#)
         .bind(payload.location
             .map(|loc| {
-                format!("ST_SetSRID(ST_MakePoint({}, {}),  4326)", loc.latitude.unwrap(), loc.longitude.unwrap())
+                format!("ST_SetSRID(ST_MakePoint({}, {}),  4674)", loc.latitude.unwrap(), loc.longitude.unwrap())
             }))
         .bind(payload.address)
         .bind(payload.start_time)

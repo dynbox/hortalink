@@ -22,7 +22,7 @@ pub async fn filter_products(
     );
 
     if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
-        sql_query.push_str(&format!(", ST_Distance(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4326)) AS dist"));
+        sql_query.push_str(&format!(", ST_Distance(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4674)) AS dist"));
     } else {
         sql_query.push_str(", null AS dist");
     }
@@ -61,11 +61,11 @@ pub async fn filter_products(
     }
 
     if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
-        sql_query.push_str(&format!("AND ST_DWithin(sc.geolocation, ST_MakePoint({longitude}, {latitude})::geometry, 45000) "));
+        sql_query.push_str(&format!("AND ST_DWithin(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4674), 45000) "));
     }
 
     sql_query.push_str(&format!("LIMIT {} OFFSET {}", query.per_page, (query.page - 1) * query.per_page));
-
+    
     let products = sqlx::query_as::<_, SellerProductPreview>(&sql_query)
         .fetch_all(&state.pool)
         .await?;
