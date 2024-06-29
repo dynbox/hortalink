@@ -1,35 +1,20 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import { Image } from "astro:assets";
-import Hortalink from "../assets/hortalink.png";
-import getSession from "../util/getSession";
-import "../style/pages/home.scss";
+import Access from "../components/page/home/Access.astro";
+import ClientHome from "../components/page/home/client_home/ClientHome.astro";
+import getUser from "../util/getUser";
+
+const session_id = Astro.cookies.get("session_id")?.value
+let user_data = null
+
+if(session_id) {
+    user_data = await getUser(session_id).catch(e => {
+        return null
+    }) as any
+}
+
+export const prerender = false
 ---
 
-<BaseLayout page="home">
-    <Fragment slot="head">
-        <title>Hortalink2</title>
-    </Fragment>
-
-    <Fragment slot="body">
-        <header>
-            <Image 
-                src={Hortalink}
-                width={450}
-                alt="Logotipo com a caligrafia escrito 'Hortalink' com uma folha atrás."
-            />
-        </header>
-        <section class="buttons">
-            <a href="/access/signin" class="colored">Entrar</a>
-            <a href="/access/signup">Criar conta</a>
-        </section>
-    </Fragment>
-    
-    <script>
-        fetch(`http://localhost:5443/api/v1/users/@me`, {
-            credentials: "include"
-        }).then(request => {
-            request.json().then((data) => console.log(data))
-        })
-    </script>
-</BaseLayout>
+{
+    user_data ? <ClientHome /> : <Access />
+}

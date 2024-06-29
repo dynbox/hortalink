@@ -15,7 +15,7 @@ function getUser(session_id: string) {
                 } else {
                     resolve(data)
                 }
-            })
+            }).catch(error => reject(error))
         }).catch(error => reject(error))
     }) 
 }

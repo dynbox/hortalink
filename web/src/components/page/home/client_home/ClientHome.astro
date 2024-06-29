@@ -1,0 +1,70 @@
+---
+import "../../../../style/pages/home/client_home.scss";
+
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+import Search from "./Search";
+import Categories from "./Categories";
+import ProductsSection from "./ProductsSection";
+
+import { getImage } from "astro:assets";
+
+import search_logo_raw from "../../../../assets/search.svg";
+import star from "../../../../assets/star.svg";
+import location from "../../../../assets/location.svg";
+import arrow from "../../../../assets/arrow.svg";
+import Products from "../../../../stores/Products";
+
+const search_logo = await getImage({
+    src: search_logo_raw,
+    inferSize: true
+})
+
+const star_logo = await getImage({
+    src: star
+})
+
+const location_logo = await getImage({
+    src: location
+})
+
+const arrow_logo = await getImage({
+    src: arrow
+})
+
+// http://localhost:5767/resources/products/${product}.jpg?size=32
+---
+
+<BaseLayout page={"home"}>
+    <Fragment slot="head">
+        <title>Hortalink</title>
+    </Fragment>
+    <Fragment slot="body">
+        <header>
+            <Search client:load search_icon_url={search_logo.src} />
+            <Categories category_list={[
+                {
+                    img_src: "http://localhost:5767/resources/products/tomate.jpg?size=256",
+                    label: "Frutas"
+                },
+                {
+                    img_src: "http://localhost:5767/resources/products/tomate.jpg?size=256",
+                    label: "Frutas"
+                },
+                {
+                    img_src: "http://localhost:5767/resources/products/tomate.jpg?size=256",
+                    label: "Frutas"
+                }
+            ]} client:load />
+        </header>
+        <main>
+            <ProductsSection
+                star_image_src={star_logo.src}
+                location_image_src={location_logo.src}
+                arrow_image_src={arrow_logo.src}
+
+                client:load
+            />
+        </main>
+    </Fragment>
+</BaseLayout>
