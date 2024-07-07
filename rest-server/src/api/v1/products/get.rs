@@ -40,6 +40,10 @@ pub async fn filter_products(
 
     sql_query.push_str("WHERE 1 = 1 ");
 
+    if let Some(query) = query.query.map(|query| query.to_lowercase()) {
+        sql_query.push_str(&format!("AND p.name = '{query}' OR '{query}' = ANY (p.alias) "))
+    }
+
     if let Some(max_price) = query.max_price {
         sql_query.push_str(&format!("AND s.price < {max_price} "));
     }
@@ -65,7 +69,7 @@ pub async fn filter_products(
     }
 
     sql_query.push_str(&format!("LIMIT {} OFFSET {}", query.per_page, (query.page - 1) * query.per_page));
-    
+
     let products = sqlx::query_as::<_, SellerProductPreview>(&sql_query)
         .fetch_all(&state.pool)
         .await?;

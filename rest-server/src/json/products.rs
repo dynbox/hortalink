@@ -32,7 +32,7 @@ pub struct PostSellerProduct {
     #[garde(range(min = 0, max = 5))]
     pub unit: i16,
     #[garde(range(min = 0.0))]
-    pub unit_quantity: f64
+    pub unit_quantity: f64,
 }
 
 #[derive(TryFromMultipart, Validate)]
@@ -68,6 +68,9 @@ pub struct FilterProducts {
     pub product_type: Option<i32>,
     #[garde(skip)]
     pub start_time: Option<time::Time>,
+    #[garde(alphanumeric)]
+    #[garde(length(min = 1, max = 20))]
+    pub query: Option<String>,
     #[garde(skip)]
     pub day_of_week: Option<WeekDay>,
     #[garde(range(min = 1, max = 100))]
