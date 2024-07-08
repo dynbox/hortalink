@@ -68,9 +68,8 @@ pub struct FilterProducts {
     pub product_type: Option<i32>,
     #[garde(skip)]
     pub start_time: Option<time::Time>,
-    #[garde(alphanumeric)]
-    #[garde(length(min = 1, max = 20))]
-    pub query: Option<String>,
+    #[garde(range(min = 1))]
+    pub product_id: Option<i32>,
     #[garde(skip)]
     pub day_of_week: Option<WeekDay>,
     #[garde(range(min = 1, max = 100))]
@@ -81,4 +80,15 @@ pub struct FilterProducts {
     pub latitude: Option<f64>,
     #[garde(range(min = - 180.0000000, max = 180.0000000))]
     pub longitude: Option<f64>,
+}
+
+#[derive(Deserialize, Validate)]
+pub struct FilterResources {
+    #[garde(alphanumeric)]
+    #[garde(length(min = 1, max = 20))]
+    pub query: Option<String>,
+    #[garde(range(min = 1, max = 100))]
+    pub page: i16,
+    #[garde(range(min = 5, max = 100))]
+    pub per_page: i16,
 }

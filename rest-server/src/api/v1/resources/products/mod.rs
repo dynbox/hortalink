@@ -1,9 +1,9 @@
-mod get;
-
 use axum::Router;
 use axum::routing::get;
 
+mod get;
+
 pub fn router() -> Router {
     Router::new()
-        .route("/", get(get::filter_products))
+        .route("/", get(get::products))
 }

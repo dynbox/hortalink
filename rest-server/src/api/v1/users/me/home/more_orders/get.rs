@@ -3,7 +3,6 @@ use axum::extract::Query;
 use axum_garde::WithValidation;
 use sqlx::{Pool, Postgres};
 
-use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::utils::HomePage;
@@ -12,15 +11,11 @@ use crate::models::products::SellerProductPreview;
 pub async fn more_orders(
     Extension(state): Extension<AppState>,
     WithValidation(query): WithValidation<Query<HomePage>>,
-    auth_session: AuthSession,
 ) -> Result<Json<Vec<SellerProductPreview>>, ApiError> {
-    let user = auth_session.user.unwrap();
-
-    Ok(Json(fetch(user.id, query.into_inner(), &state.pool).await?))
+    Ok(Json(fetch(query.into_inner(), &state.pool).await?))
 }
 
 pub async fn fetch(
-    id: i32,
     query: HomePage,
     pool: &Pool<Postgres>,
 ) -> Result<Vec<SellerProductPreview>, ApiError> {

@@ -31,7 +31,6 @@ pub async fn home(
             .await?;
 
         let more_orders = super::more_orders::get::fetch(
-            user.id,
             query.clone(),
             &state.pool,
         )
