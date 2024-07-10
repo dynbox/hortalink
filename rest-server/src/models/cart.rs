@@ -9,7 +9,7 @@ pub struct Order {
     #[sqlx(rename = "order_id")]
     id: i64,
     #[sqlx(flatten)]
-    customer: UserPreview,
+    seller: UserPreview,
     amount: i32,
     withdrawn: i64,
     #[sqlx(flatten)]
