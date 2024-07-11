@@ -63,6 +63,12 @@ pub struct ResourceProduct {
     category_id: i32
 }
 
+#[derive(sqlx::FromRow, Serialize)]
+pub struct ProductDistance {
+    pub id: i64,
+    pub dist: f64
+}
+
 impl SellerProduct {
     pub async fn get_author(
         pool: &Pool<Postgres>,

@@ -7,6 +7,7 @@ use sqlx::types::Decimal;
 use common::entities::{StarRating, WeekDay};
 
 use crate::json::validate_price;
+use crate::json::deserialize_array;
 use crate::models::products::SellerProduct;
 use crate::models::schedules::Schedule;
 
@@ -91,4 +92,15 @@ pub struct FilterResources {
     pub page: i16,
     #[garde(range(min = 5, max = 100))]
     pub per_page: i16,
+}
+
+#[derive(Deserialize, Validate)]
+pub struct ProductDistanceQuery {
+    #[garde(length(min = 1, max = 100))]
+    #[serde(deserialize_with = "deserialize_array")]
+    pub products_id: Vec<i64>,
+    #[garde(range(min = - 90.0000000, max = 90.0000000))]
+    pub latitude: f64,
+    #[garde(range(min = - 180.0000000, max = 180.0000000))]
+    pub longitude: f64,
 }

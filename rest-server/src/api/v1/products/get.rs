@@ -4,8 +4,8 @@ use axum_garde::WithValidation;
 
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
-use crate::json::products::FilterProducts;
-use crate::models::products::SellerProductPreview;
+use crate::json::products::{FilterProducts, ProductDistanceQuery};
+use crate::models::products::{ProductDistance, SellerProductPreview};
 
 pub async fn filter_products(
     Extension(state): Extension<AppState>,
@@ -73,5 +73,28 @@ pub async fn filter_products(
         .fetch_all(&state.pool)
         .await?;
 
+    Ok(Json(products))
+}
+
+pub async fn distance(
+    Extension(state): Extension<AppState>,
+    WithValidation(query): WithValidation<Query<ProductDistanceQuery>>,
+) -> Result<Json<Vec<ProductDistance>>, ApiError> {
+    let query = query.into_inner();
+    let products = sqlx::query_as::<_, ProductDistance>(
+        r#"
+            SELECT sp.id, ST_Distance(sc.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674)) AS dist
+            FROM seller_products sp
+            JOIN products_schedules ps ON ps.seller_product_id = sp.id
+            JOIN schedules sc ON sc.id = ps.schedule_id
+            WHERE sp.id = ANY($3)
+        "#
+    )
+        .bind(query.longitude)
+        .bind(query.latitude)
+        .bind(query.products_id)
+        .fetch_all(&state.pool)
+        .await?;
+    
     Ok(Json(products))
 }

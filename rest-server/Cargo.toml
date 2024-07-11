@@ -27,7 +27,6 @@ password-auth = { version = "1.0.0" }
 time = { version = "0.3.34" }
 oauth2 = { version = "5.0.0-alpha.4", default-features = false, features = ["reqwest", "rustls-tls"] }
 image = { version = "0.25.1" }
-chrono = "0.4.38"
 
 [dev-dependencies]
 axum-test = { workspace = true }
