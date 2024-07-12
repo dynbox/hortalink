@@ -1,7 +1,7 @@
 use axum::body::Bytes;
 use axum_typed_multipart::{FieldData, TryFromMultipart};
 use garde::Validate;
-use serde::{Serialize, Serializer};
+use serde::{Deserialize, Serialize, Serializer};
 
 use crate::models::customers::CustomerUser;
 use crate::models::sellers::SellerUser;
@@ -24,6 +24,16 @@ pub struct PatchUserMe {
 pub struct UserMeResponse {
     pub user: ProtectedUser,
     pub infos: Vec<UserType>,
+}
+
+#[derive(Deserialize, Validate)]
+pub struct FilterUsers {
+    #[garde(length(min = 3, max = 64))]
+    pub query: Option<String>,
+    #[garde(range(min = 1, max = 100))]
+    pub page: i16,
+    #[garde(range(min = 5, max = 100))]
+    pub per_page: i16
 }
 
 pub enum UserType {

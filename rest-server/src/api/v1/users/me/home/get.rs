@@ -36,20 +36,9 @@ pub async fn home(
         )
             .await?;
 
-        let recommendations = sqlx::query_as::<_, PreviewUser>(
-            r#"
-                SELECT s.user_id, u.avatar as user_avatar, u.name as user_name
-                FROM sellers s
-                JOIN (
-                    SELECT DISTINCT seller_id
-                    FROM seller_products
-                ) sp ON s.user_id = sp.seller_id
-                JOIN users u ON u.id = s.user_id
-                ORDER BY RANDOM()
-                LIMIT 9;
-            "#
+        let recommendations = crate::api::v1::users::get::recommendations(
+            &state.pool
         )
-            .fetch_all(&state.pool)
             .await?;
 
         return Ok(Json(Home {

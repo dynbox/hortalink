@@ -20,6 +20,8 @@ pub async fn products(
 
     if let Some(name) = query.query.map(|name| name.to_lowercase()) {
         sql_query.push_str(&format!("WHERE p.name LIKE '{name}%' OR '{name}' = ANY (p.alias) "));
+    } else {
+        sql_query.push_str("ORDER BY p.name ASC ")
     }
 
     sql_query.push_str(&format!("LIMIT {} OFFSET {}", query.per_page, (query.page - 1) * query.per_page));

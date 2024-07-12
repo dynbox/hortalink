@@ -68,6 +68,14 @@ pub enum UnitMass {
     Mg = 5
 }
 
+pub enum CartStatus {
+    Pending = 1,
+    Confirmed = 2,
+    Cancelled = 3,
+    Delivered = 4,
+    Abandoned = 5
+}
+
 impl ImageSize {
     pub fn dimensions(self) -> (i16, i16) {
         let size = self.into();

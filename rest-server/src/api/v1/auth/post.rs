@@ -54,7 +54,7 @@ pub async fn sign_in(
             "#,
         )
             .bind(payload.email)
-            .bind(payload.name)
+            .bind(payload.name.to_lowercase())
             .bind(oauth_token)
             .bind(vec![payload.role.clone() as i16])
             .fetch_one(&mut *tx)

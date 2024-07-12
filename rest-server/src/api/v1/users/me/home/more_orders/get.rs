@@ -34,7 +34,7 @@ pub async fn fetch(
             JOIN products p ON sp.product_id = p.id
             JOIN products_schedules ps ON ps.seller_product_id = sp.id
             JOIN schedules s ON s.id = ps.schedule_id
-            WHERE status = 2
+            WHERE status = 4
             GROUP BY sp.id, p.id, s.geolocation
             ORDER BY COUNT(*) DESC
             LIMIT $3 OFFSET $4

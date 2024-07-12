@@ -23,7 +23,7 @@ pub async fn product(
         r#"
             SELECT 1
             FROM cart
-            WHERE seller_product_id = $1 AND status = 2
+            WHERE seller_product_id = $1 AND status = 2 OR status = 4
         "#
     )
         .bind(product_id)
