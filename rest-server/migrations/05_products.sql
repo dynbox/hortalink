@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS "seller_products"
     unit_quantity   REAL           NOT NULL,
     quantity        SMALLINT       NOT NULL,
     photos          VARCHAR(256)[] NOT NULL,
+    description     TEXT,
     rating_sum      INT DEFAULT NULL,
     rating_quantity INT DEFAULT NULL
 );

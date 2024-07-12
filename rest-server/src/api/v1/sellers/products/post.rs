@@ -29,7 +29,7 @@ pub async fn product(
 
     let id = sqlx::query_scalar::<_, i32>(
         r#"
-            INSERT INTO seller_products (product_id, seller_id, price, quantity, unit, unit_quantity)
+            INSERT INTO seller_products (product_id, seller_id, price, quantity, unit, unit_quantity, description)
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id
         "#
@@ -40,6 +40,7 @@ pub async fn product(
         .bind(payload.quantity)
         .bind(payload.unit)
         .bind(payload.unit_quantity)
+        .bind(payload.description)
         .fetch_one(&mut *tx)
         .await?;
 

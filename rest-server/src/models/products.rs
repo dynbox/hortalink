@@ -17,6 +17,7 @@ pub struct SellerProduct {
     price: Decimal,
     rating: Option<f64>,
     rating_quantity: Option<i32>,
+    description: Option<String>,
     #[serde(serialize_with = "serialize_unit")]
     unit: i16,
     unit_quantity: f64

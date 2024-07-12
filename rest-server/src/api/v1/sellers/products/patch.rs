@@ -38,11 +38,15 @@ pub async fn product(
                 quantity = COALESCE($2, quantity),
                 unit = COALESCE($3, unit)
                 unit_quantity = COALESCE($4, unit_quantity)
+                description = COALESCE($5, description)
             WHERE product_id = $4
         "#
     )
         .bind(payload.price)
         .bind(payload.quantity)
+        .bind(payload.unit)
+        .bind(payload.unit_quantity)
+        .bind(payload.description)
         .bind(product_id)
         .execute(&mut *tx)
         .await?;
