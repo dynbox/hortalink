@@ -103,7 +103,7 @@ pub async fn product(
                     let name = entry.file_name().to_str().unwrap().to_string();
 
                     if payload.remove_photos.contains(&name) {
-                        std::fs::remove_file(entry.path());
+                        std::fs::remove_file(entry.path()).expect("Failed to delete");
                     } else {
                         actual.push(name)
                     }

@@ -18,9 +18,9 @@ pub async fn product(
     let product = sqlx::query_as::<_, SellerProduct>(
         r#"
             SELECT s.id, p.id AS product_id, p.name, 
-                s.photos, s.quantity, s.price, s.description
+                s.photos, s.quantity, s.price, s.description,
                 COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
-                s.rating_quantity, s.unit
+                s.rating_quantity, s.unit, s.unit_quantity
             FROM seller_products s
             JOIN products p ON s.product_id = p.id
             LEFT JOIN seller_product_ratings sp ON s.id = sp.seller_product_id

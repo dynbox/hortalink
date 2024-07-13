@@ -25,9 +25,9 @@ pub async fn user(
             SELECT 
                 u.id, u.name, u.avatar, 4 = ANY(u.roles) as is_seller,
                 s.bio, s.followers
-            FROM "users" u
-            LEFT JOIN "sellers" s ON u.id = s.user_id
-            LEFT JOIN "customers" c ON u.id = c.user_id
+            FROM users u
+            LEFT JOIN sellers s ON u.id = s.user_id
+            LEFT JOIN customers c ON u.id = c.user_id
             WHERE u.id = $1
         "#
     )
@@ -35,25 +35,6 @@ pub async fn user(
         .fetch_optional(&state.pool)
         .await?
         .ok_or(ApiError::NotFound("Usuário não encontrado".to_string()))?;
-
-    if profile.is_seller {
-        let products = sqlx::query_as::<_, SellerProduct>(
-            r#"
-                SELECT
-                    sp.id, sp.price, sp.unit, sp.quantity,
-                    sp.photos, (CAST(sp.rating_sum AS FLOAT) / CAST(sp.rating_quantity AS FLOAT)) AS rating,
-                    sp.rating_quantity, p.id AS product_id, p.name
-                FROM seller_products sp
-                JOIN products p ON p.id = sp.product_id
-                WHERE sp.seller_id = $1
-            "#
-        )
-            .bind(user_id)
-            .fetch_all(&state.pool)
-            .await?;
-
-        return Ok(Json(UserResponse { profile, products: Some(products) }));
-    }
 
     Ok(Json(UserResponse { profile, products: None }))
 }

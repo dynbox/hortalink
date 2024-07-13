@@ -9,7 +9,7 @@ use crate::common::{login, test_app};
 
 mod common;
 
-#[sqlx::test(fixtures("users", "sellers", "schedules", "products"))]
+#[sqlx::test(fixtures("users", "sellers", "customers", "schedules", "products"))]
 async fn test_schedules(pool: Pool<Postgres>) {
     let server = &mut test_app(pool);
 
@@ -38,8 +38,8 @@ async fn test_get_schedules(server: &TestServer) {
 async fn test_post_schedules(server: &TestServer) {
     let payload = CreateSchedulePayload {
         location: Location {
-            latitude: -11.737770,
-            longitude: -49.065820
+            latitude: Some(-11.737770),
+            longitude: Some(-49.065820)
         },
         address: "Rua S, 230, 77413-420, Gurupi Tocantins Brasil".to_string(),
         start_time: Time::from_hms(12, 00, 00).unwrap(),

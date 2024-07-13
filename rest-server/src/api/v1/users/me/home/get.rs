@@ -7,7 +7,6 @@ use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::home::Home;
 use crate::json::utils::{HomePage, Location};
-use crate::models::users::PreviewUser;
 
 pub async fn home(
     Extension(state): Extension<AppState>,

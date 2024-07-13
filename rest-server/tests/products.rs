@@ -40,6 +40,7 @@ async fn test_get_product(server: &TestServer) {
         min_stars: None,
         product_type: None,
         start_time: None,
+        product_id: None,
         day_of_week: None,
         page: 1,
         per_page: 5,
