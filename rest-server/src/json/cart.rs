@@ -12,8 +12,6 @@ pub struct PatchProductCart {
 #[derive(Serialize, Deserialize, Validate)]
 pub struct PostProductCart {
     #[garde(skip)]
-    pub seller_id: i32,
-    #[garde(skip)]
     pub seller_product_id: i32,
     #[garde(skip)]
     pub withdrawn: i64,
