@@ -14,7 +14,7 @@ pub struct PostProductCart {
     #[garde(skip)]
     pub seller_product_id: i32,
     #[garde(skip)]
-    pub withdrawn: i64,
+    pub withdrawn: Option<i64>,
     #[garde(range(min = 1, max = 20))]
     pub amount: i32,
 }
