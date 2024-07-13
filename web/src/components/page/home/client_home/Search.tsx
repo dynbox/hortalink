@@ -1,56 +1,36 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Products from "../../../../stores/Products";
+import SearchTypes from "../../../../api/searchTypes";
+import SearchResults from "./SearchResults";
+import call_all from "../../../../api/call_all";
 
-const sample_data = [
-    {
-        id: 1,
-        product: {
-            name: "Cenoura",
-            id: 1
-        },
-        price: 29.99,
-        rating: 5,
-        rating_quantity: 34,
-        photos: ["cenoura"],
-        dist: 0.7,
-        unit: "kg"
-    },
-    {
-        id: 2,
-        product: {
-            name: "Tomate",
-            id: 2
-        },
-        price: 29.99,
-        rating: 5,
-        rating_quantity: 34,
-        photos: ["tomate"],
-        dist: 0.7,
-        unit: "kg"
-    },
-    {
-        id: 4,
-        product: {
-            name: "Gengibre",
-            id: 4
-        },
-        price: 29.99,
-        rating: 5,
-        rating_quantity: 34,
-        photos: ["gengibre"],
-        dist: 0.7,
-        unit: "kg"
-    },
-]
+import { useStore } from "@nanostores/react";
 
 export default function Search(props: { search_icon_url: string }) {
+    const results = useStore(Products.searched)
+    const [search_value, setSearchValue] = useState<{ value: string, product_id: number }>(null)
+    
     useEffect(() => {
         const icon_box = document.querySelector<HTMLDivElement>(".search_bar .icon_box")
+        const input = document.querySelector<HTMLInputElement>(".search_bar input")
 
         icon_box.addEventListener("click", async () => {
-            Products.searched.set(sample_data)
+            const query = input.value
+            const result = await SearchTypes(query)
+
+            Products.searched.set(result)
         })
     }, [])
+
+    useEffect(() => {
+        if(!search_value) return;
+        const input = document.querySelector<HTMLInputElement>(".search_bar input")
+
+        input.value = search_value.value
+        Products.searched.set([])
+
+        call_all(undefined, search_value.product_id, 1, 10)
+    }, [search_value])
 
     return (
         <>
@@ -66,6 +46,11 @@ export default function Search(props: { search_icon_url: string }) {
                     />
                 </div>
             </section>
+            {
+                results?.length > 0 && 
+                <SearchResults id="results" set_value={setSearchValue}/>
+            }
+            <div className="border" style={{ visibility: `${results.length ? "hidden" : "visible"}` }} />
         </>
     )
 }
