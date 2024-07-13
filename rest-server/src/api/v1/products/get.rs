@@ -56,7 +56,7 @@ pub async fn filter_products(
     }
 
     if let Some(product_type) = query.product_type {
-        sql_query.push_str(&format!("AND p.id = {product_type} "));
+        sql_query.push_str(&format!("AND p.category = {product_type} "));
     }
 
     if let Some(start_time) = query.start_time {

@@ -20,5 +20,8 @@ pub struct PublicProfile {
     pub bio: Option<String>,
     pub avatar: Option<String>,
     pub is_seller: bool,
-    pub followers: Option<i32>
+    pub followers: Option<i32>,
+    following: Option<i32>,
+    orders_made: Option<i32>,
+    orders_received: Option<i32>
 }

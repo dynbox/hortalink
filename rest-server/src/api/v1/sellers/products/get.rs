@@ -67,3 +67,11 @@ pub async fn product(
 
     Ok(Json(SellerProductResponse { product, schedule }))
 }
+
+pub async fn products(
+    Extension(state): Extension<AppState>,
+    auth_session: AuthSession,
+    Path(seller_id): Path<(i32)>,
+) -> Result<(), ApiError> {
+    Ok(())
+}

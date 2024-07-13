@@ -6,14 +6,12 @@ use sqlx::{Pool, Postgres};
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::users::FilterUsers;
-use crate::models::products::SellerProduct;
 use crate::models::sellers::PublicProfile;
 use crate::models::users::PreviewUser;
 
 #[derive(Serialize)]
 pub struct UserResponse {
     profile: PublicProfile,
-    products: Option<Vec<SellerProduct>>,
 }
 
 pub async fn user(
@@ -24,7 +22,7 @@ pub async fn user(
         r#"
             SELECT 
                 u.id, u.name, u.avatar, 4 = ANY(u.roles) as is_seller,
-                s.bio, s.followers
+                s.bio, s.followers, c.following, c.orders_made, s.orders_received
             FROM users u
             LEFT JOIN sellers s ON u.id = s.user_id
             LEFT JOIN customers c ON u.id = c.user_id
@@ -35,8 +33,14 @@ pub async fn user(
         .fetch_optional(&state.pool)
         .await?
         .ok_or(ApiError::NotFound("Usuário não encontrado".to_string()))?;
-
-    Ok(Json(UserResponse { profile, products: None }))
+    
+    if profile.is_seller {
+        
+    } else {
+        
+    }
+    
+    Ok(Json(UserResponse { profile }))
 }
 
 pub async fn users(

@@ -3,6 +3,7 @@ use sqlx::{Pool, Postgres};
 use sqlx::types::Decimal;
 
 use crate::json::error::ApiError;
+use crate::json::serialize_unit;
 
 #[derive(sqlx::FromRow, Serialize)]
 pub struct Order {
@@ -32,6 +33,9 @@ struct ProductPreview {
     name: String,
     price: Decimal,
     photos: Option<Vec<String>>,
+    #[serde(serialize_with = "serialize_unit")]
+    unit: i16,
+    dist: Option<f64>,
 }
 
 impl Order {
@@ -56,7 +60,7 @@ impl Order {
     }
 
     pub async fn get_customer(pool: &Pool<Postgres>, order_id: i32) -> Result<i32, ApiError> {
-        let customer_id = sqlx::query_scalar::<_, i32>(
+        sqlx::query_scalar::<_, i32>(
             r#"
                 SELECT customer_id
                 FROM cart
@@ -65,12 +69,7 @@ impl Order {
         )
             .bind(order_id)
             .fetch_optional(pool)
-            .await?;
-
-        if customer_id.is_none() {
-            return Err(ApiError::NotFound("Produto não encontrada".to_string()));
-        }
-
-        Ok(customer_id.unwrap())
+            .await?
+            .ok_or(ApiError::NotFound("Produto não encontrada".to_string()))
     }
 }

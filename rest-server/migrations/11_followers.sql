@@ -11,6 +11,10 @@ CREATE INDEX customers_id ON "followers" (customer_id);
 CREATE OR REPLACE FUNCTION update_followers_count_after_addition()
     RETURNS TRIGGER AS $$
 BEGIN
+    UPDATE "customers"
+        SET following = following + 1
+    WHERE user_id = NEW.customer_id;
+
     UPDATE "sellers"
     SET followers = followers + 1
     WHERE user_id = NEW.seller_id;
@@ -26,6 +30,10 @@ CREATE TRIGGER after_insert_followers
 CREATE OR REPLACE FUNCTION update_followers_count_after_removal()
     RETURNS TRIGGER AS $$
 BEGIN
+    UPDATE "customers"
+    SET following = following + 1
+    WHERE user_id = OLD.customer_id;
+
     UPDATE "sellers"
     SET followers = followers - 1
     WHERE user_id = OLD.seller_id;

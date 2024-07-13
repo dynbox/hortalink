@@ -66,7 +66,7 @@ async fn test_customer_orders(server: &TestServer) {
 
     let payload = PostProductCart {
         seller_product_id: 10,
-        withdrawn: 2,
+        withdrawn: Some(2),
         amount: 1,
     };
 
@@ -77,7 +77,7 @@ async fn test_customer_orders(server: &TestServer) {
 
     let payload = PostProductCart {
         seller_product_id: 9,
-        withdrawn: Default::default(),
+        withdrawn: Some(99),
         amount: 1,
     };
 
