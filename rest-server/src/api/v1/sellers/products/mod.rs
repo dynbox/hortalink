@@ -1,5 +1,5 @@
 mod ratings;
-mod get;
+pub mod get;
 mod post;
 mod patch;
 mod delete;

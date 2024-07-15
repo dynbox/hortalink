@@ -38,6 +38,15 @@ pub struct SellerProductPreview {
 }
 
 #[derive(sqlx::FromRow, Serialize)]
+pub struct SellerProductMinimal {
+    #[sqlx(rename = "product_id")]
+    id: i64,
+    #[sqlx(rename = "product_name")]
+    name: String,
+    photo: String
+}
+
+#[derive(sqlx::FromRow, Serialize)]
 pub struct Product {
     #[sqlx(rename = "product_id")]
     id: i32,

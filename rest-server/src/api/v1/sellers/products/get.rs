@@ -1,11 +1,14 @@
 use axum::{Extension, Json};
-use axum::extract::Path;
+use axum::extract::{Path, Query};
+use axum_garde::WithValidation;
+use sqlx::{Pool, Postgres};
 
 use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::products::SellerProductResponse;
-use crate::models::products::SellerProduct;
+use crate::json::utils::HomePage;
+use crate::models::products::{SellerProduct, SellerProductPreview};
 use crate::models::schedules::Schedule;
 
 pub async fn product(
@@ -62,7 +65,7 @@ pub async fn product(
                 .await?;
         }
     };
-    
+
     tx.commit().await?;
 
     Ok(Json(SellerProductResponse { product, schedule }))
@@ -70,8 +73,50 @@ pub async fn product(
 
 pub async fn products(
     Extension(state): Extension<AppState>,
-    auth_session: AuthSession,
-    Path(seller_id): Path<(i32)>,
-) -> Result<(), ApiError> {
-    Ok(())
+    Path(seller_id): Path<i32>,
+    WithValidation(query): WithValidation<Query<HomePage>>,
+) -> Result<Json<Vec<SellerProductPreview>>, ApiError> {
+    let products = fetch_products(seller_id, query.into_inner(), &state.pool)
+        .await?;
+
+    Ok(Json(products))
+}
+
+pub async fn fetch_products(
+    seller_id: i32,
+    query: HomePage,
+    pool: &Pool<Postgres>,
+) -> Result<Vec<SellerProductPreview>, ApiError> {
+    let mut sql_query = String::from(
+        r#"
+            SELECT s.id, p.id AS product_id, p.name,
+               s.photos, s.price, s.unit,
+               COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
+               s.rating_quantity
+        "#
+    );
+
+    if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
+        sql_query.push_str(&format!(", ST_Distance(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4674)) AS dist"));
+    } else {
+        sql_query.push_str(", null AS dist");
+    }
+
+    sql_query.push_str(r#"
+        FROM seller_products s
+        JOIN products p ON s.product_id = p.id
+        JOIN products_schedules ps ON ps.seller_product_id = s.id
+        JOIN schedules sc ON sc.id = ps.schedule_id
+        WHERE s.seller_id = $1
+        LIMIT $2 OFFSET $3
+    "#);
+
+    Ok(
+        sqlx::query_as::<_, SellerProductPreview>(&sql_query)
+            .bind(seller_id)
+            .bind(query.per_page)
+            .bind((query.page - 1) * query.per_page)
+            .fetch_all(pool)
+            .await?
+    )
 }

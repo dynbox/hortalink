@@ -68,6 +68,8 @@ pub enum UnitMass {
     Mg = 5
 }
 
+#[derive(TryFromPrimitive, Deserialize_repr, Serialize_repr, Debug)]
+#[repr(i16)]
 pub enum CartStatus {
     Pending = 1,
     Confirmed = 2,
