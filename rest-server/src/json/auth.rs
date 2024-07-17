@@ -39,7 +39,7 @@ pub struct SignCreds {
     pub email: String,
     #[garde(length(min = 8, max = 64))]
     pub password: Option<String>,
-    #[garde(range(min = 3, max = 6))]
+    #[garde(range(min = 3, max = 4))]
     pub role: i32,
     #[garde(skip)]
     #[form_data(limit = "15MiB")]

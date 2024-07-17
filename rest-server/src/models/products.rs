@@ -35,6 +35,7 @@ pub struct SellerProductPreview {
     dist: Option<f64>,
     #[serde(serialize_with = "serialize_unit")]
     unit: i16,
+    seller_id: i32
 }
 
 #[derive(sqlx::FromRow, Serialize)]

@@ -33,7 +33,7 @@ pub async fn fetch(
                     (CASE
                         WHEN $1 IS NULL OR $2 IS NULL THEN NULL
                         ELSE ST_Distance(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674))
-                    END) AS dist
+                    END) AS dist, sp.seller_id
                 FROM products_seen_recently sr
                 LEFT JOIN seller_products sp ON sp.id = sr.seller_product_id
                 JOIN products p ON sp.product_id = p.id

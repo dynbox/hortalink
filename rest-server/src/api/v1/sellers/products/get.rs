@@ -10,14 +10,13 @@ use crate::json::products::SellerProductResponse;
 use crate::json::utils::HomePage;
 use crate::models::products::{SellerProduct, SellerProductPreview};
 use crate::models::schedules::Schedule;
+use crate::models::users::PreviewUser;
 
 pub async fn product(
     Extension(state): Extension<AppState>,
     auth_session: AuthSession,
-    Path((_, product_id)): Path<(i32, i32)>,
+    Path((seller_id, product_id)): Path<(i32, i32)>,
 ) -> Result<Json<SellerProductResponse>, ApiError> {
-    let mut tx = state.pool.begin().await?;
-
     let product = sqlx::query_as::<_, SellerProduct>(
         r#"
             SELECT s.id, p.id AS product_id, p.name, 
@@ -27,14 +26,26 @@ pub async fn product(
             FROM seller_products s
             JOIN products p ON s.product_id = p.id
             LEFT JOIN seller_product_ratings sp ON s.id = sp.seller_product_id
-            WHERE s.id = $1
+            WHERE s.id = $1 AND s.seller_id = $2
             GROUP BY s.id, p.id, p.name, s.photos, s.quantity, s.price;
         "#
     )
         .bind(product_id)
-        .fetch_optional(&mut *tx)
+        .bind(seller_id)
+        .fetch_optional(&state.pool)
         .await?
         .ok_or(ApiError::NotFound("Produto não encontrado".to_string()))?;
+
+    let seller = sqlx::query_as::<_, PreviewUser>(
+        r#"
+            SELECT id AS user_id, avatar as user_avatar, name as user_name
+            FROM users
+            WHERE id = $1
+        "#
+    )
+        .bind(seller_id)
+        .fetch_one(&state.pool)
+        .await?;
 
     let schedule = sqlx::query_as::<_, Schedule>(
         r#"
@@ -46,7 +57,7 @@ pub async fn product(
         "#
     )
         .bind(product_id)
-        .fetch_all(&mut *tx)
+        .fetch_all(&state.pool)
         .await?;
 
     if let Some(user) = auth_session.user {
@@ -61,14 +72,12 @@ pub async fn product(
             )
                 .bind(product_id)
                 .bind(user.id)
-                .execute(&mut *tx)
+                .execute(&state.pool)
                 .await?;
         }
     };
 
-    tx.commit().await?;
-
-    Ok(Json(SellerProductResponse { product, schedule }))
+    Ok(Json(SellerProductResponse { product, schedule, seller }))
 }
 
 pub async fn products(
@@ -92,7 +101,7 @@ pub async fn fetch_products(
             SELECT s.id, p.id AS product_id, p.name,
                s.photos, s.price, s.unit,
                COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
-               s.rating_quantity
+               s.rating_quantity, s.seller_id
         "#
     );
 

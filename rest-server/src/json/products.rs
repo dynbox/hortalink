@@ -6,15 +6,17 @@ use sqlx::types::Decimal;
 
 use common::entities::{StarRating, WeekDay};
 
-use crate::json::validate_price;
 use crate::json::deserialize_array;
+use crate::json::validate_price;
 use crate::models::products::SellerProduct;
 use crate::models::schedules::Schedule;
+use crate::models::users::PreviewUser;
 
 #[derive(Serialize)]
 pub struct SellerProductResponse {
     pub product: SellerProduct,
     pub schedule: Vec<Schedule>,
+    pub seller: PreviewUser,
 }
 
 #[derive(TryFromMultipart, Validate)]
@@ -35,7 +37,7 @@ pub struct PostSellerProduct {
     #[garde(range(min = 0.0))]
     pub unit_quantity: f64,
     #[garde(length(min = 10, max = 2096))]
-    pub description: Option<String>
+    pub description: Option<String>,
 }
 
 #[derive(TryFromMultipart, Validate)]
@@ -58,7 +60,7 @@ pub struct PatchSellerProduct {
     #[garde(skip)]
     pub remove_schedules: Vec<i32>,
     #[garde(length(min = 10, max = 2096))]
-    pub description: Option<String>
+    pub description: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Validate)]
