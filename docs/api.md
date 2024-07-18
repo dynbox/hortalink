@@ -185,3 +185,130 @@ Esta rota permite realizar operações relacionadas a apagar pedidos. Ela suport
 #### DELETE
 
 - **Descrição**: Utilizado para selecionar e deletar pedidos, com base nos parâmetros aplicados.
+
+## Rota: `/api/v1/sellers/:seller_id/products`
+
+### Descrição
+
+TODO
+
+### Métodos Suportados
+
+#### GET
+- **Descrição**: TODO
+- **Query Params**:
+  - `latitude` (string | null): Retorna a distância atual do usuário até o produto com o minimo de -90.0000000 e máximo de 90.0000000.
+  - `longitude` (string | null): Retorna a distância atual do usuário até o produto entre com o minimo de -180.0000000 e máximo de 180.0000000.
+  - `page` (number): Define o número da página, com valor mínimo de 1 e máximo de 100, para carregamento da primeira (1) até a última (100).
+  - `per_page` (number): Define o número de itens, com valor mínimo de 5 e máximo de 100. Carregando 5 itens por página.
+
+#### POST
+- **Descrição**: TODO
+- **Multipart Body**:
+  - `product_id` (number | null): Identificador único do tipo de produto a ser vendido. Deve ser um valor inteiro não negativo.
+  - `price` (float): Preço do produto. Deve ser um valor decimal não negativo, com precisão até duas casas decimais após a vírgula.
+  - `quantity` (number): Quantidade disponível do produto. Pode ser nulo se não aplicável.
+  - `photos` (bytes[]): Vetor de fotos do produto. Cada foto deve ter um tamanho máximo de 25 MiB e o vetor pode conter de 1 a 5 fotos.
+  - `schedules_id` (number[]): Vetor de identificadores de horários disponíveis para entrega ou coleta do produto. Pode conter até 5 IDs.
+  - `unit` (number): Unidade de medida do produto. Deve ser um valor inteiro de 16 bits não negativo, com valores permitidos de 0 a 5.
+  - `unit_quantity` (float): Quantidade por unidade de medida. Deve ser um valor decimal não negativo.
+  - `description` (string | null): Descrição detalhada do produto. Pode ser nulo se não aplicável. Se fornecido, deve ter um mínimo de 10 caracteres e um máximo de 2096 caracteres.
+
+## Rota: `/api/v1/sellers/:seller_id/products/:product_id`
+
+### Descrição
+
+TODO
+
+### Métodos Suportados
+
+#### GET
+- **Descrição**: TODO
+
+#### DELETE
+- **Descrição**: TODO
+
+#### PATCH
+- **Descrição**: TODO
+- **Multipart Body**:
+  - `price` (float | null): Novo preço do produto. Deve ser um valor decimal positivo, com precisão até duas casas decimais após a vírgula. Pode ser nulo se não aplicável.
+  - `quantity` (number | null): Nova quantidade disponível do produto. Deve ser um valor inteiro positivo. Pode ser nulo se não aplicável.
+  - `unit` (number | null): Nova unidade de medida do produto. Deve ser um valor inteiro de 16 bits não negativo, com valores permitidos de 0 a 5.
+  - `unit_quantity` (float | null): Nova quantidade por unidade de medida. Deve ser um valor decimal não negativo.
+  - `add_photos` (bytes[]): Vetor de novas fotos para adicionar ao produto. Cada foto deve ter um tamanho máximo de 25 MiB. Não há restrição sobre o número de fotos adicionais.
+  - `remove_photos` (string[]): Vetor de identificadores das fotos existentes que devem ser removidas do produto. Cada string representa o ID de uma foto.
+  - `add_schedules` (number[]): Vetor de identificadores de novos horários disponíveis para entrega ou coleta do produto.
+  - `remove_schedules` (number[]): Vetor de identificadores de horários existentes que devem ser removidos.
+  - `description` (string | null): Nova descrição detalhada do produto. Pode ser nulo se não aplicável. Se fornecido, deve ter um mínimo de 10 caracteres e um máximo de 2096 caracteres.
+
+## Rota: `/api/v1/sellers/:seller_id/products/:product_id/ratings`
+
+### Descrição
+
+TODO
+
+### Métodos Suportados
+
+#### GET
+- **Descrição**: TODO
+
+#### POST
+- **Descrição**: TODO
+
+## Rota: `/api/v1/sellers/:seller_id/products/:product_id/ratings/:rating_id`
+
+### Descrição
+
+TODO
+
+### Métodos Suportados
+
+#### DELETE
+- **Descrição**: TODO
+
+#### PATCH
+- **Descrição**: TODO
+- **Json Body**:
+  - `rating` (number | null): Quantidade de estrelas de 1 á 5
+  - `content` (string | null): Conteúdo da avaliação
+
+## Rota: `/api/v1/sellers/:seller_id/schedules`
+
+### Descrição
+
+TODO
+
+### Métodos Suportados
+
+#### POST
+- **Descrição**: TODO
+- **Json Body**:
+  - `location`: Localização do ponto de venda
+    - `latitude` (float):
+    - `longitude` (float):
+  - `address` (string): Endereço humano do ponto de venda
+  - `start_time` (time): Que horas abre
+  - `end_time` (time): Que horas fecha
+  - `day_of_week` (number): Número de 0 á 6 començando da segunda
+
+#### GET
+- **Descrição**: TODO
+
+## Rota: `/api/v1/sellers/:seller_id/schedules/:schedule_id`
+### Descrição
+
+TODO
+
+### Métodos Suportados
+
+#### PATCH
+- **Descrição**: TODO
+- **Json Body**:
+  - `location` (nullable): Localização do ponto de venda
+    - `latitude` (float):
+    - `longitude` (float):
+  - `address` (string | null): Endereço humano do ponto de venda
+  - `start_time` (time | null): Que horas abre
+  - `end_time` (time | null): Que horas fecha
+  - `day_of_week` (number | null): Número de 0 á 6 començando da segunda
+#### DELETE

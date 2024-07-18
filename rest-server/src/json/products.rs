@@ -47,9 +47,9 @@ pub struct PatchSellerProduct {
     #[garde(range(min = 1))]
     pub quantity: Option<i16>,
     #[garde(range(min = 0, max = 5))]
-    pub unit: i16,
+    pub unit: Option<i16>,
     #[garde(range(min = 0.0))]
-    pub unit_quantity: f64,
+    pub unit_quantity: Option<f64>,
     #[form_data(limit = "25MiB")]
     #[garde(skip)]
     pub add_photos: Vec<FieldData<Bytes>>,
