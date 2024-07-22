@@ -7,7 +7,7 @@ edition.workspace = true
 common = { path = "../common" }
 app_core = { path = "../core" }
 
-sqlx = { workspace = true }
+sqlx = { workspace = true, features = ["time"] }
 log = { workspace = true }
 env_logger = { workspace = true }
 tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros", "sync", "time"] }

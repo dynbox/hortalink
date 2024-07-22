@@ -34,6 +34,10 @@ pub trait Protocol {
 
         format!("{}://{}", protocol, self.url())
     }
+
+    fn socket(&self) -> String {
+        format!("{}:{}", self.get_host(), self.get_port())
+    }
 }
 
 impl AppSettings {

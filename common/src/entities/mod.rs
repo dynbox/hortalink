@@ -23,7 +23,7 @@ pub enum UserRole {
     Administrator = 5,
 }
 
-#[derive(TryFromPrimitive, Deserialize_repr, Serialize_repr)]
+#[derive(TryFromPrimitive, Deserialize_repr, Serialize_repr, Clone)]
 #[repr(i16)]
 pub enum NotificationType {
     Info = 1,
