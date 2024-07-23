@@ -311,4 +311,36 @@ TODO
   - `start_time` (time | null): Que horas abre
   - `end_time` (time | null): Que horas fecha
   - `day_of_week` (number | null): Número de 0 á 6 començando da segunda
+
 #### DELETE
+- **Descrição**: TODO
+
+
+## Rota: `/api/v1/sellers/:customer_id/ratings`
+
+### Descrição
+
+Esta rota permite realizar operações relacionadas a classificação de clientes. Ela suporta requisições GET.
+
+### Métodos Suportados
+
+#### GET
+- **Descrição**: Utilizado para retornar as classificações sobre um cliente, de acordo com os parâmetros especificos.
+- **Query Params**:
+  - `page` (number): Define o número da página, com valor mínimo de 1 e máximo de 100, para carregamento da primeira (1) até a última (100).
+  - `per_page` (number): Define o número de itens, com valor mínimo de 5 e máximo de 100. Carregando 5 itens por página.
+
+
+## Rota: `/api/v1/sellers/:customer_id/orders`
+
+### Descrição
+
+Esta rota permite realizar operações relacionadas a pedidos de clientes. Ela suporta requisições GET.
+
+### Métodos Suportados
+
+#### GET
+- **Descrição**: Utilizado para retornar pedidos feitos por um cliente, de acordo com os parâmetros especificos.
+- **Query Params**:
+  - `page` (number): Define o número da página, com valor mínimo de 1 e máximo de 100, para carregamento da primeira (1) até a última (100).
+  - `per_page` (number): Define o número de itens, com valor mínimo de 5 e máximo de 100. Carregando 5 itens por página.
