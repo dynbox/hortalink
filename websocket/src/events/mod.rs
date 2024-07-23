@@ -8,10 +8,10 @@ pub async fn handle(
     session: &mut SocketSession,
     data: Box<[u8]>,
     cmd_tx: &tokio::sync::mpsc::UnboundedSender<Command>,
-) -> Result<(), ()> {
+) {
     let event = match serde_json::from_slice::<GatewayRequest>(&data) {
         Ok(event) => event,
-        Err(_) => return Ok(()),
+        Err(_) => return,
     };
 
     match (event.opcode, event.d) {
@@ -23,8 +23,6 @@ pub async fn handle(
         }
         _ => {}
     }
-
-    Ok(())
 }
 
 pub fn postgres(
@@ -41,6 +39,21 @@ pub fn postgres(
             send_message(
                 &cmd_tx,
                 Command::NotificationCreated(data),
+            ),
+        ("message_insert", PostgresEvent::MessageCreated(data)) =>
+            send_message(
+                &cmd_tx,
+                Command::MessageCreated(data),
+            ),
+        ("message_update", PostgresEvent::MessageUpdated(data)) =>
+            send_message(
+                &cmd_tx,
+                Command::MessageUpdated(data),
+            ),
+        ("message_deleted", PostgresEvent::MessageDeleted(data)) =>
+            send_message(
+                &cmd_tx,
+                Command::MessageDeleted(data),
             ),
         _ => {}
     }

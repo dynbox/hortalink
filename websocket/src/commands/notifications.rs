@@ -1,5 +1,5 @@
 use crate::json::{GatewayData, GatewayRequest};
-use crate::json::notifications::NotificationCreated;
+use crate::json::notification::NotificationCreated;
 use crate::server::send_message;
 use crate::server::session::SocketSession;
 

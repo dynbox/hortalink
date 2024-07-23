@@ -1,11 +1,12 @@
 use std::net::SocketAddr;
 
-use serde::{Deserialize, Serialize};
-
-use crate::json::notifications::NotificationCreated;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use crate::json::message::{MessageCreated, MessageDeleted, MessageUpdated};
+use crate::json::notification::NotificationCreated;
 
 pub mod user;
-pub mod notifications;
+pub mod notification;
+pub mod message;
 
 #[derive(Serialize, Deserialize)]
 pub struct GatewayRequest {
@@ -20,18 +21,30 @@ pub enum GatewayData {
     Identify { session_id: String },
     // opcode: 11
     NotificationCreated(NotificationCreated),
+    // opcode: 12
+    MessageCreated(MessageCreated),
+    // opcode: 13
+    MessageDeleted(MessageDeleted),
+    // opcode: 14
+    MessageUpdated(MessageUpdated),
 }
 
 #[derive(Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PostgresEvent {
-    NotificationCreated(NotificationCreated)
+    NotificationCreated(NotificationCreated),
+    MessageCreated(MessageCreated),
+    MessageDeleted(MessageDeleted),
+    MessageUpdated(MessageUpdated),
 }
 
 pub enum Command {
     Disconnect(SocketAddr),
     Identify(SocketAddr, String),
     NotificationCreated(NotificationCreated),
+    MessageCreated(MessageCreated),
+    MessageDeleted(MessageDeleted),
+    MessageUpdated(MessageUpdated),
 }
 
 impl GatewayRequest {

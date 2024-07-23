@@ -119,7 +119,14 @@ impl Application {
 
     async fn postgres_client(&self) {
         let mut pg_listener = PgListener::connect(&self.settings.database.url()).await.unwrap();
-        pg_listener.listen("notification_insert").await.unwrap();
+        let channels = [
+            "notification_insert", "message_insert", "message_update", 
+            "message_delete"
+        ];
+
+        for channel in channels {
+            pg_listener.listen(channel).await.unwrap();
+        }
         
         let cmd_tx = self.cmd_tx.clone();
 
