@@ -19,6 +19,7 @@ pub mod products;
 pub mod utils;
 pub mod cart;
 pub mod home;
+pub mod chats;
 
 pub fn serialize_timestamp<S>(naive_datetime: &NaiveDateTime, serializer: S) -> Result<S::Ok, S::Error>
 where
