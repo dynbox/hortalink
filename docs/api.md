@@ -316,7 +316,7 @@ TODO
 - **Descrição**: TODO
 
 
-## Rota: `/api/v1/sellers/:customer_id/ratings`
+## Rota: `/api/v1/customers/:customer_id/ratings`
 
 ### Descrição
 
@@ -331,7 +331,7 @@ Esta rota permite realizar operações relacionadas a classificação de cliente
   - `per_page` (number): Define o número de itens, com valor mínimo de 5 e máximo de 100. Carregando 5 itens por página.
 
 
-## Rota: `/api/v1/sellers/:customer_id/orders`
+## Rota: `/api/v1/customers/:customer_id/orders`
 
 ### Descrição
 
@@ -344,3 +344,86 @@ Esta rota permite realizar operações relacionadas a pedidos de clientes. Ela s
 - **Query Params**:
   - `page` (number): Define o número da página, com valor mínimo de 1 e máximo de 100, para carregamento da primeira (1) até a última (100).
   - `per_page` (number): Define o número de itens, com valor mínimo de 5 e máximo de 100. Carregando 5 itens por página.
+
+
+## Rota: `/api/v1/oauth/:oauth_type`
+
+### Descrição
+
+Esta rota permite realizar operações relacionadas ao login de usuário em sites de terceiros. Ela suporta requisições GET e POST.
+
+### Métodos Suportados
+
+#### GET
+
+- **Descrição**: Utilizado para se conectar com o serviço e retornar o sucesso ou falha do login.
+- **Query Param**:
+    - `state` (string): TODO
+    - `code` (string): TODO
+
+#### POST
+
+- **Descrição**: Utilizado para realizar a requisição de login no servidor do serviço.
+
+## Rota: `/api/v1/oauth/:oauth_type/callback`
+
+### Descrição
+
+TODO
+
+
+## Rota: `/api/v1/products/`
+
+### Descrição
+
+Esta rota permite realizar operações relacionadas a filtragem de produtos. Ela suporta requisições GET.
+
+### Métodos Suportados
+
+#### GET
+
+- **Descrição**: Utilizado para selecionar produtos com base em parâmetros espécificos e retornar os produtos selecionados.
+- **Query Param**:
+    - `max_price` (string | null): Preço máximo, decimal, para a seleção.
+    - `min_price` (string | null): Preço minimo, decimal, para a seleção
+    - `min_stars` (string | null): Quantidade minima de estrelas para a seleção.
+    - `product_type` (string | null): Tipo de produto para a seleção.
+    - `start_time` (string | null): Tempo de início da postagem do produto.
+    - `product_id` (string | null): Id do produto.
+    - `day_of_week` (string | null): Define um número, de 0 a 6, começando pela segunda.
+    - `page` (number): Define o número da página, com valor mínimo de 1 e máximo de 100, para carregamento da primeira (1) até a última (100).
+    - `per_page` (number): Define o número de itens, com valor mínimo de 5 e máximo de 100. Carregando 5 itens por página.
+    - `latitude` (string | null): Retorna a distância atual do usuário até o produto com o minimo de -90.0000000 e máximo de 90.0000000.
+    - `longitude` (string | null): Retorna a distância atual do usuário até o produto entre com o minimo de -180.0000000 e máximo de 180.0000000.
+
+## Rota: `/api/v1/products/dist`
+
+### Descrição
+
+Esta rota permite realizar operações relacionadas a filtragem de produtos, focando na distância. Ela suporta requisições GET.
+
+### Métodos Suportados
+
+#### GET
+
+- **Descrição**: Utilizado para selecionar produtos com base em parâmetros espécificos e retornar a distância atual do usuário até eles.
+- **Query Param**:
+    - `product_id` (string | null): Id do produto.
+    - `latitude` (string | null): Retorna a distância atual do usuário até o produto com o minimo de -90.0000000 e máximo de 90.0000000.
+    - `longitude` (string | null): Retorna a distância atual do usuário até o produto entre com o minimo de -180.0000000 e máximo de 180.0000000.
+
+## Rota: `/api/v1/resources/products/`
+
+### Descrição
+
+Esta rota permite realizar operações relacionadas aos recursos de um produto de acordo com os parametros fornecidos. Ela suporta requisições GET.
+
+### Métodos Suportados
+
+#### GET
+
+- **Descrição**: Utilizado para selecionar e retornar recursos de produtos com base em parâmetros espécificos.
+- **Query Param**:
+    - `query` (string | null): O termo de pesquisa para a filtragem.
+    - `page` (number): Define o número da página, com valor mínimo de 1 e máximo de 100, para carregamento da primeira (1) até a última (100).
+    - `per_page` (number): Define o número de itens, com valor mínimo de 5 e máximo de 100. Carregando 5 itens por página.
