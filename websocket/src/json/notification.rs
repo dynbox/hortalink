@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+
 use common::entities::NotificationType;
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -10,6 +11,6 @@ pub struct NotificationCreated {
     pub content: String,
     pub read: bool,
     #[serde(rename = "type")]
-    pub  notification_type: NotificationType,
+    pub notification_type: NotificationType,
     pub icon: Option<String>,
 }

@@ -23,10 +23,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER after_insert_followers
-    AFTER INSERT ON "followers"
-    FOR EACH ROW EXECUTE PROCEDURE update_followers_count_after_addition();
-
 CREATE OR REPLACE FUNCTION update_followers_count_after_removal()
     RETURNS TRIGGER AS $$
 BEGIN
@@ -41,6 +37,10 @@ BEGIN
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER after_insert_followers
+    AFTER INSERT ON "followers"
+    FOR EACH ROW EXECUTE PROCEDURE update_followers_count_after_addition();
 
 CREATE TRIGGER after_delete_followers
     AFTER DELETE ON "followers"

@@ -5,6 +5,7 @@ use crate::server::session::SocketSession;
 
 mod users;
 mod notifications;
+mod messages;
 
 pub async fn handle(
     command: Command,
@@ -18,6 +19,15 @@ pub async fn handle(
             users::identify((data, session_id), connections, pool)
                 .await,
         Command::NotificationCreated(data) =>
-            notifications::created(connections, data)
+            notifications::created(connections, data),
+        Command::MessageCreated(data) =>
+            messages::created(connections, data, pool)
+                .await,
+        Command::MessageDeleted(data) =>
+            messages::deleted(connections, data, pool)
+                .await,
+        Command::MessageUpdated(data) =>
+            messages::updated(connections, data, pool)
+                .await,
     }
 }
