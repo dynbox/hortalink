@@ -2,7 +2,9 @@ use std::net::SocketAddr;
 
 use sqlx::{Pool, Postgres};
 
+use crate::json::GatewayRequest;
 use crate::json::user::Record;
+use crate::server::send_message;
 use crate::server::session::SocketSession;
 
 pub fn disconnect(addr: SocketAddr, connections: &mut Vec<SocketSession>) {
@@ -37,8 +39,15 @@ pub async fn identify(
 
     if let Some(data) = session_data {
         let user_id = rmp_serde::from_slice::<Record>(&data).unwrap()
-            .data["axum-login.data"]["user_id"].as_i64().unwrap();
+            .data["axum-login.data"]["user_id"].as_i64().unwrap() as i32;
 
-        client.user_id = Some(user_id as i32);
+        if let Some(session) = connections.iter().find(|session| session.user_id == Some(user_id)) {
+            send_message(
+                &session.frame,
+                GatewayRequest { opcode: 8, d: None },
+            )
+        }
+
+        client.user_id = Some(user_id);
     }
 }

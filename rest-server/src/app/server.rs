@@ -16,7 +16,7 @@ use crate::app::provider::OAuthProvider;
 #[derive(Clone)]
 pub struct AppState {
     pub settings: AppSettings,
-    pub pool: Pool<Postgres>
+    pub pool: Pool<Postgres>,
 }
 
 pub struct Server {
@@ -41,7 +41,7 @@ impl Server {
         let gate = AuthGate::new(state.pool.clone());
         let provider = OAuthProvider::new(
             &state.settings.secrets,
-            state.settings.web.rest.protocol_url()
+            state.settings.web.rest.protocol_url(),
         );
 
         Router::new()
@@ -56,7 +56,7 @@ impl Server {
     }
 
     pub async fn run(self) {
-        log::info!("Starting axum server with tokio...");
+        log::info!("Starting axum server with tokio on {}", self.state.settings.web.rest.url());
 
         let listener = tokio::net::TcpListener::bind(self.state.settings.web.rest.url())
             .await
@@ -70,16 +70,14 @@ impl Server {
         CorsLayer::new()
             .allow_credentials(true)
             .allow_origin([
-                state.settings.web.client.protocol_url().parse()
-                    .unwrap()
+                "https://accounts.google.com".parse().unwrap()
             ])
             .allow_headers([
-                header::AUTHORIZATION, header::CONTENT_TYPE,
-                header::ACCESS_CONTROL_ALLOW_ORIGIN
+                header::CONTENT_TYPE
             ])
             .allow_methods([
                 Method::GET, Method::PUT,
-                Method::DELETE, Method::PATCH,
+                Method::DELETE, Method::PATCH
             ])
     }
 

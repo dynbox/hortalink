@@ -2,7 +2,7 @@ use axum::{Extension, Json};
 use axum::extract::{Path, Query};
 use axum_garde::WithValidation;
 use sqlx::{Pool, Postgres};
-
+use crate::app::auth::AuthSession;
 use crate::app::server::AppState;
 use crate::json::error::ApiError;
 use crate::json::utils::Pagination;
@@ -12,7 +12,12 @@ pub async fn orders(
     Extension(state): Extension<AppState>,
     Path(customer_id): Path<i32>,
     WithValidation(query): WithValidation<Query<Pagination>>,
+    auth_session: AuthSession,
 ) -> Result<Json<Vec<OrderPreview>>, ApiError> {
+    if customer_id != auth_session.user.unwrap().id {
+        return Err(ApiError::Unauthorized("Você não pode fazer isso!".to_string()))
+    }
+    
     let orders = fetch_orders(customer_id, query.into_inner(), &state.pool)
         .await?;
 

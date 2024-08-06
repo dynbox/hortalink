@@ -2,7 +2,7 @@ use axum::body::Bytes;
 use axum_typed_multipart::{FieldData, TryFromMultipart};
 use garde::Validate;
 use oauth2::CsrfToken;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Serializer};
 
 #[derive(Debug, Clone, Deserialize)]
 pub enum Credentials {
@@ -28,7 +28,26 @@ pub struct LoginCreds {
 pub struct UserInfo {
     pub email: String,
     pub name: String,
-    pub picture: Option<String>,
+    pub picture: Option<PictureVariant>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct PictureData {
+    pub height: u32,
+    pub is_silhouette: bool,
+    pub url: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Picture {
+    pub data: PictureData,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+#[serde(untagged)]
+pub enum PictureVariant {
+    Url(String),
+    Data(Picture),
 }
 
 #[derive(Validate, TryFromMultipart)]
@@ -55,4 +74,16 @@ pub struct AuthUrlResponse {
 pub struct AuthzResp {
     pub state: CsrfToken,
     pub code: String,
+}
+
+impl Serialize for PictureVariant {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self {
+            PictureVariant::Url(url) => serializer.serialize_str(&url),
+            PictureVariant::Data(data) => serializer.serialize_str(&data.data.url),
+        }
+    }
 }
