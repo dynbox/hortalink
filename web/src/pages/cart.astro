@@ -1,0 +1,68 @@
+---
+import "../style/pages/cart/cart.scss";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+import CartGroup from "../components/page/cart/CartGroup";
+
+import type { RawCart } from "../interfaces/RawCart";
+import WatchPosition from "../components/util/WatchPosition";
+
+const data: RawCart[] = [
+    {
+        id: 1,
+        amount: 2,
+        product: {
+            id: 3,
+            name: "Tomate",
+            photos: ["tomate.jpg"],
+            price: 30,
+            unit: "hg",
+            dist: 33.333333333
+        },
+        seller: {
+            id: 1,
+            name: "João Gomes",
+            avatar: "tomate.jpg"
+        },
+        withdrawn: 2
+    },
+    {
+        id: 2,
+        amount: 2,
+        product: {
+            id: 3,
+            name: "Tomate",
+            photos: ["tomate.jpg"],
+            price: 30,
+            unit: "hg",
+            dist: 33.333333333
+        },
+        seller: {
+            id: 1,
+            name: "João Gomes",
+            avatar: "tomate.jpg"
+        },
+        withdrawn: 2
+    }
+]
+
+export const prerender = false
+---
+
+<BaseLayout page="cart">
+    <Fragment slot="head">
+        <title>Hortalink | Carrinho do cliente</title>
+    </Fragment>
+    <Fragment slot="body">
+        <header>
+            <h1>Carrinho</h1>
+        </header>
+        <div class="border" />
+        <main>
+            <CartGroup carts={data} client:load/>
+            <WatchPosition
+                client:only="react"
+            />
+        </main>
+    </Fragment>
+</BaseLayout>

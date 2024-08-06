@@ -1,5 +1,6 @@
 import React from "react";
 import Geolocation from "../stores/Geolocation";
+import { GPS_state } from "../stores/Geolocation";
 
 class NotAvailableError extends Error {
     constructor(msg: string) {
@@ -13,12 +14,14 @@ class NotAvailableError extends Error {
 function watchPosition() {
     if("geolocation" in navigator) {
         const WatchId = navigator.geolocation.watchPosition((position) => {
+            console.log("Aviso: localização do dispositivo atualizada")
+
             Geolocation.position.set([position.coords.latitude, position.coords.longitude])
-            Geolocation.state.set("updated")
+            Geolocation.state.set(GPS_state.updated)
 
         }, (error) => {
             if(error.code === error.PERMISSION_DENIED) {
-                Geolocation.state.set("denied")
+                Geolocation.state.set(GPS_state.denied)
             }
         }, {
             enableHighAccuracy: true
@@ -26,7 +29,7 @@ function watchPosition() {
 
         return WatchId
     } else {
-        throw new NotAvailableError("Geolocation não é suportado pelo navegador.")   
+        Geolocation.state.set(GPS_state.not_available) 
     }
 }
 

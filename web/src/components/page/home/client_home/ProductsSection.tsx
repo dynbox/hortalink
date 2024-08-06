@@ -3,10 +3,8 @@ import { useStore } from "@nanostores/react"
 import Items from "./Items";
 import Products from "../../../../stores/Products";
 import Geolocation from "../../../../stores/Geolocation";
-import geoLocation from "../../../../util/geoLocation";
 
 import call_all from "../../../../api/call_all";
-
 
 export default function ProductsSection(props: { star_image_src: string, location_image_src: string, arrow_image_src: string}) {
     const { star_image_src, location_image_src, arrow_image_src } = props
@@ -24,8 +22,6 @@ export default function ProductsSection(props: { star_image_src: string, locatio
                 call_all()
             }
         })
-
-        geoLocation.watchPosition() // chamar apenas no elemento root
     }, [])
 
     return (

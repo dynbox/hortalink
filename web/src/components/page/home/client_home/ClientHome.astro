@@ -6,6 +6,7 @@ import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import Search from "./Search";
 import Categories from "./Categories";
 import ProductsSection from "./ProductsSection";
+import WatchPosition from "../../../util/WatchPosition";
 
 import { getImage } from "astro:assets";
 
@@ -67,5 +68,8 @@ export const prerender = false
                 client:load
             />
         </main>
+        <WatchPosition
+            client:only="react"
+        />
     </Fragment>
 </BaseLayout>

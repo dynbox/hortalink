@@ -1,0 +1,44 @@
+---
+
+---
+
+<nav class="sections_nav">
+    <div id="products_selector" class="seller_sections_navigator" role="button" tabindex="0">
+        <p>Produtos</p>
+    </div>
+
+    <div id="agenda_selector" class="seller_sections_navigator" role="button" tabindex="0">
+        <p>Agenda</p>
+    </div>
+
+    <div id="ratings_selector" class="seller_sections_navigator" role="button" tabindex="0">
+        <p>Avaliações</p>
+    </div>
+</nav>
+
+<script>
+    const items = document.querySelectorAll<HTMLDivElement>(".sections_nav div")
+    
+    let current_focused: HTMLDivElement;
+
+    document.addEventListener("keypress", (key) => {
+        // @ts-ignore
+        if(key.key == "Enter") {
+            const activeElement = document.activeElement
+
+            console.log(activeElement)
+            if(activeElement.className === "seller_sections_navigator") {
+                const content = document.querySelector<HTMLDivElement>(`#${activeElement.id}_content`)
+                if(content) {
+                    if(current_focused) {
+                        current_focused.hidden = true
+                    }
+
+                    content.hidden = false
+                    
+                    current_focused = content
+                }
+            }
+        }
+    })
+</script>
