@@ -46,7 +46,7 @@ impl Server {
 
         Router::new()
             .nest("/api", crate::api::router())
-            .layer(Self::configure_cors(&state))
+            .layer(Self::configure_cors())
             .layer(
                 AuthManagerLayerBuilder::new(gate, Self::configure_session(&state))
                     .build()
@@ -56,9 +56,9 @@ impl Server {
     }
 
     pub async fn run(self) {
-        log::info!("Starting axum server with tokio on {}", self.state.settings.web.rest.url());
+        log::info!("Starting axum server with tokio on {}", self.state.settings.web.rest.socket());
 
-        let listener = tokio::net::TcpListener::bind(self.state.settings.web.rest.url())
+        let listener = tokio::net::TcpListener::bind(self.state.settings.web.rest.socket())
             .await
             .unwrap();
         axum::serve(listener, Self::router(self.state))
@@ -66,12 +66,8 @@ impl Server {
             .expect("Failed to start axum server");
     }
 
-    fn configure_cors(state: &AppState) -> CorsLayer {
+    fn configure_cors() -> CorsLayer {
         CorsLayer::new()
-            .allow_credentials(true)
-            .allow_origin([
-                "https://accounts.google.com".parse().unwrap()
-            ])
             .allow_headers([
                 header::CONTENT_TYPE
             ])

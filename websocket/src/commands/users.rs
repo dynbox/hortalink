@@ -21,7 +21,7 @@ pub async fn identify(
     connections: &mut Vec<SocketSession>,
     pool: &Pool<Postgres>,
 ) {
-    let client = match connections.iter_mut().find(|session| session.addr == addr) {
+    let idx = match connections.iter().position(|session| session.addr == addr) {
         None => return,
         Some(value) => value
     };
@@ -48,6 +48,6 @@ pub async fn identify(
             )
         }
 
-        client.user_id = Some(user_id);
+        connections[idx].user_id = Some(user_id);
     }
 }

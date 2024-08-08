@@ -42,7 +42,7 @@ impl Server {
     pub async fn run(self) {
         log::info!("Starting axum server with tokio...");
 
-        let listener = tokio::net::TcpListener::bind(self.state.settings.web.cdn.url())
+        let listener = tokio::net::TcpListener::bind(self.state.settings.web.cdn.socket())
             .await
             .unwrap();
         axum::serve(listener, Self::router(self.state))

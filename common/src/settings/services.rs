@@ -16,6 +16,9 @@ pub struct RabbitMQ {
 pub struct WebSocket {
     pub host: String,
     pub port: u16,
+    pub proxy: String,
+    #[serde(skip)]
+    pub ssl: bool
 }
 
 impl Protocol for RabbitMQ {
@@ -23,8 +26,12 @@ impl Protocol for RabbitMQ {
         &self.host
     }
 
-    fn get_port(&self) -> &u16 {
-        &self.port
+    fn get_port(&self) -> u16 {
+        self.port
+    }
+
+    fn is_ssl(&self) -> bool {
+        false
     }
 }
 
@@ -33,8 +40,12 @@ impl Protocol for WebSocket {
         &self.host
     }
 
-    fn get_port(&self) -> &u16 {
-        &self.port
+    fn get_port(&self) -> u16 {
+        self.port
+    }
+
+    fn is_ssl(&self) -> bool {
+        self.ssl
     }
 }
 
@@ -62,6 +73,10 @@ impl Default for WebSocket {
             port: var("WEBSOCKET_PORT")
                 .unwrap_or("9002".to_string())
                 .parse().unwrap(),
+            proxy: var("WEBSOKCET_PROXY")
+                .unwrap_or("gateway.hortalink.dev".to_string())
+                .parse().unwrap(),
+            ssl: true,
         }
     }
 }

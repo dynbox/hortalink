@@ -22,6 +22,7 @@ pub async fn oauth_callback(
     Query(AuthzResp { code, state: new_state }): Query<AuthzResp>,
     Extension(state): Extension<AppState>,
 ) -> Result<Redirect, ApiError> {
+    /*
     if let Ok(Some(old_state)) = session.remove::<String>("oauth.csrf").await {
         if &old_state != new_state.secret() {
             return Err(ApiError::Custom(StatusCode::BAD_REQUEST, "cu".to_string()))
@@ -33,6 +34,7 @@ pub async fn oauth_callback(
     let Ok(Some(pkce)) = session.remove::<String>("oauth.pkce").await else {
         return Err(ApiError::Custom(StatusCode::BAD_REQUEST, "falha".to_string()))
     };
+    */
     
     let provider = providers.get_provider(&oauth_type);
 
@@ -40,7 +42,7 @@ pub async fn oauth_callback(
         provider.client
             .exchange_code(AuthorizationCode::new(code))
             .add_extra_param("client_secret", state.settings.secrets.linkedin.client_secret)
-            .set_pkce_verifier(PkceCodeVerifier::new(pkce))
+            //.set_pkce_verifier(PkceCodeVerifier::new(pkce))
             .request_async(&oauth2::reqwest::Client::builder()
                 .redirect(oauth2::reqwest::redirect::Policy::limited(1))
                 .build().unwrap())
@@ -50,7 +52,7 @@ pub async fn oauth_callback(
             .secret()
             .clone()
     } else {
-        provider.get_token(code, PkceCodeVerifier::new(pkce)).await?
+        provider.get_token(code, /*PkceCodeVerifier::new(pkce)*/).await?
             .access_token()
             .secret()
             .clone()
@@ -74,12 +76,12 @@ pub async fn oauth_callback(
     if let Some(user) = user {
         auth_session.login(&user).await?;
         
-        Ok(Redirect::to(&format!("{}", state.settings.web.client.protocol_url())))
+        Ok(Redirect::to(&format!("{}", state.settings.web.client.proxy_url())))
     } else {
         session.insert("oauth.token", token).await
             .map_err(|e| ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, format!("Falha ao inserir na sessão: {e}")))?;
         
-        Ok(Redirect::to(&format!("{}/access/signup?oauth_type={oauth_type}", state.settings.web.client.protocol_url())))
+        Ok(Redirect::to(&format!("{}/access/signup?oauth_type={oauth_type}", state.settings.web.client.proxy_url())))
     }
 }
 

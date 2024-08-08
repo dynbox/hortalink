@@ -87,23 +87,23 @@ impl Provider {
         }
     }
 
-    pub fn auth_url(&self) -> ((Url, CsrfToken), oauth2::PkceCodeVerifier) {
-        let (pkce_code_challenge, pkce_code_verifier) = oauth2::PkceCodeChallenge::new_random_sha256();
+    pub fn auth_url(&self) -> ((Url, CsrfToken), /*oauth2::PkceCodeVerifier*/) {
+        //let (pkce_code_challenge, pkce_code_verifier) = oauth2::PkceCodeChallenge::new_random_sha256();
 
         (
             self.client
                 .authorize_url(CsrfToken::new_random)
-                .set_pkce_challenge(pkce_code_challenge)
+                //.set_pkce_challenge(pkce_code_challenge)
                 .add_scopes(self.scopes.clone())
                 .url(),
-            pkce_code_verifier
+            //pkce_code_verifier
         )
     }
 
-    pub async fn get_token(&self, code: String, pkce_code_verifier: oauth2::PkceCodeVerifier) -> Result<BasicTokenResponse, ApiError> {
+    pub async fn get_token(&self, code: String, /*pkce_code_verifier: oauth2::PkceCodeVerifier*/) -> Result<BasicTokenResponse, ApiError> {
         self.client
             .exchange_code(oauth2::AuthorizationCode::new(code))
-            .set_pkce_verifier(pkce_code_verifier)
+            //.set_pkce_verifier(pkce_code_verifier)
             .request_async(
                 &oauth2::reqwest::Client::builder()
                     .redirect(oauth2::reqwest::redirect::Policy::limited(1))
