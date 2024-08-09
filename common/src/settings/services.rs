@@ -18,6 +18,7 @@ pub struct WebSocket {
     pub port: u16,
     pub proxy: String,
     #[serde(skip)]
+    #[serde(default)]
     pub ssl: bool
 }
 
@@ -42,6 +43,10 @@ impl Protocol for WebSocket {
 
     fn get_port(&self) -> u16 {
         self.port
+    }
+
+    fn get_proxy(&self) -> String {
+        self.proxy.clone()
     }
 
     fn is_ssl(&self) -> bool {
@@ -73,7 +78,7 @@ impl Default for WebSocket {
             port: var("WEBSOCKET_PORT")
                 .unwrap_or("9002".to_string())
                 .parse().unwrap(),
-            proxy: var("WEBSOKCET_PROXY")
+            proxy: var("WEBSOCKET_PROXY")
                 .unwrap_or("gateway.hortalink.dev".to_string())
                 .parse().unwrap(),
             ssl: true,

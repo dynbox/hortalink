@@ -31,7 +31,9 @@ pub trait Protocol {
 
     fn get_port(&self) -> u16;
 
-    fn get_proxy(&self) -> &String;
+    fn get_proxy(&self) -> String {
+        self.socket()
+    }
 
     fn is_ssl(&self) -> bool;
 
@@ -50,7 +52,7 @@ pub trait Protocol {
         format!("{}://{}", protocol, self.socket())
     }
 
-    fn ssl_url(&self) -> String {
+    fn proxy_url(&self) -> String {
         let protocol = match (self.get_port(), self.is_ssl()) {
             (9002, true) => "wss",
             (9002, false) => "ws",

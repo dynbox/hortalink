@@ -51,7 +51,11 @@ impl Protocol for RestServer {
         self.port
     }
 
-    fn ssl(&self) -> bool {
+    fn get_proxy(&self) -> String {
+        self.proxy.clone()
+    }
+
+    fn is_ssl(&self) -> bool {
         self.ssl
     }
 }
@@ -79,6 +83,10 @@ impl Protocol for WebClient {
 
     fn get_port(&self) -> u16 {
         self.port
+    }
+
+    fn get_proxy(&self) -> String {
+        self.proxy.clone()
     }
 
     fn is_ssl(&self) -> bool {
@@ -109,6 +117,10 @@ impl Protocol for CdnServer {
 
     fn get_port(&self) -> u16 {
         self.port
+    }
+
+    fn get_proxy(&self) -> String {
+        self.proxy.clone()
     }
 
     fn is_ssl(&self) -> bool {
