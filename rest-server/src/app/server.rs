@@ -68,6 +68,7 @@ impl Server {
 
     fn configure_cors() -> CorsLayer {
         CorsLayer::new()
+            .allow_credentials(true)
             .allow_headers([
                 header::CONTENT_TYPE
             ])
