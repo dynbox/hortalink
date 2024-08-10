@@ -73,7 +73,7 @@ impl Server {
         if path.exists() {
             return;
         } else {
-            std::fs::create_dir(path).unwrap();
+            std::fs::create_dir_all(path).unwrap();
         }
 
         let resources = Path::new("cdn-server/resources");
