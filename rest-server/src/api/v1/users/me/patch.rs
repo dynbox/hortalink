@@ -16,7 +16,7 @@ pub async fn me(
     auth_session: AuthSession,
     TypedMultipart(payload): TypedMultipart<PatchUserMe>,
 ) -> Result<(), ApiError> {
-    if let Err(e) = payload.validate(&()) {
+    if let Err(e) = payload.validate() {
         return Err(ApiError::Custom(StatusCode::BAD_REQUEST, format!("Campos inválidos: {e}")));
     }
     

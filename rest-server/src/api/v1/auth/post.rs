@@ -35,7 +35,7 @@ pub async fn sign_in(
     mut auth_session: AuthSession,
     TypedMultipart(payload): TypedMultipart<SignCreds>,
 ) -> Result<StatusCode, ApiError> {
-    if let Err(e) = payload.validate(&()) {
+    if let Err(e) = payload.validate() {
         return Err(ApiError::Custom(StatusCode::BAD_REQUEST, format!("Campos inválidos: {e}")));
     }
 

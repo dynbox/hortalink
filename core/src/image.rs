@@ -56,7 +56,8 @@ impl<Q> ImageManager<Q>
         let image = image.decode()?;
         let image = image.thumbnail(thumb, thumb);
 
-        let hash = self.hasher.hash_image(&image).to_base64();
+        let hash = self.hasher.hash_image(&image).to_base64()
+            .replace("/", "⁄");
         image.save_with_format(
             self.path.as_ref().join(&hash),
             format,
