@@ -16,7 +16,7 @@ export default function Items(props: { container_id: string, store: string, star
                             <div className="product" key={i}>
                                 <div>
                                     <img
-                                        src={`http://localhost:5767/resources/products/${item.photos ? item.photos[0] : "undefined"}.jpg?size=256`}
+                                        src={`cdn/products/${item.id}/${encodeURIComponent(item.photos ? item.photos[0] : "undefined")}.jpg?size=256`}
                                         width={108}
                                         height={108}
                                         alt={`Foto do produto "${item.product.name}"`}
