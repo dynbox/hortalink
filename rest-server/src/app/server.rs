@@ -46,7 +46,7 @@ impl Server {
 
         Router::new()
             .nest("/api", crate::api::router())
-            .layer(Self::configure_cors())
+            .layer(Self::configure_cors(&state))
             .layer(
                 AuthManagerLayerBuilder::new(gate, Self::configure_session(&state))
                     .build()
@@ -66,9 +66,12 @@ impl Server {
             .expect("Failed to start axum server");
     }
 
-    fn configure_cors() -> CorsLayer {
+    fn configure_cors(state: &AppState) -> CorsLayer {
         CorsLayer::new()
             .allow_credentials(true)
+            .allow_origin(
+                [state.settings.web.client.protocol_url().parse().unwrap()]
+            )
             .allow_headers([
                 header::CONTENT_TYPE
             ])
