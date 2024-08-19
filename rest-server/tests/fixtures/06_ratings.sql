@@ -23,10 +23,8 @@ VALUES
     (13, 11, 5, 'Melhor couve chinesa já experimentei!'),
     (15, 11, 4, 'Ótimo para salteados, recomendo.'),
     (2, 11, 4, 'Ótimo para sopas, mas um pouco caro.'),
-    (17, 11, 3, 'Boa, mas esperava mais textura.'),
 
     (14, 13, 4, 'Aroma incrível, uso sempre!'),
-    (16, 13, 5, 'Adoro, sempre tenho em casa!'),
     (3, 13, 5, 'Refrescante e crocante, perfeito para o verão.'),
 
     (3, 16, 4, 'Gostei, mas esperava mais sabor.'),
