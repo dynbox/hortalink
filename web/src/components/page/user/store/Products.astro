@@ -1,0 +1,32 @@
+---
+import type { Product } from "../../../../interfaces/Product";
+import StoreProductsLayout from "../../../../layouts/pages/user/store/StoreProductsLayout.astro";
+
+interface Props {
+    products: Product[]
+}
+
+const products = Astro.props.products
+console.log(products)
+---
+
+<StoreProductsLayout>
+    {
+        products.map((product) => (
+            <div class="product">
+                <div class="product_header">
+                    <h2>{product.product.product.name}</h2>
+                </div>
+                <img
+                    src="http://localhost:5767/resources/products/tomate.jpg?size=256"
+                    width="175"
+                    height="170"
+                />
+                <div class="product_footer">
+                    <button class="edit">Editar</button>
+                    <p>R$ {product.product.price}</p>
+                </div>
+            </div>
+        ))
+    }
+</StoreProductsLayout>

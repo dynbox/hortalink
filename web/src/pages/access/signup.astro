@@ -128,7 +128,7 @@ export const prerender = false
 
             hideAlternativeLogins()
 
-            const request = await fetch(`http://localhost:5443/api/v1/oauth/${oauth_type}`, {
+            const request = await fetch(`/api/v1/oauth/${oauth_type}`, {
                 credentials: "include"
             })
             const ok = request.ok
@@ -230,7 +230,7 @@ export const prerender = false
             global_form.append("role", account_type)
             await readImage(image.src, global_form)
 
-            fetch("http://localhost:5443/api/v1/auth/sign-in", {
+            fetch("/api/v1/auth/sign-in", {
                 method: "POST",
                 body: global_form,
                 credentials: "include",

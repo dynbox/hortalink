@@ -60,7 +60,7 @@ export const prerender = false
 
             hideAlternativeLogins()
             
-            fetch('http://localhost:5443/api/v1/auth/login', {
+            fetch('/api/v1/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

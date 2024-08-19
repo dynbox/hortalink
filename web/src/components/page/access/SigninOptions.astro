@@ -49,7 +49,7 @@ import LinkedinIcon from "../../../assets/linkedin.svg";
 
     async function handleExternalLogin(oauthType: string) {
         try {
-            const response = await fetch(`${url}/api/v1/oauth/${oauthType}`, {
+            const response = await fetch(`/api/v1/oauth/${oauthType}`, {
                 method: 'POST',
                 credentials: 'include'
             });

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const WS_URL = `ws://localhost:9002`
+const WS_URL = `ws://localhost:5555/ws`
 
 export default function NotificationsWatcher(props: { session_id: string }) {
     useEffect(() => {

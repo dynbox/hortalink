@@ -26,7 +26,7 @@ import "../../../style/pages/home.scss";
     </Fragment>
     
     <script>
-        fetch(`http://localhost:5443/api/v1/users/@me`, {
+        fetch(`/api/v1/users/@me`, {
             credentials: "include"
         }).then(request => {
             request.json().then((data) => console.log(data)).catch(e => {})

@@ -1,5 +1,5 @@
 export default async function request_api(path: string, credentials: RequestCredentials = "include", cookie?: string) {
-    const request = await fetch(`http://localhost:5443${path}`, {
+    const request = await fetch(`/api${path}`, {
         credentials: credentials,
         headers: cookie ? {
             'Cookie': cookie
