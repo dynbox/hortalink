@@ -18,4 +18,5 @@ pub fn router() -> Router {
         .route("/:order_id/reserve", patch(patch::reserve_product))
         .route_layer(permission_required!(AuthGate, UserRole::Customer, UserRole::Verified))
         .route("/", get(get::products))
+        .route_layer(permission_required!(AuthGate, UserRole::Verified))
 }

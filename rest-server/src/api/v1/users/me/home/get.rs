@@ -41,6 +41,7 @@ pub async fn home(
             .await?;
 
         return Ok(Json(Home {
+            role: user.roles.first().unwrap().clone(),
             recents: Some(recent),
             more_orders: Some(more_orders),
             recommendations: Some(recommendations),
@@ -48,6 +49,7 @@ pub async fn home(
     } else {}
 
     return Ok(Json(Home {
+        role: user.roles.first().unwrap().clone(),
         recents: None,
         more_orders: None,
         recommendations: None,

@@ -26,7 +26,7 @@ pub async fn fetch(
 ) -> Result<Vec<SellerProductPreview>, ApiError> {
     let seen_recently = sqlx::query_as::<_, SellerProductPreview>(
         r#"
-                SELECT sp.id, p.id AS product_id, p.name,
+                SELECT DISTINCT ON (sp.id) sp.id, p.id AS product_id, p.name,
                     sp.photos, sp.price,
                     COALESCE(CAST(sp.rating_sum AS FLOAT) / CAST(NULLIF(sp.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                     sp.rating_quantity, sp.unit,
@@ -40,7 +40,7 @@ pub async fn fetch(
                 JOIN products_schedules ps ON ps.seller_product_id = sp.id
                 JOIN schedules s ON s.id = ps.schedule_id
                 WHERE sr.customer = $3
-                ORDER BY sr.viewed_at DESC
+                ORDER BY sp.id, sr.viewed_at DESC
                 LIMIT $4 OFFSET $5;
             "#
     )
