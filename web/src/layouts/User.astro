@@ -15,7 +15,7 @@ if(props.userid) {
     // lógica para pegar usuário externo
 } else {
     const session_id = Astro.cookies.get("session_id")
-    user_data = session_id ? await getUser(session_id.value) : null    
+    user_data = session_id?.value ? await getUser(session_id.value) : null    
 }
 
 export const prerender = false

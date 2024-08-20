@@ -29,7 +29,7 @@ export default function CartData(props: { cartData: Cart }) {
                             <div className="product">
                                 <div>
                                     <img
-                                        src={`http://localhost:5767/resources/products/${item.photos ? item.photos[0] : "undefined"}.jpg?size=256`}
+                                        src={`cdn/products/${item.id}/${item.photos ? item.photos[0] : "undefined"}.jpg?size=256`}
                                         width={108}
                                         height={108}
                                         alt={`Foto do produto "${item.name}"`}
@@ -39,10 +39,10 @@ export default function CartData(props: { cartData: Cart }) {
                                     <h2>{item.name}</h2>
                                     <div className="product_infos">
                                         <p>Distância: {item.dist && pos ? `${degreesToKm(item.dist, pos[0])} km` : pos_state}</p>
-                                        <p>Valor: R$ {item.price.toFixed(2)}/{item.unit}</p>
+                                        <p>Valor: R$ {item.price}/{item.unit}</p>
                                     </div>
                                     <p className="price_label">Valor total</p>
-                                    <p className="price">R$ {item.price.toFixed(2)}</p>
+                                    <p className="price">R$ {item.price}</p>
                                 </div>
                             </div>
                             <div className="order_specs">

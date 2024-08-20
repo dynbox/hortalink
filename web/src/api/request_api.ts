@@ -10,6 +10,7 @@ export default async function request_api(path: string, credentials: RequestCred
         return await request.json()
     } else {
         console.log(request.url, request.status)
+        console.log(request)
         throw new Error(`Request error`)
     }
 }

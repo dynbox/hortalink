@@ -37,6 +37,7 @@ header {
 
 .cart-container {
     width: 100%;
+    margin-bottom: 2.5rem;
 
     .header {
         display: grid;
@@ -88,6 +89,7 @@ header {
             @include flex-column();
             align-items: center;
             gap: 2rem;
+            margin-bottom: 2rem;
 
             .product_data {
                 display: grid;

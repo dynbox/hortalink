@@ -281,8 +281,7 @@ main {
     }
 
     .bottom_button {
-        position: fixed;
-        bottom: 50px;
+        bottom: 1px;
         left: 0;
 
         width: 100%;
@@ -301,4 +300,39 @@ main {
             cursor: pointer;
         }
     }
+}
+
+.gallery_change_loading {
+    position: absolute;
+
+    width: 100%;
+    max-width: 500px;
+
+    height: 100%;
+    max-height: 350px;
+
+    background-color: rgba(0, 0, 0, 0.26);
+
+    animation-name: loading;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-duration: 1.8s;
+
+    left: 50%;
+    transform: translateX(-50%);
+
+    top: 0;
+}
+
+@keyframes loading {
+    0% {
+        background-color: rgba(0, 0, 0, 0.26);
+    }
+    50% {
+        background-color: rgba(0, 0, 0, 0.542);
+    }
+    100% {
+        background-color: rgba(0, 0, 0, 0.26);
+    }
+    
 }

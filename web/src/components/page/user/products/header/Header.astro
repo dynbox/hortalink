@@ -23,7 +23,7 @@ const product = Astro.props.product
 ---
 
 <header>
-    <Gallery photos={product.product.photos} arrow_image_src={arrow_img.src} client:load />
+    <Gallery photos={product.product.photos} product_id={product.product.id} arrow_image_src={arrow_img.src} client:load />
     <section class="product_infos">
         <div class="infos">
             <h1>{product.product.product.name}</h1>

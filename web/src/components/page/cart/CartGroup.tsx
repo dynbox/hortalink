@@ -36,7 +36,7 @@ export default function CartGroup(props: { carts: RawCart[] }) {
                                         width={53}
                                         height={53}
                                         alt={`Foto de perfil do vendedor ${cart.seller.name}`}
-                                        src={`http://localhost:5767/resources/products/${cart.seller.avatar}?size=256`}
+                                        src={`cdn/avatars/${cart.seller.id}/${cart.seller.avatar}.jpg?size=256`}
                                     />
                                 </div>
                                 <h2>{cart.seller.name}</h2>
