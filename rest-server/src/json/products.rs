@@ -15,7 +15,7 @@ use crate::models::users::PreviewUser;
 #[derive(Serialize)]
 pub struct SellerProductResponse {
     pub product: SellerProduct,
-    pub schedule: Vec<Schedule>,
+    pub schedules: Vec<i64>,
     pub seller: PreviewUser,
 }
 
