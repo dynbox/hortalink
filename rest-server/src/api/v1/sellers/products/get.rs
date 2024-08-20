@@ -47,9 +47,9 @@ pub async fn product(
         .fetch_one(&state.pool)
         .await?;
 
-    let schedule = sqlx::query_as::<_, Schedule>(
+    let schedules = sqlx::query_scalar::<_, i64>(
         r#"
-            SELECT s.id, s.address, s.start_time, s.end_time, s.day_of_week
+            SELECT s.id
             FROM seller_products sp
             JOIN products_schedules sc ON sc.seller_product_id = sp.id
             JOIN schedules s ON sc.schedule_id = s.id
@@ -77,7 +77,7 @@ pub async fn product(
         }
     };
 
-    Ok(Json(SellerProductResponse { product, schedule, seller }))
+    Ok(Json(SellerProductResponse { product, schedules, seller }))
 }
 
 pub async fn products(
