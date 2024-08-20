@@ -17,9 +17,9 @@ if(session_id) {
         return {}
     }) as any
 
-    if(user_data?.user?.roles?.includes(3)) {
+    if(user_data?.profile?.roles?.includes(3)) {
         role = "customer"
-    } else if (user_data?.user?.roles?.includes(4)) {
+    } else if (user_data?.profile?.roles?.includes(4)) {
         role = "seller"
     }
 

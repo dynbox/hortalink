@@ -60,7 +60,7 @@ export default function Items(props: { container_id: string, store: string, star
                             {
                                 items && local_permission_state !== "prompt" && items.map((item, i) => {
                                     return (
-                                        <div className={`product ${i >= slide_pos && !props.noscroll ? "" : `${props.noscroll ? "" : "hidden"}`}`} key={item.id}>
+                                        <div className={`product ${i >= slide_pos && !props.noscroll ? "" : `${props.noscroll ? "" : "hidden"}`}`} key={`${props.container_id}-${Math.floor(Math.random() * 100) + Date.now()}`}>
                                             <div className="head">
                                                 <h3>{item.product.name}</h3>
                                                 {
