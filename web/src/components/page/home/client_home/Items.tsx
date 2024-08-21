@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useStore } from "@nanostores/react";
 import Products from "../../../../stores/Products";
 import ItemsModal from "./ItemsModal";
-import Geolocation from "../../../../stores/Geolocation";
+import Geolocation, { GPS_state } from "../../../../stores/Geolocation";
 import degreesToKm from "../../../../util/degreesToKm";
 
 export default function Items(props: { container_id: string, store: string, star_image_src: string, location_image_src: string, arrow_image_src: string, noscroll?: boolean }) {
@@ -58,7 +58,7 @@ export default function Items(props: { container_id: string, store: string, star
                     <div className={`product_list`}>
                         <div className="product_container">
                             {
-                                items && local_permission_state !== "prompt" && items.map((item, i) => {
+                                items && local_permission_state !== GPS_state.loading && items.map((item, i) => {
                                     return (
                                         <div className={`product ${i >= slide_pos && !props.noscroll ? "" : `${props.noscroll ? "" : "hidden"}`}`} key={`${props.container_id}-${Math.floor(Math.random() * 100) + Date.now()}`}>
                                             <div className="head">
@@ -77,7 +77,7 @@ export default function Items(props: { container_id: string, store: string, star
                                                 }
                                             </div>
                                             <img 
-                                                src={`/cdn/products/${item.id}/${encodeURIComponent(item.photos[0])}.jpg?size=256`}
+                                                src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.id}/${encodeURIComponent(item.photos[0])}.jpg?size=256`}
                                                 width={145}
                                                 height={138}
                                                 alt={`Foto do produto "${item.product.name}"`}

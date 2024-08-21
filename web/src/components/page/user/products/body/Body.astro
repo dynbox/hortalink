@@ -65,7 +65,7 @@ const product = Astro.props.product
             <div class="seller_name">
                 <div class="img_container">
                     <Image
-                        src=`/cdn/avatars/${product.seller.id}/${product.seller.avatar}.jpg?size=256`
+                        src=`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/avatars/${product.seller.id}/${product.seller.avatar}.jpg?size=256`
                         alt="Foto de perfil do vendedor",
                         width={57}
                         height={57}

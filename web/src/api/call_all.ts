@@ -20,11 +20,11 @@ export default async function call_all(setRequested?: React.Dispatch<React.SetSt
 
     if(product_type) {
         url.searchParams.append("product_id", `${product_type}`)
-        const products = await request_api(`/api/v1/products${url.search}`)
+        const products = await request_api(`/v1/products${url.search}`)
 
         Products.search_result.set(products)
     } else {
-        const products = await request_api(`/api/v1/users/@me/home${url.search}`)
+        const products = await request_api(`/v1/users/@me/home${url.search}`)
 
         const recent = products.recents
         const more_orders = products.more_orders

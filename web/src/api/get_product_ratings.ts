@@ -6,5 +6,5 @@ export default async function get_product_ratings(seller: number, product: numbe
     url.searchParams.append("page", String(options.page))
     url.searchParams.append("per_page", String(options.per_page))
 
-    return await request_api(`/api/v1/sellers/${seller}/products/${product}/ratings${url.search}`, "include", session_id ? `session_id=${session_id}` : undefined)
+    return await request_api(`/v1/sellers/${seller}/products/${product}/ratings${url.search}`, "include", session_id ? `session_id=${session_id}` : undefined)
 }

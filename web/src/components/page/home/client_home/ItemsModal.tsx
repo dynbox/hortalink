@@ -16,7 +16,7 @@ export default function Items(props: { container_id: string, store: string, star
                             <div className="product" key={`${props.container_id}-${Date.now()}`}>
                                 <div>
                                     <img
-                                        src={`cdn/products/${item.id}/${encodeURIComponent(item.photos ? item.photos[0].replace("/", "⁄") : "undefined")}.jpg?size=256`}
+                                        src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.id}/${encodeURIComponent(item.photos ? item.photos[0].replace("/", "⁄") : "undefined")}.jpg?size=256`}
                                         width={108}
                                         height={108}
                                         alt={`Foto do produto "${item.product.name}"`}
