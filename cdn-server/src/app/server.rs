@@ -1,11 +1,12 @@
 use std::path::Path;
 
 use axum::{Extension, Router};
+use axum::extract::{MatchedPath, Request};
 use axum::http::{header, Method};
 use image::ImageFormat;
 use image::imageops::FilterType;
 use tower_http::cors::CorsLayer;
-
+use tower_http::trace::TraceLayer;
 use common::settings::{AppSettings, Protocol};
 
 use crate::routes;
@@ -37,6 +38,21 @@ impl Server {
             .merge(routes::router())
             .layer(Self::configure_cors(&state))
             .layer(Extension(state))
+            .layer(
+                TraceLayer::new_for_http()
+                    .make_span_with(|req: &Request| {
+                        let method = req.method();
+                        let uri = req.uri();
+
+                        let matched_path = req
+                            .extensions()
+                            .get::<MatchedPath>()
+                            .map(|matched_path| matched_path.as_str());
+
+                        tracing::debug_span!("request", %method, %uri, matched_path)
+                    })
+                    .on_failure(())
+            )
     }
 
     pub async fn run(self) {

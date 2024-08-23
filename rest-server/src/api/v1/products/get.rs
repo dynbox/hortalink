@@ -14,7 +14,7 @@ pub async fn filter_products(
     let query = query.into_inner();
     let mut sql_query = String::from(
         r#"
-            SELECT s.id, p.id AS product_id, p.name,
+            SELECT DISTINCT ON (s.id) s.id, p.id AS product_id, p.name,
                s.photos, s.price, s.unit,
                COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                s.rating_quantity, s.seller_id
@@ -67,7 +67,7 @@ pub async fn filter_products(
         sql_query.push_str(&format!("AND ST_DWithin(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4674), 45000) "));
     }
 
-    sql_query.push_str(&format!("LIMIT {} OFFSET {}", query.per_page, (query.page - 1) * query.per_page));
+    sql_query.push_str(&format!("ORDER BY s.id LIMIT {} OFFSET {}", query.per_page, (query.page - 1) * query.per_page));
 
     let products = sqlx::query_as::<_, SellerProductPreview>(&sql_query)
         .fetch_all(&state.pool)
@@ -83,10 +83,11 @@ pub async fn distance(
     let query = query.into_inner();
     let products = sqlx::query_as::<_, ProductDistance>(
         r#"
-            SELECT sp.id, ST_Distance(sc.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674)) AS dist
+            SELECT DISTINCT ON (sp.id) sp.id, ST_Distance(sc.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674)) AS dist
             FROM seller_products sp
             JOIN products_schedules ps ON ps.seller_product_id = sp.id
             JOIN schedules sc ON sc.id = ps.schedule_id
+            ORDER BY sp.id
             WHERE sp.id = ANY($3)
         "#
     )
