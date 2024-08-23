@@ -9,7 +9,6 @@ use crate::json::error::ApiError;
 use crate::json::products::SellerProductResponse;
 use crate::json::utils::HomePage;
 use crate::models::products::{SellerProduct, SellerProductPreview};
-use crate::models::schedules::Schedule;
 use crate::models::users::PreviewUser;
 
 pub async fn product(
@@ -98,7 +97,7 @@ pub async fn fetch_products(
 ) -> Result<Vec<SellerProductPreview>, ApiError> {
     let mut sql_query = String::from(
         r#"
-            SELECT s.id, p.id AS product_id, p.name,
+            SELECT DISTINCT ON (s.id) s.id, p.id AS product_id, p.name,
                s.photos, s.price, s.unit,
                COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                s.rating_quantity, s.seller_id
@@ -117,6 +116,7 @@ pub async fn fetch_products(
         JOIN products_schedules ps ON ps.seller_product_id = s.id
         JOIN schedules sc ON sc.id = ps.schedule_id
         WHERE s.seller_id = $1
+        ORDER BY s.id
         LIMIT $2 OFFSET $3
     "#);
 

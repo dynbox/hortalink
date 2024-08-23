@@ -16,6 +16,7 @@ serde = { workspace = true }
 
 thiserror = { version = "1.0.57" }
 image = { version = "0.25.0" }
+tracing = "0.1.40"
 
 [dev-dependencies]
 axum-test = { workspace = true }

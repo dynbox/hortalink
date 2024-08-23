@@ -1,5 +1,5 @@
-use axum::{Extension, Json};
 use axum::http::StatusCode;
+use axum::{Extension, Json};
 use axum_garde::WithValidation;
 use axum_login::tower_sessions::Session;
 use axum_typed_multipart::TypedMultipart;
@@ -22,7 +22,7 @@ pub async fn login(
         Credentials::Password(payload.into_inner())
     )
         .await?
-        .ok_or(ApiError::NotFound("Usuário não encontrado".to_string()))?;
+        .unwrap();
 
     auth_session.login(&user)
         .await?;

@@ -91,12 +91,12 @@ pub async fn userinfo(
     Extension(providers): Extension<OAuthProvider>,
 ) -> Result<Json<UserInfo>, ApiError> {
     let provider = providers.get_provider(&oauth_type);
-    let token = session.get::<String>("oauth.token").await;
+    let token = session.remove::<String>("oauth.token").await;
 
-    return if let Ok(Some(token)) = token {
+    if let Ok(Some(token)) = token {
         let user_info = provider.get_user(&token).await;
         Ok(Json(user_info))
     } else {
         Err(ApiError::NotFound("Oauth token not found".to_string()))
-    };
+    }
 }

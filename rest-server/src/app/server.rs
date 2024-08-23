@@ -1,10 +1,12 @@
-use axum::{Extension, Router};
 use axum::http::{header, Method};
-use axum_login::AuthManagerLayerBuilder;
-use axum_login::tower_sessions::{Expiry, SessionManagerLayer};
+use axum::{Extension, Router};
+use axum::extract::{MatchedPath, Request};
 use axum_login::tower_sessions::cookie::time::Duration;
+use axum_login::tower_sessions::{Expiry, SessionManagerLayer};
+use axum_login::AuthManagerLayerBuilder;
 use sqlx::{Pool, Postgres};
 use tower_http::cors::CorsLayer;
+use tower_http::trace::TraceLayer;
 use tower_sessions_sqlx_store::PostgresStore;
 
 use app_core::database::SqlxManager;
@@ -53,6 +55,21 @@ impl Server {
             )
             .layer(Extension(state))
             .layer(Extension(provider))
+            .layer(
+                TraceLayer::new_for_http()
+                    .make_span_with(|req: &Request| {
+                        let method = req.method();
+                        let uri = req.uri();
+                        
+                        let matched_path = req
+                            .extensions()
+                            .get::<MatchedPath>()
+                            .map(|matched_path| matched_path.as_str());
+
+                        axum_login::tracing::debug_span!("request", %method, %uri, matched_path)
+                    })
+                    .on_failure(())
+            )
     }
 
     pub async fn run(self) {
