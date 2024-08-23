@@ -209,6 +209,11 @@ main {
     }
 
     .seller {
+        a {
+            color: colors.$dark;
+            text-decoration: none;
+        }
+
         .seller_title, .seller_infos {
             display: grid;
             grid-template-columns: 2.5fr 1fr;

@@ -32,7 +32,7 @@ const avg_rating = total_rating / user.products.length
         <section class="infos">
             <div class="profile_img">
                 <Image
-                    src="http://localhost:5767/resources/products/tomate.jpg?size=256"
+                    src=`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/avatars/${user.profile.id}/${user.profile.avatar}.jpg?size=256`
                     alt="Foto de perfil do vendedor"
                     width={102}
                     height={102}
@@ -55,7 +55,7 @@ const avg_rating = total_rating / user.products.length
 
             <div class="seller_presentation">
                 <h1>{user.profile.name}</h1>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga nostrum numquam optio sunt quas facere</p>
+                <p>{user.profile.bio || "Este usuário não tem uma biografia."}</p>
                 
                 <Metrics
                     products={user.products.length}

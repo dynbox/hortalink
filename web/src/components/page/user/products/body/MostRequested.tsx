@@ -8,6 +8,7 @@ import Products from "../../../../../stores/Products";
 import call_all from "../../../../../api/call_all";
 
 import Items from "../../../home/client_home/Items";
+import get_products_dist from "../../../../../api/get_products_dist";
 
 export default function ProductsSection(props: { star_image_src: string, location_image_src: string, arrow_image_src: string}) {
     const { star_image_src, location_image_src, arrow_image_src } = props
@@ -16,10 +17,6 @@ export default function ProductsSection(props: { star_image_src: string, locatio
 
     useEffect(() => {
         call_all(setRequested)
-
-        Geolocation.position.listen(() => {
-            call_all()
-        })
     }, [])
 
     return (

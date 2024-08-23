@@ -5,10 +5,20 @@ import ItemsModal from "./ItemsModal";
 import Geolocation, { GPS_state } from "../../../../stores/Geolocation";
 import degreesToKm from "../../../../util/degreesToKm";
 
+import { useMemo } from "react";
+
+function ItemDist(props: { id: number }) {
+    const dists = useStore(Products.all_products_dist)
+    console.log(dists)
+    return <>{dists ? degreesToKm(dists[props.id]) : "N/A"} km</>
+}
+
 export default function Items(props: { container_id: string, store: string, star_image_src: string, location_image_src: string, arrow_image_src: string, noscroll?: boolean }) {
     const items = useStore(Products[props.store]);
     const local_permission_state = useStore(Geolocation.state)
-    const pos = useStore(Geolocation.position)
+    //const pos = useStore(Geolocation.position)
+
+    console.log(items)
 
     if(props.store === "search_result") {
         return (
@@ -42,6 +52,7 @@ export default function Items(props: { container_id: string, store: string, star
             } else {
                 next_element.style.display = "block"
             }
+
         }, [slide_pos])
     
         return (
@@ -58,9 +69,9 @@ export default function Items(props: { container_id: string, store: string, star
                     <div className={`product_list`}>
                         <div className="product_container">
                             {
-                                items && local_permission_state !== GPS_state.loading && items.map((item, i) => {
+                                items && items.map((item, i) => {
                                     return (
-                                        <div className={`product ${i >= slide_pos && !props.noscroll ? "" : `${props.noscroll ? "" : "hidden"}`}`} key={`${props.container_id}-${Math.floor(Math.random() * 100) + Date.now()}`}>
+                                        <a href={`/users/${item.seller_id}/products/${item.id}`} className={`product ${i >= slide_pos && !props.noscroll ? "" : `${props.noscroll ? "" : "hidden"}`}`} key={`${props.container_id}-${Math.floor(Math.random() * 100) + Date.now()}`}>
                                             <div className="head">
                                                 <h3>{item.product.name}</h3>
                                                 {
@@ -90,13 +101,13 @@ export default function Items(props: { container_id: string, store: string, star
                                                         width={15}
                                                         height={15}
                                                     />
-                                                    <p>{item.dist ? `${degreesToKm(item.dist, pos[0])} km` : "N/A"}</p>
+                                                    <p><ItemDist id={item.id} /></p>
                                                 </span>
                                                 <span className="price">
                                                     <p>R$ {item.price} {item.unit}</p>
                                                 </span>
                                             </div>
-                                        </div>
+                                        </a>
                                     )
                                 })
                             }

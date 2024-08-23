@@ -4,6 +4,7 @@ interface UserProfile {
     name: string,
     id: number,
     avatar?: string,
+    bio?: string,
     is_seller: boolean,
     followers: number,
     roles: number[],

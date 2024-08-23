@@ -4,6 +4,7 @@ import "../style/global.scss";
 import Navbar from "./Navbar.astro";
 import getUser from "../util/getUser";
 import NotificationsWatcher from "../components/util/NotificationsWatcher";
+import WatchProductsDistance from "../components/util/WatchProductsDistance";
 
 interface Props {
     page: string
@@ -39,5 +40,6 @@ const page = Astro.props.page
     {
         role && <Navbar type={role} page={page} />
     }
-    <NotificationsWatcher client:only="react" session_id={session_id}/>
+    <NotificationsWatcher client:only="react" session_id={session_id} />
+    <WatchProductsDistance client:only="react" />
 </body>

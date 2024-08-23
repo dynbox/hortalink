@@ -4,6 +4,8 @@ import Items from "./Items";
 import Products from "../../../../stores/Products";
 import Geolocation from "../../../../stores/Geolocation";
 
+import get_products_dist from "../../../../api/get_products_dist";
+
 import call_all from "../../../../api/call_all";
 
 export default function ProductsSection(props: { star_image_src: string, location_image_src: string, arrow_image_src: string}) {
@@ -11,17 +13,13 @@ export default function ProductsSection(props: { star_image_src: string, locatio
 
     const search_result = useStore(Products.search_result)
     const [requested, setRequested] = useState(false)
+    const [firstLoad, setFirstLoad] = useState(false)
 
     useEffect(() => {
-        call_all(setRequested)
-
-        Geolocation.position.listen(() => {
-            if(Products.search_result.value?.length) {
-                
-            } else {
-                call_all()
-            }
-        })
+        if(!firstLoad) {
+            call_all(setRequested)    
+            setFirstLoad(true)
+        }
     }, [])
 
     return (

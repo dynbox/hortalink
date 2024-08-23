@@ -49,6 +49,7 @@ const product = Astro.props.product
     </div>
     <div class="line" />
     <section class="seller">
+       
         <div class="seller_title">
             <h2>Vendido por</h2>
             <div class="location on_end">
@@ -62,24 +63,26 @@ const product = Astro.props.product
             </div>
         </div>
         <div class="seller_infos">
-            <div class="seller_name">
-                <div class="img_container">
-                    <Image
-                        src=`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/avatars/${product.seller.id}/${product.seller.avatar}.jpg?size=256`
-                        alt="Foto de perfil do vendedor",
-                        width={57}
-                        height={57}
-                    />
+            <a href={`/users/${product.seller.id}`}>
+                <div class="seller_name">
+                    <div class="img_container">
+                        <Image
+                            src=`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/avatars/${product.seller.id}/${product.seller.avatar}.jpg?size=256`
+                            alt="Foto de perfil do vendedor",
+                            width={57}
+                            height={57}
+                        />
+                    </div>
+                    <h2>{product.seller.name}</h2>
                 </div>
-                <h2>{product.seller.name}</h2>
-            </div>
-            <Rating
-                rate={{
-                    quantity: 5,
-                    rating: 4.2
-                }}
-            />
-        </div>
+                <Rating
+                    rate={{
+                        quantity: 5,
+                        rating: 4.2
+                    }}
+                />
+                </div>
+            </a>
     </section>
     <div class="line" />
     <div class="most_requested">
