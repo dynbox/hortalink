@@ -1,13 +1,12 @@
 use std::path::Path;
 
-use axum::{Extension, Router};
 use axum::extract::{MatchedPath, Request};
 use axum::http::{header, Method};
-use image::ImageFormat;
-use image::imageops::FilterType;
+use axum::{Extension, Router};
+use common::entities::Environment;
+use common::settings::{AppSettings, Protocol};
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
-use common::settings::{AppSettings, Protocol};
 
 use crate::routes;
 
@@ -24,7 +23,7 @@ impl Server {
     pub async fn new(settings: &str) -> Self {
         let settings = AppSettings::new(settings);
 
-        Self::load_resources(&settings.web.cdn.storage);
+        Self::load_resources(&settings.web.cdn.storage, &settings.environment);
 
         Self {
             state: AppState {
@@ -82,22 +81,50 @@ impl Server {
             ])
     }
 
-    fn load_resources(storage_path: &String) {
-        let storage_resources = format!("{storage_path}/resources");
-        let path = Path::new(storage_resources.as_str());
+    fn load_resources(storage_path: &String, env: &Environment) {
+        let destination = format!("{storage_path}/resources");
+        let destination = Path::new(destination.as_str());
 
-        if path.exists() {
+        if destination.exists() {
             return;
         } else {
-            std::fs::create_dir_all(path).unwrap();
+            std::fs::create_dir_all(destination).unwrap();
         }
+        
+        log::info!("Loading resources images");
 
         let resources = Path::new("cdn-server/resources");
+        copy_dir_all(resources, destination);
 
-        process_directory(resources, path);
+        if let Environment::Development = env {
+            let destination = format!("{storage_path}");
+            let destination = Path::new(destination.as_str());
+            let resources = Path::new("rest-server/tests/resources");
+
+            copy_dir_all(resources, destination);
+        }
     }
 }
 
+
+fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> std::io::Result<()> {
+    std::fs::create_dir_all(&dst)?;
+
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let ty = entry.file_type()?;
+
+        if ty.is_dir() {
+            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        } else {
+            std::fs::copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        }
+    }
+
+    Ok(())
+}
+
+/*
 fn process_directory(path: &Path, destination: &Path) {
     if !path.exists() {
         return;
@@ -129,4 +156,4 @@ fn process_directory(path: &Path, destination: &Path) {
             }
         }
     };
-}
+}*/

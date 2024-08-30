@@ -87,7 +87,6 @@ pub async fn distance(
             FROM seller_products sp
             JOIN products_schedules ps ON ps.seller_product_id = sp.id
             JOIN schedules sc ON sc.id = ps.schedule_id
-            ORDER BY sp.id
             WHERE sp.id = ANY($3)
         "#
     )

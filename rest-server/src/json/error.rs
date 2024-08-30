@@ -41,6 +41,7 @@ impl IntoResponse for ApiError {
 
 impl From<sqlx::Error> for ApiError {
     fn from(value: sqlx::Error) -> Self {
+        log::error!("Database error: {value}");
         ApiError::Database(format!("Falha no banco de dados: {}", value))
     }
 }
