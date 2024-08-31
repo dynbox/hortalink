@@ -22,7 +22,7 @@ pub async fn filter_products(
     );
 
     if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
-        sql_query.push_str(&format!(", ST_Distance(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4674)) AS dist"));
+        sql_query.push_str(&format!(", ST_DistanceSphere(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4674)) / 1000 AS dist"));
     } else {
         sql_query.push_str(", null AS dist");
     }
@@ -83,7 +83,7 @@ pub async fn distance(
     let query = query.into_inner();
     let products = sqlx::query_as::<_, ProductDistance>(
         r#"
-            SELECT DISTINCT ON (sp.id) sp.id, ST_Distance(sc.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674)) AS dist
+            SELECT DISTINCT ON (sp.id) sp.id, ST_DistanceSphere(sc.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674)) / 1000 AS dist
             FROM seller_products sp
             JOIN products_schedules ps ON ps.seller_product_id = sp.id
             JOIN schedules sc ON sc.id = ps.schedule_id
