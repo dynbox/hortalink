@@ -34,7 +34,7 @@ pub async fn fetch(
                         sp.rating_quantity, sp.unit,
                         (CASE
                             WHEN $1 IS NULL OR $2 IS NULL THEN NULL
-                            ELSE ST_Distance(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674))
+                            ELSE ST_DistanceSphere(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674)) / 1000
                         END) AS dist, sp.seller_id,
                         sr.viewed_at
                     FROM products_seen_recently sr
