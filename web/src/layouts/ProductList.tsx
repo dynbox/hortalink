@@ -1,0 +1,258 @@
+import "../style/layouts/productlist.scss";
+import Product from "../components/ProductList/Product";
+import { useStore } from "@nanostores/react";
+import Products from "../stores/Products";
+import call_all from "../api/call_all";
+
+import { useContext, createContext, useState, useEffect, memo, useRef } from "react";
+import type { MemoExoticComponent } from "react";
+import type { WritableAtom } from "nanostores";
+
+type MemoizedComponent = MemoExoticComponent<() => JSX.Element>
+
+const ItemsPaginationContext = createContext<{
+    slide_pos: number,
+    setSlidePos: React.Dispatch<React.SetStateAction<number>>,
+
+    page: number,
+    setPage: React.Dispatch<React.SetStateAction<number>>,
+
+    nextArrowRef: React.MutableRefObject<HTMLDivElement>,
+    prevArrowRef: React.MutableRefObject<HTMLDivElement>
+}>({
+    slide_pos: undefined,
+    setSlidePos: undefined,
+
+    page: undefined,
+    setPage: undefined,
+
+    nextArrowRef: undefined,
+    prevArrowRef: undefined
+})
+
+const itemsContext = createContext<{
+    container_id: string,
+    
+    items: {
+        [key: string]: MemoizedComponent
+    },
+    setItems: React.Dispatch<React.SetStateAction<unknown>>,
+    
+    currentItemsRaw: any[],
+    setItemsRaw: React.Dispatch<React.SetStateAction<unknown>>,
+}>({
+    container_id: undefined,
+
+    items: {},
+    setItems: undefined,
+    
+    currentItemsRaw: undefined,
+    setItemsRaw: undefined,
+}) // valores padrões podem ser nulos
+
+const imagesContext = createContext<{
+    Star_image: JSX.Element,
+    Location_image: JSX.Element,
+    ArrowBack_image: JSX.Element,
+    ArrowNext_image: JSX.Element
+}>({} as any)
+
+function ProductsProvider({ children }) {
+    const [items, setItems] = useState({})
+    const [currentItemsRaw, setItemsRaw] = useState([])
+    const { container_id } = useContext(itemsContext)
+
+    return (
+        <itemsContext.Provider value={{ container_id, items, setItems, currentItemsRaw, setItemsRaw }}>
+            {children}
+        </itemsContext.Provider>
+    )
+}
+
+function ProductsUpdater(props: { store: string }) {
+    const store = Products[props.store] as WritableAtom
+    const { setItemsRaw } = useContext(itemsContext)
+
+    useEffect(() => {
+        const currentValue = store.get()
+        setItemsRaw(currentValue)
+
+        store.listen((v) => {
+            setItemsRaw(v)
+        })
+    })
+
+    return <></>
+}
+
+function Items(props: { store: string }) {
+    const { items, setItems, currentItemsRaw, container_id } = useContext(itemsContext)
+    
+    useEffect(() => {
+        const newItems = { ...items };
+
+        // Adiciona novos itens ao objeto 'newItems' sem causar re-renderizações desnecessárias
+        currentItemsRaw.forEach((item, i) => {
+            if(item) {
+                if (!newItems[item.id]) {
+                    newItems[item.id] = memo(() => (<Product item={item} i={i} />))
+                }
+            }
+        })
+    
+        const newKeys = Object.keys(newItems)
+
+        let isEqual = true
+
+        for(const key of newKeys) {
+            const currentValue = items[key]
+
+            if(!currentValue) {
+                isEqual = false
+                break;
+            }
+        }
+
+        if(!isEqual) {
+            setItems(newItems);
+        }
+      
+    }, [currentItemsRaw])
+
+    return (
+        <>
+            {
+                Object.keys(items).map(itemKey => {
+                    const ItemComponent = items[itemKey]
+                    
+                    return <ItemComponent key={`${container_id}-${itemKey}`}></ItemComponent>
+                })
+            }
+        </>
+    )
+}
+
+const Location_Img = memo(({ location_image_src }: any) => {
+    return (
+        <img
+            src={location_image_src}
+            alt="Ícone de GPS, ao lado está a sua distância até o vendedor, em quilômetros."
+            width={15}
+            height={15}
+        />
+    )
+}, (prev, next) => true)
+
+const ArrowBack = memo(({ arrow_image_src }: any) => {
+    return (
+      <img src={arrow_image_src}
+        alt="Seta para direita, clique para passar os elementos do carrossel."
+        width={35}
+        height={35}
+        style={{ transform: "rotate(180deg)" }}
+      />
+    );
+}, (prev, next) => true);
+  
+const StarImage = memo(({ star_image_src }: any) => {
+    return (
+      <img
+        src={star_image_src}
+        alt="Imagem de uma estrela, ao lado direito está indicando o número de avaliações."
+        width={12}
+        height={12}
+      />
+    );
+}, (prev, next) => true);
+  
+const ArrowNext = memo(({ arrow_image_src }: any) => {
+    return (
+      <img src={arrow_image_src}
+        alt="Seta para direita, clique para passar os elementos do carrossel."
+        width={35}
+        height={35}
+      />
+    );
+}, (prev, next) => true);
+
+function PaginationProvider(props: { arrow_image_src: string, store: string, children }) {
+    const [slide_pos, setSlidePos] = useState(0)
+    const [page, setPage] = useState(0)
+    const nextArrowRef = useRef(null)
+    const prevArrowRef = useRef(null)
+
+    const { ArrowBack_image, ArrowNext_image } = useContext(imagesContext)
+
+    useEffect(() => {
+
+        prevArrowRef.current.addEventListener("click", () => {
+            if(slide_pos <= 2) {
+                setSlidePos(slide_pos - 2)
+            }
+        })
+
+        nextArrowRef.current.addEventListener("click", () => {
+            setSlidePos(slide_pos + 2)
+        })
+    }, [])
+
+    useEffect(() => {
+        const rawItems = (Products[props.store] as WritableAtom).get()
+
+        if(rawItems.length > 0 && slide_pos >= rawItems.length - 3) {
+            setPage(page + 1)
+        }
+    }, [slide_pos])    
+
+    useEffect(() => {
+        call_all(undefined, undefined, page, undefined, true, props.store)
+    }, [page])
+
+    return (
+        <ItemsPaginationContext.Provider value={{
+            slide_pos: slide_pos,
+            setSlidePos: setSlidePos,
+            page,
+            setPage,
+            nextArrowRef,
+            prevArrowRef
+        }}>
+            <div className="arrow_container arr-prev" ref={prevArrowRef}>
+                {ArrowBack_image}
+            </div>
+                {props.children}
+            <div className="arrow_container arr-next" ref={nextArrowRef}>
+                {ArrowNext_image}
+            </div>
+        </ItemsPaginationContext.Provider>
+    )
+}
+
+export default function ProductList(props: { store: string, star_image_src: string, location_image_src: string, arrow_image_src: string }) {
+    return (
+        <div className="products">
+            <imagesContext.Provider value={{
+                Location_image: <Location_Img location_image_src={props.location_image_src}/> as any,
+                ArrowBack_image: <ArrowBack arrow_image_src={props.arrow_image_src} /> as any,
+                ArrowNext_image: <ArrowNext arrow_image_src={props.arrow_image_src} /> as any,
+                Star_image: <StarImage star_image_src={props.star_image_src} /> as any
+            }}>
+                <ProductsProvider>
+                    <PaginationProvider {...props}>
+                        <div className="product_list">
+                            <div className="product_container">
+                                <Items {...props}/>
+                            </div>
+                            <ProductsUpdater store={props.store} />
+                        </div>
+                    </PaginationProvider>
+                </ProductsProvider>
+            </imagesContext.Provider>
+        </div>
+    )
+}
+export {
+    itemsContext,
+    imagesContext,
+    ItemsPaginationContext
+}

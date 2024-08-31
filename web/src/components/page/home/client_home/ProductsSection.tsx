@@ -3,6 +3,7 @@ import { useStore } from "@nanostores/react"
 import Items from "./Items";
 import Products from "../../../../stores/Products";
 import Geolocation from "../../../../stores/Geolocation";
+import ProductList from "../../../../layouts/ProductList";
 
 import get_products_dist from "../../../../api/get_products_dist";
 
@@ -17,7 +18,7 @@ export default function ProductsSection(props: { star_image_src: string, locatio
 
     useEffect(() => {
         if(!firstLoad) {
-            call_all(setRequested)    
+            call_all(setRequested, undefined, 1, 3) 
             setFirstLoad(true)
         }
     }, [])
@@ -31,32 +32,31 @@ export default function ProductsSection(props: { star_image_src: string, locatio
                         <h2>Recentes</h2>
                         {
                             requested &&
-                            <Items
+                            <ProductList
                                 star_image_src={star_image_src}
                                 location_image_src={location_image_src}
                                 arrow_image_src={arrow_image_src}
-                                container_id="recentes"
-                                store="recent"
+                                store="most_requested"
                             />
                         }
                     </section>
                     <section className="products_section">
                         <h2>Mais pedidos</h2>
                         {
-                            requested &&
+                            /*requested &&
                             <Items
                                 star_image_src={star_image_src}
                                 location_image_src={location_image_src}
                                 arrow_image_src={arrow_image_src}
                                 container_id="mais_pedidos"
                                 store="most_requested"
-                            />
+                            />*/
                         }
                     </section>
                 </>
            }
            {
-                search_result &&
+                /*search_result &&
                 <>
                     <section className="products_section">
                         <Items
@@ -68,7 +68,7 @@ export default function ProductsSection(props: { star_image_src: string, locatio
                             noscroll={true}
                         />
                     </section>
-                </>
+                </>*/
             }
         </>
     )
