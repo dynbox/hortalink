@@ -15,7 +15,8 @@ body {
 }
 
 #site-container {
-    min-height: calc(100vh - 50px);
+    min-height: calc(100vh - 30px);
+    padding-bottom: 80px;
 }
 /*
     site-container é necessário para delimitar a caixa onde ficará todo o conteúdo do site, excluindo navbar e footer. Assim é possível fazer com que o footer fique sempre no final da página independente do tamanho do conteúdo.

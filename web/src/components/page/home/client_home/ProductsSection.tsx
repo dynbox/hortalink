@@ -16,13 +16,6 @@ export default function ProductsSection(props: { star_image_src: string, locatio
     const [requested, setRequested] = useState(false)
     const [firstLoad, setFirstLoad] = useState(false)
 
-    useEffect(() => {
-        if(!firstLoad) {
-            call_all(setRequested, undefined, 1, 3) 
-            setFirstLoad(true)
-        }
-    }, [])
-
     return (
         <>
            {
@@ -31,26 +24,23 @@ export default function ProductsSection(props: { star_image_src: string, locatio
                     <section className="products_section">
                         <h2>Recentes</h2>
                         {
-                            requested &&
                             <ProductList
                                 star_image_src={star_image_src}
                                 location_image_src={location_image_src}
                                 arrow_image_src={arrow_image_src}
-                                store="most_requested"
+                                store="recent"
                             />
                         }
                     </section>
                     <section className="products_section">
                         <h2>Mais pedidos</h2>
                         {
-                            /*requested &&
-                            <Items
+                            <ProductList
                                 star_image_src={star_image_src}
                                 location_image_src={location_image_src}
                                 arrow_image_src={arrow_image_src}
-                                container_id="mais_pedidos"
                                 store="most_requested"
-                            />*/
+                            />
                         }
                     </section>
                 </>

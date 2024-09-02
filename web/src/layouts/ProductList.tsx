@@ -7,8 +7,20 @@ import call_all from "../api/call_all";
 import { useContext, createContext, useState, useEffect, memo, useRef } from "react";
 import type { MemoExoticComponent } from "react";
 import type { WritableAtom } from "nanostores";
+import get_user_recent_products from "../api/get_user_recent_products";
+import get_user_most_requested_products from "../api/get_user_most_requested_products";
 
 type MemoizedComponent = MemoExoticComponent<() => JSX.Element>
+
+function getProducts(store: string, page: number) {
+    switch(store) {
+        case "recent":
+            get_user_recent_products(page, 5)
+            break
+        case "most_requested":
+            get_user_most_requested_products(page, 5)
+    }
+}
 
 const ItemsPaginationContext = createContext<{
     slide_pos: number,
@@ -74,9 +86,6 @@ function ProductsUpdater(props: { store: string }) {
     const { setItemsRaw } = useContext(itemsContext)
 
     useEffect(() => {
-        const currentValue = store.get()
-        setItemsRaw(currentValue)
-
         store.listen((v) => {
             setItemsRaw(v)
         })
@@ -87,15 +96,18 @@ function ProductsUpdater(props: { store: string }) {
 
 function Items(props: { store: string }) {
     const { items, setItems, currentItemsRaw, container_id } = useContext(itemsContext)
-    
+    let i = 0
+
     useEffect(() => {
         const newItems = { ...items };
 
         // Adiciona novos itens ao objeto 'newItems' sem causar re-renderizações desnecessárias
-        currentItemsRaw.forEach((item, i) => {
+        currentItemsRaw.forEach((item) => {
             if(item) {
+                const index = i
                 if (!newItems[item.id]) {
-                    newItems[item.id] = memo(() => (<Product item={item} i={i} />))
+                    newItems[item.id] = memo(() => (<Product item={item} i={index} />))
+                    i += 1
                 }
             }
         })
@@ -177,6 +189,7 @@ const ArrowNext = memo(({ arrow_image_src }: any) => {
 
 function PaginationProvider(props: { arrow_image_src: string, store: string, children }) {
     const [slide_pos, setSlidePos] = useState(0)
+    const [firstLoad, setFirstLoad] = useState(false)
     const [page, setPage] = useState(0)
     const nextArrowRef = useRef(null)
     const prevArrowRef = useRef(null)
@@ -184,7 +197,6 @@ function PaginationProvider(props: { arrow_image_src: string, store: string, chi
     const { ArrowBack_image, ArrowNext_image } = useContext(imagesContext)
 
     useEffect(() => {
-
         prevArrowRef.current.addEventListener("click", () => {
             if(slide_pos <= 2) {
                 setSlidePos(slide_pos - 2)
@@ -197,15 +209,28 @@ function PaginationProvider(props: { arrow_image_src: string, store: string, chi
     }, [])
 
     useEffect(() => {
-        const rawItems = (Products[props.store] as WritableAtom).get()
+        const rawItems = Products[props.store].get()
 
-        if(rawItems.length > 0 && slide_pos >= rawItems.length - 3) {
+        if(slide_pos >= rawItems.length - 3) {
+            if(rawItems.length < 1) {
+                if(firstLoad) {
+                    setPage(page + 1)
+                    return;
+                }
+            } else {
+                return
+            }
+
             setPage(page + 1)
+            
         }
     }, [slide_pos])    
 
     useEffect(() => {
-        call_all(undefined, undefined, page, undefined, true, props.store)
+        if(page < 1) {
+            return;
+        }
+        getProducts(props.store, page)
     }, [page])
 
     return (

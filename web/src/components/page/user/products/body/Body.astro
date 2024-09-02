@@ -15,6 +15,8 @@ import location from "../../../../../assets/location.svg";
 import arrow from "../../../../../assets/arrow.svg";
 import Rating from '../utils/Rating.astro';
 
+import ProductList from '../../../../../layouts/ProductList';
+
 const search_logo = await getImage({
     src: search_logo_raw,
     inferSize: true
@@ -95,7 +97,7 @@ const product = Astro.props.product
             location_image_src={location_logo.src}
             arrow_image_src={arrow_logo.src}
 
-            client:load  
+            client:load
         />
     </div>
     <CartModal />
