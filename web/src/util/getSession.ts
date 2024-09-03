@@ -3,7 +3,7 @@
  */
 function getSession(oauth_type: string, session_id: string) {
     return new Promise((resolve, reject) => {
-        fetch(`http://localhost:5555/api/v1/oauth/${oauth_type}`, {
+        fetch(`http://${import.meta.env.BACKEND_API_URL}/v1/oauth/${oauth_type}`, {
             headers: {
                 'Cookie': `session_id=${session_id}`
             }

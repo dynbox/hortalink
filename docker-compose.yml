@@ -17,6 +17,9 @@ services:
     network_mode: host
     volumes:
       - ${CDN_STORAGE_PATH}:/usr/src/app/storage
+      - type: bind
+        source: ./application.toml
+        target: /usr/src/app/application.toml
     depends_on:
       - postgres
 
@@ -25,6 +28,10 @@ services:
       context: .
       dockerfile: ./web/Dockerfile
     network_mode: host
+    volumes:
+      - type: bind
+        source: ./.env
+        target: /usr/src/app/web/.env
 
   cdn-server:
     build:
@@ -33,6 +40,9 @@ services:
     network_mode: host
     volumes:
       - ${CDN_STORAGE_PATH}:/usr/src/app/storage
+      - type: bind
+        source: ./application.toml
+        target: /usr/src/app/application.toml
 
   websocket:
     build:
@@ -41,6 +51,10 @@ services:
     network_mode: host
     depends_on:
       - postgres
+    volumes:
+      - type: bind
+        source: ./application.toml
+        target: /usr/src/app/application.toml
 
   postgres:
     image: postgis/postgis:latest
