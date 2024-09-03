@@ -28,6 +28,8 @@ export default async function get_products_dist() {
         }
     }
 
+    if (ids.length == 0) { return }
+
     const request_data = await request_api(`/v1/products/dist?products_id=${JSON.stringify(ids)}&latitude=${position[0]}&longitude=${position[1]}`)
     const dists = {}
 

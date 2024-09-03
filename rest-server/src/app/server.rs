@@ -43,7 +43,7 @@ impl Server {
         let gate = AuthGate::new(state.pool.clone());
         let provider = OAuthProvider::new(
             &state.settings.secrets,
-            state.settings.web.rest.protocol_url(),
+            state.settings.web.rest.get_proxy(),
         );
 
         Router::new()
@@ -103,10 +103,13 @@ impl Server {
             .with_table_name("sessions")
             .unwrap();
 
+        let domain = state.settings.web.client.proxy.to_string();
+        let domain = domain.split(':').next().map(String::from).unwrap();
+
         SessionManagerLayer::new(session_store)
             .with_secure(false)
             .with_name("session_id")
             .with_expiry(Expiry::OnInactivity(Duration::days(20)))
-            .with_domain(state.settings.web.client.proxy.clone())
+            .with_domain(domain)
     }
 }

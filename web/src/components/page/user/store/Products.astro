@@ -18,7 +18,7 @@ console.log(products)
                     <h2>{product.product.product.name}</h2>
                 </div>
                 <img
-                    src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${product.product.product.id}/${product.product.photos[0]}.jpg?size=256`}
+                    src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${product.product.product.id}/${product.product.photos[0].replaceAll("%2FD", "⁄")}.jpg?size=256`}
                     width="175"
                     height="170"
                 />

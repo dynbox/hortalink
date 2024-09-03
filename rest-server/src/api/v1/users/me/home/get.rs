@@ -18,7 +18,7 @@ pub async fn home(
         longitude: query.longitude,
         latitude: query.latitude,
         page: 1,
-        per_page: 9
+        per_page: 4
     };
 
     if user.roles.contains(&3) {

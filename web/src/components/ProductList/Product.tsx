@@ -33,7 +33,7 @@ export default function Product(props: { item: any, i: number }) {
                     }
                 </div>
                 <img 
-                    src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.id}/${encodeURIComponent(item.photos[0])}.jpg?size=256`}
+                    src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.id}/${item.photos[0].replace("/", "⁄")}.jpg?size=256`}
                     width={145}
                     height={138}
                     alt={`Foto do produto "${item.product.name}"`}

@@ -21,14 +21,14 @@ pub struct Provider {
 }
 
 impl OAuthProvider {
-    pub fn new(secrets: &Secrets, host: String) -> Self {
+    pub fn new(secrets: &Secrets, proxy: String) -> Self {
         Self {
             google: Provider::new(
                 Self::oauth_client(
                     &secrets.google,
                     "https://accounts.google.com/o/oauth2/v2/auth",
                     "https://www.googleapis.com/oauth2/v3/token",
-                    format!("http://localhost/api/v1/oauth/google/callback"),
+                    format!("http://{proxy}/api/v1/oauth/google/callback"),
                 ),
                 "https://www.googleapis.com/oauth2/v3/userinfo".to_string(),
                 vec!["email", "profile"],
@@ -38,7 +38,7 @@ impl OAuthProvider {
                     &secrets.facebook,
                     "https://www.facebook.com/v20.0/dialog/oauth",
                     "https://graph.facebook.com/oauth/access_token",
-                    format!("{host}/api/v1/oauth/facebook/callback"),
+                    format!("http://{proxy}/api/v1/oauth/facebook/callback"),
                 ),
                 "https://graph.facebook.com/me?fields=name,email,picture".to_string(),
                 vec!["email"],
@@ -48,7 +48,7 @@ impl OAuthProvider {
                     &secrets.linkedin,
                     "https://www.linkedin.com/oauth/v2/authorization",
                     "https://www.linkedin.com/oauth/v2/accessToken",
-                    format!("{host}/api/v1/oauth/linkedin/callback"),
+                    format!("http://{proxy}/api/v1/oauth/linkedin/callback"),
                 ),
                 "https://api.linkedin.com/v2/userinfo".to_string(),
                 vec!["profile", "email", "openid"],
