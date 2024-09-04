@@ -20,8 +20,8 @@ pub struct Server {
 }
 
 impl Server {
-    pub async fn new(settings: &str) -> Self {
-        let settings = AppSettings::new(settings);
+    pub async fn new() -> Self {
+        let settings = AppSettings::new();
 
         Self::load_resources(&settings.web.cdn.storage, &settings.environment);
 

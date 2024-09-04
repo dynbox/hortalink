@@ -1,9 +1,3 @@
-use std::path::Path;
-use std::str::FromStr;
-
-use log::{error, info};
-use serde::{Deserialize, Serialize};
-
 use crate::entities::Environment;
 use crate::settings::database::DatabaseSettings;
 use crate::settings::secrets::Secrets;
@@ -15,14 +9,13 @@ pub mod database;
 pub mod secrets;
 pub mod services;
 
-#[derive(Serialize, Deserialize, Clone, Default)]
+#[derive(Clone)]
 pub struct AppSettings {
     pub web: WebApp,
     pub database: DatabaseSettings,
     pub rabbitmq: RabbitMQ,
     pub websocket: WebSocket,
     pub secrets: Secrets,
-    #[serde(skip)]
     pub environment: Environment,
 }
 
@@ -35,17 +28,13 @@ pub trait Protocol {
         self.socket()
     }
 
-    fn is_ssl(&self) -> bool;
-
     fn socket(&self) -> String {
         format!("{}:{}", self.get_host(), self.get_port())
     }
 
     fn protocol_url(&self) -> String {
-        let protocol = match (self.get_port(), self.is_ssl()) {
-            (9002, true) => "wss",
-            (9002, false) => "ws",
-            (_, true) => "https",
+        let protocol = match self.get_port() {
+            9002 => "ws",
             _ => "http",
         };
 
@@ -53,10 +42,8 @@ pub trait Protocol {
     }
 
     fn proxy_url(&self) -> String {
-        let protocol = match (self.get_port(), self.is_ssl()) {
-            (9002, true) => "wss",
-            (9002, false) => "ws",
-            (_, true) => "https",
+        let protocol = match self.get_port() {
+            9002 => "ws",
             _ => "http",
         };
 
@@ -65,60 +52,14 @@ pub trait Protocol {
 }
 
 impl AppSettings {
-    pub fn new(path: &str) -> Self {
-        let path = Path::new(path);
-        let environment = std::env::var("ENVIRONMENT")
-            .map(|env| Environment::from_str(&env).unwrap())
-            .unwrap_or(Environment::Production);
-
-        if path.exists() {
-            info!("Config file found. Reading configurations from file: '{}'", path.display());
-
-            return Self::read(path, environment);
-        }
-
-        match environment {
-            Environment::Production | Environment::Stage => {
-                std::env::set_var("RUST_LOG", "info error");
-                info!("Reading configurations from '{:?}' or using default.", environment);
-
-                // Read configs from env or use default
-                Self::default()
-            }
-            Environment::Development => {
-                Self::write(path);
-                error!(
-                    "Default configurations written to '{}'. Please edit this file to continue.",
-                    path.display()
-                );
-
-                std::process::exit(1)
-            }
-        }
-    }
-
-    fn read(path: &Path, environment: Environment) -> Self {
-        let AppSettings {
-            web,
-            database,
-            rabbitmq,
-            websocket,
-            secrets,
-            ..
-        } = toml::from_str(&std::fs::read_to_string(path).unwrap()).expect("Error reading file");
-        
+    pub fn new() -> Self {
         Self {
-            web,
-            database,
-            rabbitmq,
-            websocket,
-            secrets,
-            environment,
+            web: WebApp::new(),
+            database: DatabaseSettings::new(),
+            rabbitmq: RabbitMQ::new(),
+            websocket: WebSocket::new(),
+            secrets: Secrets::new(),
+            environment: Default::default(),
         }
-    }
-
-    fn write(path: &Path) {
-        std::fs::write(path, toml::to_string(&Self::default()).unwrap())
-            .expect("Error serializing to TOML");
     }
 }

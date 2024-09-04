@@ -278,9 +278,6 @@ Cargo.lock
 .history
 .ionide
 
-### Application settings
-application.toml
-
 ### Flutter ###
 # Flutter/Dart/Pub related
 **/doc/api/

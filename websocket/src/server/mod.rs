@@ -21,7 +21,7 @@ pub struct Application {
 impl Application {
     pub async fn new() -> Self {
         let (cmd_tx, cmd_rx) = tokio::sync::mpsc::unbounded_channel::<Command>();
-        let settings = AppSettings::new("application.toml");
+        let settings = AppSettings::new();
         let pool = SqlxManager::new(&settings.database).await.pool;
 
         Self {

@@ -8,7 +8,7 @@ pub mod json;
 async fn main() {
     env_logger::init();
 
-    let app = Server::new("application.toml")
+    let app = Server::new()
         .await;
 
     app.run().await;

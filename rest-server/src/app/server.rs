@@ -26,8 +26,8 @@ pub struct Server {
 }
 
 impl Server {
-    pub async fn new(settings: &str) -> Self {
-        let settings = AppSettings::new(settings);
+    pub async fn new() -> Self {
+        let settings = AppSettings::new();
         let database = SqlxManager::new(&settings.database)
             .await;
 
