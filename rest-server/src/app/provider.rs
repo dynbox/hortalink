@@ -1,10 +1,10 @@
 use axum::http::StatusCode;
-use oauth2::{Client, CsrfToken, Scope};
 use oauth2::basic::BasicTokenResponse;
 use oauth2::url::Url;
+use oauth2::{Client, CsrfToken, Scope};
 
-use common::settings::secrets::{OauthSecret, Secrets};
 use crate::json::error::ApiError;
+use common::settings::secrets::{OauthSecret, Secrets};
 
 #[derive(Clone)]
 pub struct OAuthProvider {
@@ -28,7 +28,7 @@ impl OAuthProvider {
                     &secrets.google,
                     "https://accounts.google.com/o/oauth2/v2/auth",
                     "https://www.googleapis.com/oauth2/v3/token",
-                    format!("http://{proxy}/api/v1/oauth/google/callback"),
+                    format!("http://{proxy}/access/signup?oauth_type=google"),
                 ),
                 "https://www.googleapis.com/oauth2/v3/userinfo".to_string(),
                 vec!["email", "profile"],
@@ -38,7 +38,7 @@ impl OAuthProvider {
                     &secrets.facebook,
                     "https://www.facebook.com/v20.0/dialog/oauth",
                     "https://graph.facebook.com/oauth/access_token",
-                    format!("http://{proxy}/api/v1/oauth/facebook/callback"),
+                    format!("http://{proxy}/access/signup?oauth_type=facebook"),
                 ),
                 "https://graph.facebook.com/me?fields=name,email,picture".to_string(),
                 vec!["email"],
@@ -48,7 +48,7 @@ impl OAuthProvider {
                     &secrets.linkedin,
                     "https://www.linkedin.com/oauth/v2/authorization",
                     "https://www.linkedin.com/oauth/v2/accessToken",
-                    format!("http://{proxy}/api/v1/oauth/linkedin/callback"),
+                    format!("http://{proxy}/access/signup?oauth_type=linkedin"),
                 ),
                 "https://api.linkedin.com/v2/userinfo".to_string(),
                 vec!["profile", "email", "openid"],
@@ -87,23 +87,23 @@ impl Provider {
         }
     }
 
-    pub fn auth_url(&self) -> ((Url, CsrfToken), /*oauth2::PkceCodeVerifier*/) {
-        //let (pkce_code_challenge, pkce_code_verifier) = oauth2::PkceCodeChallenge::new_random_sha256();
+    pub fn auth_url(&self) -> ((Url, CsrfToken), oauth2::PkceCodeVerifier) {
+        let (pkce_code_challenge, pkce_code_verifier) = oauth2::PkceCodeChallenge::new_random_sha256();
 
         (
             self.client
                 .authorize_url(CsrfToken::new_random)
-                //.set_pkce_challenge(pkce_code_challenge)
+                .set_pkce_challenge(pkce_code_challenge)
                 .add_scopes(self.scopes.clone())
                 .url(),
-            //pkce_code_verifier
+            pkce_code_verifier
         )
     }
 
-    pub async fn get_token(&self, code: String, /*pkce_code_verifier: oauth2::PkceCodeVerifier*/) -> Result<BasicTokenResponse, ApiError> {
+    pub async fn get_token(&self, code: String, pkce_code_verifier: oauth2::PkceCodeVerifier) -> Result<BasicTokenResponse, ApiError> {
         self.client
             .exchange_code(oauth2::AuthorizationCode::new(code))
-            //.set_pkce_verifier(pkce_code_verifier)
+            .set_pkce_verifier(pkce_code_verifier)
             .request_async(
                 &oauth2::reqwest::Client::builder()
                     .redirect(oauth2::reqwest::redirect::Policy::limited(1))

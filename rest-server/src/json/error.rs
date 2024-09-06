@@ -52,6 +52,12 @@ impl From<axum_login::Error<AuthGate>> for ApiError {
     }
 }
 
+impl From<axum_login::tower_sessions::session::Error> for ApiError {
+    fn from(value: axum_login::tower_sessions::session::Error) -> Self {
+        ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", value))
+    }
+}
+
 impl From<ImageError> for ApiError {
     fn from(value: ImageError) -> Self {
         ApiError::Custom(StatusCode::INTERNAL_SERVER_ERROR, value.to_string())
