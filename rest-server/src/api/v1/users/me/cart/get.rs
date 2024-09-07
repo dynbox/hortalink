@@ -14,17 +14,25 @@ pub async fn products(
     auth_session: AuthSession,
 ) -> Result<Json<Vec<Order>>, ApiError> {
     let mut sql_query = r#"
-        SELECT DISTINCT ON (c.id) c.id AS order_id, c.withdrawn, c.amount,
-            sp.price, u.name, u.avatar, sp.id AS product_id, sp.photos,
-            sp.seller_id AS user_id, p.name AS product_name,
-            sp.unit
+            SELECT u.name, u.avatar, sp.seller_id AS user_id,
+                   json_agg(json_build_object(
+                       'order_id', c.id,
+                       'withdrawn', c.withdrawn,
+                       'amount', c.amount,
+                       'price', sp.price,
+                       'product_id', sp.id,
+                       'photos', sp.photos,
+                       'product_name', p.name,
+                       'unit', sp.unit,
         "#.to_string();
 
     if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
-        sql_query.push_str(&format!(", ST_DistanceSphere(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4674)) / 1000 AS dist "));
+        sql_query.push_str(&format!("'dist', ST_DistanceSphere(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4674)) / 1000 "));
     } else {
-        sql_query.push_str(", null AS dist ");
+        sql_query.push_str("'dist', null");
     }
+    
+    sql_query.push_str(")) AS products");
 
     sql_query.push_str(
         r#"
@@ -32,10 +40,13 @@ pub async fn products(
             JOIN seller_products sp ON sp.id = c.seller_product_id
             JOIN products p ON sp.product_id = p.id
             JOIN users u ON u.id = sp.seller_id
-            JOIN products_schedules ps ON ps.seller_product_id = sp.id 
+            LEFT JOIN (
+                SELECT DISTINCT (seller_product_id) schedule_id, seller_product_id
+                FROM products_schedules
+            ) ps ON ps.seller_product_id = sp.id
             JOIN schedules sc ON sc.id = ps.schedule_id
             WHERE c.customer_id = $1
-            ORDER BY c.id
+            GROUP BY u.name, u.avatar, sp.seller_id
         "#
     );
 

@@ -1,21 +1,16 @@
-use serde::Serialize;
-use sqlx::{Pool, Postgres};
-use sqlx::types::Decimal;
-use common::entities::CartStatus;
 use crate::json::error::ApiError;
 use crate::json::serialize_unit;
 use crate::models::products::SellerProductMinimal;
+use common::entities::CartStatus;
+use serde::Serialize;
+use sqlx::types::{Decimal, JsonValue};
+use sqlx::{Pool, Postgres};
 
 #[derive(sqlx::FromRow, Serialize)]
 pub struct Order {
-    #[sqlx(rename = "order_id")]
-    id: i64,
     #[sqlx(flatten)]
-    seller: UserPreview,
-    amount: i32,
-    withdrawn: i64,
-    #[sqlx(flatten)]
-    product: ProductPreview,
+    user: UserPreview,
+    products: JsonValue,
 }
 
 #[derive(sqlx::FromRow, Serialize)]
@@ -26,7 +21,7 @@ pub struct OrderPreview {
     #[sqlx(flatten)]
     product: SellerProductMinimal,
     #[sqlx(try_from = "i16")]
-    status: CartStatus
+    status: CartStatus,
 }
 
 #[derive(sqlx::FromRow, Serialize)]

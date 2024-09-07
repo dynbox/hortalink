@@ -9,7 +9,6 @@ use common::entities::{StarRating, WeekDay};
 use crate::json::deserialize_array;
 use crate::json::validate_price;
 use crate::models::products::SellerProduct;
-use crate::models::schedules::Schedule;
 use crate::models::users::PreviewUser;
 
 #[derive(Serialize)]
