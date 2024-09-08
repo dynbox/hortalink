@@ -20,8 +20,6 @@ services:
       context: .
       dockerfile: ./rest-server/Dockerfile
     network_mode: host
-    env_file:
-      - ./.env
     volumes:
       - ${CDN_VOLUME_PATH}:${CDN_STORAGE_PATH}
     depends_on:
@@ -40,8 +38,6 @@ services:
       context: .
       dockerfile: ./cdn-server/Dockerfile
     network_mode: host
-    env_file:
-      - ./.env
     volumes:
       - ${CDN_VOLUME_PATH}:${CDN_STORAGE_PATH}
 
@@ -52,8 +48,6 @@ services:
     network_mode: host
     depends_on:
       - postgres
-    env_file:
-      - ./.env
 
   postgres:
     image: postgis/postgis:latest

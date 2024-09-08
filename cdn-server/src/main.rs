@@ -6,6 +6,7 @@ pub mod json;
 
 #[tokio::main]
 async fn main() {
+    dotenv::dotenv().ok();
     env_logger::init();
 
     let app = Server::new()

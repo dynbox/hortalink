@@ -8,6 +8,7 @@ mod commands;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
+    dotenv::dotenv().ok();
     env_logger::init();
 
     let server = Application::new()

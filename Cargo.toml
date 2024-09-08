@@ -27,5 +27,6 @@ env_logger = { version = "0.11.3" }
 serde_json = { version = "1.0.115" }
 serde_repr = { version = "0.1.18" }
 axum-login = { version = "0.15.0" }
+dotenv = { version = "0.15.0" }
 
 axum-test = { version = "15.3.1", default-features = false, features = ["pretty-assertions"] }
