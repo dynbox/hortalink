@@ -5,11 +5,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import CartGroup from "../components/page/cart/CartGroup";
 
 import type { RawCart } from "../interfaces/RawCart";
+import type { Cart } from "../interfaces/Cart";
 import WatchPosition from "../components/util/WatchPosition";
 import get_carts from "../api/get_carts";
 
 const session = Astro.cookies.get("session_id")
-let data: RawCart[] = []
+let data: Cart[] = []
 
 if(session?.value) {
     data = await get_carts(session.value)

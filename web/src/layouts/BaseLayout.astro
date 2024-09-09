@@ -6,6 +6,10 @@ import getUser from "../util/getUser";
 import NotificationsWatcher from "../components/util/NotificationsWatcher";
 import WatchProductsDistance from "../components/util/WatchProductsDistance";
 
+import Images from "../stores/Images";
+import { getImage } from "astro:assets";
+const assets = await import.meta.glob("../assets/*")
+
 interface Props {
     page: string
 }
@@ -26,6 +30,29 @@ if(session_id) {
 
 }
 const page = Astro.props.page
+
+/**
+ * Gambiarra para poder salvar a URL dos assets otimizados numa store para todos os componentes acessarem.
+ * É necessário porque o astro:assets só funciona em componentes Astro (bola fora do Astro isso ai).
+ */
+
+const images: Record<string, string> = {}
+
+for(const key of Object.keys(assets)) {
+    const filename = key.replace("../assets/", "")
+
+    const asset = assets[key]
+    const file = await asset() as any
+
+    const optimized_file = await getImage({
+        src: file.default as ImageMetadata,
+        format: "webp"
+    })
+
+    images[filename] = optimized_file.src
+}
+
+Images.set(images) // server-side
 ---
 
 <head>

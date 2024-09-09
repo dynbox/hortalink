@@ -1,8 +1,6 @@
-import "../style/layouts/productlist.scss";
-import Product from "../components/ProductList/Product";
-import { useStore } from "@nanostores/react";
+import "../style/layouts/unpaginatedproductlist.scss";
+import UnpaginatedProduct from "../components/ProductList/UnpaginatedProduct";
 import Products from "../stores/Products";
-import call_all from "../api/call_all";
 
 import { useContext, createContext, useState, useEffect, memo, useRef } from "react";
 import type { MemoExoticComponent } from "react";
@@ -24,26 +22,6 @@ function getProducts(store: string, page: number) {
             get_products()
     }
 }
-
-const ItemsPaginationContext = createContext<{
-    slide_pos: number,
-    setSlidePos: React.Dispatch<React.SetStateAction<number>>,
-
-    page: number,
-    setPage: React.Dispatch<React.SetStateAction<number>>,
-
-    nextArrowRef: React.MutableRefObject<HTMLDivElement>,
-    prevArrowRef: React.MutableRefObject<HTMLDivElement>
-}>({
-    slide_pos: undefined,
-    setSlidePos: undefined,
-
-    page: undefined,
-    setPage: undefined,
-
-    nextArrowRef: undefined,
-    prevArrowRef: undefined
-})
 
 const itemsContext = createContext<{
     container_id: string,
@@ -88,16 +66,9 @@ function ProductsUpdater(props: { store: string }) {
     const store = Products[props.store] as WritableAtom
     const { setItemsRaw } = useContext(itemsContext)
 
-    const product_type_store = Products.product_type
-
     useEffect(() => {
         store.listen((v) => {
             setItemsRaw(v)
-        })
-
-        product_type_store.listen((v) => {
-            
-            getProducts(props.store, 1)
         })
     }, [])
 
@@ -116,7 +87,7 @@ function Items(props: { store: string }) {
             if(item) {
                 const index = i
                 if (!newItems[item.id]) {
-                    newItems[item.id] = memo(() => (<Product item={item} i={index} />))
+                    newItems[item.id] = memo(() => (<UnpaginatedProduct item={item} i={index} />))
                     i += 1
                 }
             }
@@ -197,73 +168,11 @@ const ArrowNext = memo(({ arrow_image_src }: any) => {
     );
 }, (prev, next) => true);
 
-function PaginationProvider(props: { arrow_image_src: string, store: string, children }) {
-    const [slide_pos, setSlidePos] = useState(0)
-    const [firstLoad, setFirstLoad] = useState(false)
-    const [page, setPage] = useState(0)
-    const nextArrowRef = useRef(null)
-    const prevArrowRef = useRef(null)
-
-    const { ArrowBack_image, ArrowNext_image } = useContext(imagesContext)
-
+export default function UnpaginatedProductList(props: { store: string, star_image_src: string, location_image_src: string, arrow_image_src: string }) {
     useEffect(() => {
-        prevArrowRef.current.addEventListener("click", () => {
-            if(slide_pos <= 2) {
-                setSlidePos(slide_pos - 2)
-            }
-        })
-
-        nextArrowRef.current.addEventListener("click", () => {
-            setSlidePos(slide_pos + 2)
-        })
+        getProducts(props.store, 1)
     }, [])
-
-    useEffect(() => {
-        const rawItems = Products[props.store].get()
-
-        if(slide_pos >= rawItems.length - 3) {
-            if(rawItems.length < 1) {
-                if(firstLoad) {
-                    setPage(page + 1)
-                    return;
-                }
-            } else {
-                return
-            }
-
-            setPage(page + 1)
-            
-        }
-    }, [slide_pos])    
-
-    useEffect(() => {
-        if(page < 1) {
-            return;
-        }
-        getProducts(props.store, page)
-    }, [page])
-
-    return (
-        <ItemsPaginationContext.Provider value={{
-            slide_pos: slide_pos,
-            setSlidePos: setSlidePos,
-            page,
-            setPage,
-            nextArrowRef,
-            prevArrowRef
-        }}>
-            <div className="arrow_container arr-prev" ref={prevArrowRef}>
-                {ArrowBack_image}
-            </div>
-                {props.children}
-            <div className="arrow_container arr-next" ref={nextArrowRef}>
-                {ArrowNext_image}
-            </div>
-        </ItemsPaginationContext.Provider>
-    )
-}
-
-export default function ProductList(props: { store: string, star_image_src: string, location_image_src: string, arrow_image_src: string }) {
+    
     return (
         <div className="products">
             <imagesContext.Provider value={{
@@ -273,14 +182,12 @@ export default function ProductList(props: { store: string, star_image_src: stri
                 Star_image: <StarImage star_image_src={props.star_image_src} /> as any
             }}>
                 <ProductsProvider>
-                    <PaginationProvider {...props}>
-                        <div className="product_list">
-                            <div className="product_container">
-                                <Items {...props}/>
-                            </div>
-                            <ProductsUpdater store={props.store} />
+                    <div className="product_list">
+                        <div className="product_container">
+                            <Items {...props}/>
                         </div>
-                    </PaginationProvider>
+                        <ProductsUpdater store={props.store} />
+                    </div>
                 </ProductsProvider>
             </imagesContext.Provider>
         </div>
@@ -288,6 +195,5 @@ export default function ProductList(props: { store: string, star_image_src: stri
 }
 export {
     itemsContext,
-    imagesContext,
-    ItemsPaginationContext
+    imagesContext
 }

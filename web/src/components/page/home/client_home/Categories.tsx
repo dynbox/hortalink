@@ -1,7 +1,7 @@
 import { useStore } from "@nanostores/react";
 import Products from "../../../../stores/Products";
 
-export default function Categories(props: { category_list: { label: string, img_src: string }[] }) {
+export default function Categories(props: { category_list: { label: string, img_src: string, product_type: number }[] }) {
     const products = useStore(Products.search_result)
 
     return (
@@ -15,7 +15,9 @@ export default function Categories(props: { category_list: { label: string, img_
                             <div className="circular_container">
                                 {
                                     props.category_list.map((category, i) => (
-                                        <div className="item" key={i}>
+                                        <div className="item" key={i} onClick={() => {
+                                            Products.product_type.set(category.product_type)
+                                        }}>
                                             <div className="img_container">
                                                 <img
                                                     src={category.img_src}

@@ -18,7 +18,13 @@ interface CartProduct {
     price: number,
     photos?: string[],
     unit: string,
-    dist?: number
+    dist?: number,
+
+    product_name: string,
+    product_id: string,
+    withdrawn: number,
+
+    order_id: number
 }
 
 export type {

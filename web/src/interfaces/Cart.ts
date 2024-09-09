@@ -5,13 +5,11 @@ interface CartProductWithAmount extends CartProduct {
 }
 
 interface Cart {
-    id: number,
-    seller: CartSeller,
-    amount: number,
-    withdrawn: number,
-    product: CartProductWithAmount[]
+    user: CartSeller,
+    products: CartProductWithAmount[]
 }
 
 export type {
-    Cart
+    Cart,
+    CartProductWithAmount
 }

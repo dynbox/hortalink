@@ -1,0 +1,19 @@
+---
+import "../style/pages/search/search.scss";
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+import SearchMenu from "../components/page/search/SearchMenu";
+
+---
+
+<BaseLayout page="search">
+    <Fragment slot="head">
+        <title>Hortalink | Pesquisar produtos</title>
+    </Fragment>
+    <Fragment slot="body">
+        <SearchMenu
+            client:load
+        />
+    </Fragment>
+</BaseLayout>
