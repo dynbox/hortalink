@@ -7,7 +7,7 @@ import degreesToKm from "../../../util/degreesToKm";
 
 function DateInput() {
     return (
-        <div className="modal_container">
+        <div className="">
 
         </div>
     )

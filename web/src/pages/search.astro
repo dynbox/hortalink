@@ -4,6 +4,7 @@ import "../style/pages/search/search.scss";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 import SearchMenu from "../components/page/search/SearchMenu";
+import SearchMain from "../components/page/search/Search";
 
 ---
 
@@ -12,8 +13,9 @@ import SearchMenu from "../components/page/search/SearchMenu";
         <title>Hortalink | Pesquisar produtos</title>
     </Fragment>
     <Fragment slot="body">
-        <SearchMenu
+        <SearchMain
             client:load
+            store="products"
         />
     </Fragment>
 </BaseLayout>

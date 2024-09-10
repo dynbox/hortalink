@@ -8,12 +8,12 @@ import Tags from "./Tags";
 import UnpaginatedProductList from "../../../layouts/UnpaginatedProductList";
 import Images from "../../../stores/Images";
 
-export default function SearchMenu() {
+export default function SearchMenu(props: { store: string }) {
     const images = Images.get()
 
     return (
         <>
-            <SearchContainer>
+            <SearchContainer store={props.store}>
                 <SearchBar />
                 <div className="line" />
                 <Tags />
@@ -21,7 +21,7 @@ export default function SearchMenu() {
                     arrow_image_src={images["arrow.svg"]}
                     location_image_src={images["location.svg"]}
                     star_image_src={images["star.svg"]}
-                    store="products"
+                    store={props.store}
                 />
             </SearchContainer>
         </>

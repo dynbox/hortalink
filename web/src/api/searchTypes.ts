@@ -1,13 +1,13 @@
 import request_api from "./request_api";
 
 export default async function SearchTypes(query: string, page: number = 1, per_page: number = 10) {
-    const url = new URL("http://localhost/api/v1/resources/products")
+    const searchParams = new URLSearchParams()
 
-    url.searchParams.append("query", query)
-    url.searchParams.append("page", String(page))
-    url.searchParams.append("per_page", String(per_page))
+    searchParams.append("query", query)
+    searchParams.append("page", String(page))
+    searchParams.append("per_page", String(per_page))
 
-    const types = await request_api(url.pathname + url.search)
+    const types = await request_api(`/v1/resources/products?${searchParams.toString()}`)
 
     return types
 }
