@@ -27,7 +27,7 @@ pub async fn fetch(
                 sp.rating_quantity, sp.unit,
                 (CASE
                     WHEN $1 IS NULL OR $2 IS NULL THEN NULL
-                    ELSE ST_DistanceSphere(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674)) / 1000
+                    ELSE ST_DistanceSphere(s.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674))
                 END) AS dist, sp.seller_id
             FROM cart c
             LEFT JOIN seller_products sp ON c.seller_product_id = sp.id

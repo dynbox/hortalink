@@ -3,7 +3,7 @@ import { useStore } from "@nanostores/react";
 import Products from "../../../../stores/Products";
 import ItemsModal from "./ItemsModal";
 import Geolocation, { GPS_state } from "../../../../stores/Geolocation";
-import degreesToKm from "../../../../util/degreesToKm";
+import formatDistance from "../../../../util/formatDistance.ts";
 
 import { memo, useMemo, createContext } from "react";
 import type { MemoExoticComponent } from "react";
@@ -14,7 +14,7 @@ const itemsContext = createContext([])
 
 function ItemDist(props: { id: number }) {
     const dists = useStore(Products.all_products_dist)
-    return <>{dists ? degreesToKm(dists[props.id]) : "N/A"} km</>
+    return <>{dists ? formatDistance(dists[props.id]) : "N/A"}</>
 }
 
 function RenderItems(props: { store: string, star_image_src: string, location_image_src: string, arrow_image_src: string, slide_pos: number, noscroll?: boolean, container_id: string }) {

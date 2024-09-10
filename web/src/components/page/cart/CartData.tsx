@@ -3,7 +3,7 @@ import Geolocation from "../../../stores/Geolocation";
 import { useStore } from "@nanostores/react";
 
 import type { Cart, CartProductWithAmount } from "../../../interfaces/Cart";
-import degreesToKm from "../../../util/degreesToKm";
+import formatDistance from "../../../util/formatDistance.ts";
 
 function DateInput() {
     return (
@@ -37,7 +37,7 @@ export default function CartData(props: { cartData: CartProductWithAmount }) {
                         <div>
                             <h2>{item.product_name}</h2>
                             <div className="product_infos">
-                                <p>Distância: {item.dist && pos ? `${item.dist} km` : ""}</p>
+                                <p>Distância: {item.dist && pos ? `${formatDistance(item.dist)}` : ""}</p>
                                 <p>Valor: R$ {item.price}/{item.unit}</p>
                             </div>
                             <p className="price_label">Valor total</p>

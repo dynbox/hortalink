@@ -6,6 +6,8 @@ use sqlx::types::Decimal;
 use crate::json::error::ApiError;
 use crate::json::serialize_timestamp;
 use crate::json::serialize_unit;
+use crate::json::serialize_price;
+use crate::json::serialize_rating;
 
 #[derive(sqlx::FromRow, Serialize)]
 pub struct SellerProduct {
@@ -14,7 +16,9 @@ pub struct SellerProduct {
     product: Product,
     photos: Vec<String>,
     quantity: Option<i16>,
+    #[serde(serialize_with = "serialize_price")]
     price: Decimal,
+    #[serde(serialize_with = "serialize_rating")]
     rating: Option<f64>,
     rating_quantity: Option<i32>,
     description: Option<String>,
@@ -28,7 +32,9 @@ pub struct SellerProductPreview {
     id: i64,
     #[sqlx(flatten)]
     product: Product,
+    #[serde(serialize_with = "serialize_price")]
     price: Decimal,
+    #[serde(serialize_with = "serialize_rating")]
     rating: Option<f64>,
     rating_quantity: Option<i32>,
     photos: Vec<String>,

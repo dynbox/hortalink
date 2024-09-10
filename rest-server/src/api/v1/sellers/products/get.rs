@@ -105,7 +105,7 @@ pub async fn fetch_products(
     );
 
     if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
-        sql_query.push_str(&format!(", ST_DistanceSphere(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4674)) / 1000 AS dist"));
+        sql_query.push_str(&format!(", ST_DistanceSphere(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4674)) AS dist"));
     } else {
         sql_query.push_str(", null AS dist");
     }

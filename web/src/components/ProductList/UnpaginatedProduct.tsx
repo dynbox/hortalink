@@ -2,11 +2,12 @@ import { imagesContext, itemsContext } from "../../layouts/UnpaginatedProductLis
 import { useContext } from "react";
 import { useStore } from "@nanostores/react";
 import Products from "../../stores/Products";
+import formatDistance from "../../util/formatDistance.ts";
 
 function ItemDist(props: { id: number }) {
     const dists = useStore(Products.all_products_dist)
 
-    return <>{dists && dists[props.id] ? dists[props.id].toFixed(2) : "N/A"} km</>
+    return <>{dists && dists[props.id] ? formatDistance(dists[props.id]) : "N/A"}</>
 }
 
 export default function UnpaginatedProduct(props: { item: any, i: number }) {

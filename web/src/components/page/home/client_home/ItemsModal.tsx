@@ -1,7 +1,7 @@
 import Products from "../../../../stores/Products";
 import { useStore } from "@nanostores/react";
 import Geolocation from "../../../../stores/Geolocation";
-import degreesToKm from "../../../../util/degreesToKm";
+import formatDistance from "../../../../util/formatDistance.ts";
 
 export default function Items(props: { container_id: string, store: string, star_image_src: string, location_image_src: string, arrow_image_src: string, noscroll?: boolean }) {
     const products = useStore(Products.search_result)
@@ -25,7 +25,7 @@ export default function Items(props: { container_id: string, store: string, star
                                 <div>
                                     <h2>{item.product.name}</h2>
                                     <div className="product_infos">
-                                        <p>Distância: {item.dist ? degreesToKm(item.dist) : "N/A"} km</p>
+                                        <p>Distância: {item.dist ? formatDistance(item.dist) : "N/A"}</p>
                                         <p>Valor por {item.unit}: {item.price}</p>
                                     </div>
                                     <div className="product_modal_rating">

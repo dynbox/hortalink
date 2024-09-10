@@ -65,7 +65,8 @@ pub enum UnitMass {
     Dag = 2,
     G = 3,
     Cg = 4,
-    Mg = 5
+    Mg = 5,
+    U = 6
 }
 
 #[derive(TryFromPrimitive, Deserialize_repr, Serialize_repr, Debug)]

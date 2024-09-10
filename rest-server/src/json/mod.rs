@@ -1,4 +1,7 @@
+use std::fmt::format;
 use std::str::FromStr;
+use locale::Numeric;
+use rust_decimal::prelude::ToPrimitive;
 
 use serde::{Deserialize, Deserializer, Serializer};
 use serde::ser::Error;
@@ -60,6 +63,24 @@ where
     serializer.serialize_str(&unit.to_string())
 }
 
+pub fn serialize_price<S>(num: &Decimal, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+{
+    serializer.serialize_str(&format_num(num.to_usize().unwrap()))
+}
+
+pub fn serialize_rating<S>(num: &Option<f64>, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+{
+    if let Some(num) = num {
+        serializer.serialize_str(&format!("{num:.1}").replace(".", ","))
+    } else {
+        serializer.serialize_none()
+    }
+}
+
 pub fn deserialize_array<'de, D, T>(deserializer: D) -> Result<Vec<T>, D::Error>
 where
     D: Deserializer<'de>,
@@ -75,4 +96,24 @@ where
         .collect();
 
     Ok(v)
+}
+
+fn format_num(num: usize) -> String {
+    let binding = num.to_string();
+    let parts = binding.split(".").collect::<Vec<&str>>();
+
+    let formated_integer = parts[0]
+        .as_bytes()
+        .rchunks(3)
+        .rev()
+        .map(std::str::from_utf8)
+        .collect::<Result<Vec<&str>, _>>()
+        .unwrap()
+        .join(".");
+
+    if parts.len() > 1 {
+        format!("{formated_integer},{}", parts[1])
+    } else {
+        format!("{formated_integer},00")
+    }
 }
