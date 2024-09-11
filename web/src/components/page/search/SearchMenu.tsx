@@ -13,17 +13,13 @@ export default function SearchMenu(props: { store: string }) {
 
     return (
         <>
-            <SearchContainer store={props.store}>
-                <SearchBar />
-                <div className="line" />
-                <Tags />
-                <UnpaginatedProductList
-                    arrow_image_src={images["arrow.svg"]}
-                    location_image_src={images["location.svg"]}
-                    star_image_src={images["star.svg"]}
-                    store={props.store}
-                />
-            </SearchContainer>
+            <UnpaginatedProductList
+                arrow_image_src={images["arrow.svg"]}
+                location_image_src={images["location.svg"]}
+                star_image_src={images["star.svg"]}
+                store={props.store}
+                noInitialFetch={false}
+            />
         </>
     )
 }

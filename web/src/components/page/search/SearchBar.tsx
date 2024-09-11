@@ -17,12 +17,24 @@ async function doSeach(query: string) {
 
 function SearchResults() {
     const results = useStore(Products.searched)
+    const { filter, set_filter } = useContext(SearchContext)
+
+    const [product_id, set_product_id] = useState(null)
+
+    useEffect(() => {
+        if(!product_id) return;
+
+        const oldFilter = {...filter}
+
+        Products.products_filter.set({...oldFilter, product_id})
+        console.log(`Set product type: ${product_id}`)
+    }, [product_id])
 
     return (
         <section className="select_result_container">
             {
                 results && results.map((result, i) => (
-                    <div className="result" key={`option-${result.product_name}`} tabIndex={0}>
+                    <div className="result" key={`option-${result.product_name}`} tabIndex={0} onClick={() => { set_product_id(result.product_id) }}>
                         {result.product_name}
                     </div>
                 ))
@@ -38,6 +50,8 @@ export default function SearchBar() {
     const inputRef = useRef<HTMLInputElement>()
 
     function isFocusedOption() {
+        return false
+
         console.log(document.activeElement.className)
         if(document.activeElement.className === "result") {
             return true
@@ -61,13 +75,13 @@ export default function SearchBar() {
             setHidden(false)
         })
 
-        inputRef.current.addEventListener("blur", () => {
+        /*inputRef.current.addEventListener("blur", () => {
             if(isFocusedOption()) {
                 setHidden(false)
             } else {
                 setHidden(true)
             }
-        })
+        })*/
     }, [])
 
     return (

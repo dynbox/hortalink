@@ -108,6 +108,58 @@
                 }
             }
 
+            .column_product {
+                display: flex;
+    
+                flex-direction: row;
+                gap: 1rem;
+        
+                img {
+                    object-fit: cover;
+                    border-radius: 8px;
+                }
+    
+                h2 {
+                    font-size: 1rem;
+                }
+    
+                .product_infos {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.1rem;
+    
+                    margin-top: 0.3rem;
+                    margin-bottom: 0.3rem;
+    
+                    p {
+                        font-size: 0.85em;
+                        font-weight: 500;
+                    }
+                }
+    
+                .product_modal_rating {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+    
+                    gap: 0.3rem;
+    
+                    font-size: 0.7rem;
+                    color: colors.$mid;
+    
+                    margin-top: 0.4rem;
+                    margin-bottom: 0.4rem;
+                }
+    
+                .price {
+                    color: colors.$primary-dark;
+                    font-weight: bold;
+                    font-size: 1em;
+                }
+    
+                margin-bottom: 2rem;
+            }
+
             .hidden {
                 display: none;
             }

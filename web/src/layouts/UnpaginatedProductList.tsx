@@ -8,6 +8,7 @@ import type { WritableAtom } from "nanostores";
 import get_user_recent_products from "../api/get_user_recent_products";
 import get_user_most_requested_products from "../api/get_user_most_requested_products";
 import get_products from "../api/get_products";
+import UnpaginatedColumnProduct from "../components/ProductList/UnpaginatedColumnProduct";
 
 type MemoizedComponent = MemoExoticComponent<() => JSX.Element>
 
@@ -20,6 +21,10 @@ function getProducts(store: string, page: number) {
             get_user_most_requested_products(page, 5)
         case "products":
             get_products()
+            break;
+        case "search_result":
+            get_products("search_result")
+            break;
     }
 }
 
@@ -75,7 +80,7 @@ function ProductsUpdater(props: { store: string }) {
     return <></>
 }
 
-function Items(props: { store: string }) {
+function Items(props: { store: string, isColumn?: boolean }) {
     const { items, setItems, currentItemsRaw, container_id } = useContext(itemsContext)
     let i = 0
 
@@ -87,7 +92,7 @@ function Items(props: { store: string }) {
             if(item) {
                 const index = i
                 if (!newItems[item.id]) {
-                    newItems[item.id] = memo(() => (<UnpaginatedProduct item={item} i={index} />))
+                    newItems[item.id] = !props.isColumn ? memo(() => (<UnpaginatedProduct item={item} i={index} />)) : memo(() => ( <UnpaginatedColumnProduct item={item} /> ))
                     i += 1
                 }
             }
@@ -168,7 +173,7 @@ const ArrowNext = memo(({ arrow_image_src }: any) => {
     );
 }, (prev, next) => true);
 
-export default function UnpaginatedProductList(props: { store: string, star_image_src: string, location_image_src: string, arrow_image_src: string }) {
+export default function UnpaginatedProductList(props: { store: string, noInitialFetch?: boolean, isColumn?: boolean, star_image_src: string, location_image_src: string, arrow_image_src: string }) {
     useEffect(() => {
         getProducts(props.store, 1)
     }, [])
@@ -183,7 +188,7 @@ export default function UnpaginatedProductList(props: { store: string, star_imag
             }}>
                 <ProductsProvider>
                     <div className="product_list">
-                        <div className="product_container">
+                        <div className="product_container" style={props.isColumn ? { flexDirection: "column" } : {}}>
                             <Items {...props}/>
                         </div>
                         <ProductsUpdater store={props.store} />
