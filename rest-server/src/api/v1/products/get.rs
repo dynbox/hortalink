@@ -16,23 +16,17 @@ pub async fn filter_products(
     let mut sql_query = QueryBuilder::new(
         r#"
             SELECT DISTINCT ON (s.id) s.id, p.id AS product_id, p.name,
-               s.photos, s.price, s.unit,
+               s.photos[1], s.price, s.unit,
                COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                s.rating_quantity, s.seller_id
         "#
     );
 
-    if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
-        sql_query.push(", ST_DistanceSphere(sc.geolocation, ST_SetSRID(ST_MakePoint(")
-            .push_bind(longitude)
-            .push(", ")
-            .push_bind(latitude)
-            .push("),4674)) AS dist ");
+    if let (Some(_), Some(_)) = (query.latitude, query.longitude) {
+        sql_query.push(" FROM places pl ");
     } else {
-        sql_query.push(", null AS dist");
+        sql_query.push(" FROM seller_products s ");
     }
-
-    sql_query.push(" FROM seller_products s ");
 
     if let Some(product_id) = query.product_id {
         sql_query.push(" JOIN products p ON p.id = ")
@@ -76,7 +70,7 @@ pub async fn filter_products(
     }
 
     if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
-        sql_query.push(" AND ST_DWithin(sc.geolocation::geography, ST_SetSRID(ST_MakePoint(")
+        sql_query.push(" AND ST_DWithin(pl.geolocation::geography, ST_SetSRID(ST_MakePoint(")
             .push_bind(longitude)
             .push(", ")
             .push_bind(latitude)
@@ -102,10 +96,11 @@ pub async fn distance(
     let query = query.into_inner();
     let products = sqlx::query_as::<_, ProductDistance>(
         r#"
-            SELECT DISTINCT ON (sp.id) sp.id, ST_DistanceSphere(sc.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674)) AS dist
+            SELECT DISTINCT ON (sp.id) sp.id, ST_DistanceSphere(pl.geolocation, ST_SetSRID(ST_MakePoint($1, $2),4674)) AS dist
             FROM seller_products sp
             JOIN products_schedules ps ON ps.seller_product_id = sp.id
             JOIN schedules sc ON sc.id = ps.schedule_id
+            JOIN places pl ON pl.id = sc.id
             WHERE sp.id = ANY($3)
         "#
     )

@@ -15,7 +15,6 @@ use crate::models::users::PreviewUser;
 pub async fn user(
     Extension(state): Extension<AppState>,
     Path(user_id): Path<i32>,
-    WithValidation(query): WithValidation<Query<Location>>,
 ) -> Result<Json<UserResponse>, ApiError> {
     let profile = PublicProfile::fetch(user_id, &state.pool)
         .await?;
@@ -29,8 +28,6 @@ pub async fn user(
             products: Some(fetch_products(
                 user_id,
                 HomePage {
-                    latitude: query.latitude,
-                    longitude: query.longitude,
                     page: 1,
                     per_page: 15,
                 },

@@ -48,10 +48,9 @@ pub async fn product(
 
     let schedules = sqlx::query_scalar::<_, i64>(
         r#"
-            SELECT s.id
+            SELECT sc.schedule_id
             FROM seller_products sp
             JOIN products_schedules sc ON sc.seller_product_id = sp.id
-            JOIN schedules s ON sc.schedule_id = s.id
             WHERE sp.id = $1
         "#
     )
@@ -95,37 +94,24 @@ pub async fn fetch_products(
     query: HomePage,
     pool: &Pool<Postgres>,
 ) -> Result<Vec<SellerProductPreview>, ApiError> {
-    let mut sql_query = String::from(
+    let products = sqlx::query_as::<_, SellerProductPreview>(
         r#"
-            SELECT DISTINCT ON (s.id) s.id, p.id AS product_id, p.name,
-               s.photos, s.price, s.unit,
+            SELECT s.id, p.id AS product_id, p.name,
+               s.photos[1], s.price, s.unit,
                COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                s.rating_quantity, s.seller_id
+            FROM seller_products s
+            JOIN products p ON s.product_id = p.id
+            WHERE s.seller_id = $1
+            ORDER BY s.id
+            LIMIT $2 OFFSET $3
         "#
-    );
-
-    if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
-        sql_query.push_str(&format!(", ST_DistanceSphere(sc.geolocation, ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4674)) AS dist"));
-    } else {
-        sql_query.push_str(", null AS dist");
-    }
-
-    sql_query.push_str(r#"
-        FROM seller_products s
-        JOIN products p ON s.product_id = p.id
-        JOIN products_schedules ps ON ps.seller_product_id = s.id
-        JOIN schedules sc ON sc.id = ps.schedule_id
-        WHERE s.seller_id = $1
-        ORDER BY s.id
-        LIMIT $2 OFFSET $3
-    "#);
-
-    Ok(
-        sqlx::query_as::<_, SellerProductPreview>(&sql_query)
-            .bind(seller_id)
-            .bind(query.per_page)
-            .bind((query.page - 1) * query.per_page)
-            .fetch_all(pool)
-            .await?
     )
+        .bind(seller_id)
+        .bind(query.per_page)
+        .bind((query.page - 1) * query.per_page)
+        .fetch_all(pool)
+        .await?;
+
+    Ok(products)
 }

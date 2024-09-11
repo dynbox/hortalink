@@ -38,7 +38,7 @@ const product = Astro.props.product
                 <Image
                     src={star} width={16} height={16} alt="Imagem de uma estrela ilustrando as avaliações"
                 />
-                <p>{product.product.rating.toFixed(1)} ({product.product.rating_quantity})</p>
+                <p>{product.product.rating} ({product.product.rating_quantity})</p>
             </a>
             <QuantitySwitcher
                 client:load

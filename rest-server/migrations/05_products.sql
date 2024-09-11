@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS "seller_products"
     seller_id       INT REFERENCES "sellers" (user_id),
     price           NUMERIC(7, 2)  NOT NULL,
     unit            SMALLINT       NOT NULL,
-    unit_quantity   REAL           NOT NULL,
+    unit_quantity   REAL,
     quantity        SMALLINT       NOT NULL,
     photos          VARCHAR(256)[] NOT NULL,
     description     TEXT,

@@ -10,15 +10,12 @@ use crate::json::utils::{HomePage, Location};
 
 pub async fn home(
     Extension(state): Extension<AppState>,
-    auth_session: AuthSession,
-    WithValidation(query): WithValidation<Query<Location>>,
+    auth_session: AuthSession
 ) -> Result<Json<Home>, ApiError> {
     let user = auth_session.user.as_ref().unwrap();
     let query = HomePage {
-        longitude: query.longitude,
-        latitude: query.latitude,
         page: 1,
-        per_page: 4
+        per_page: 6
     };
 
     if user.roles.contains(&3) {

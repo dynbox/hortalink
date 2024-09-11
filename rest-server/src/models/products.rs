@@ -37,8 +37,7 @@ pub struct SellerProductPreview {
     #[serde(serialize_with = "serialize_rating")]
     rating: Option<f64>,
     rating_quantity: Option<i32>,
-    photos: Vec<String>,
-    dist: Option<f64>,
+    photos: String,
     #[serde(serialize_with = "serialize_unit")]
     unit: i16,
     seller_id: i32
