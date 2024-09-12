@@ -1,16 +1,17 @@
 use crate::json::error::ApiError;
 use crate::json::serialize_unit;
+use crate::json::serialize_price;
 use crate::models::products::SellerProductMinimal;
 use common::entities::CartStatus;
-use serde::Serialize;
-use sqlx::types::{Decimal, JsonValue};
+use serde::{Deserialize, Serialize};
+use sqlx::types::{Decimal};
 use sqlx::{Pool, Postgres};
 
 #[derive(sqlx::FromRow, Serialize)]
 pub struct Order {
     #[sqlx(flatten)]
     user: UserPreview,
-    products: JsonValue,
+    products: sqlx::types::Json<Vec<ProductPreview>>,
 }
 
 #[derive(sqlx::FromRow, Serialize)]
@@ -32,17 +33,18 @@ struct UserPreview {
     avatar: Option<String>,
 }
 
-#[derive(sqlx::FromRow, Serialize)]
+#[derive(sqlx::FromRow, Serialize, Deserialize)]
 struct ProductPreview {
-    #[sqlx(rename = "product_id")]
-    id: i64,
-    #[sqlx(rename = "product_name")]
-    name: String,
+    order_id: i64,
+    withdrawn: i64,
+    amount: i32,
+    product_id: i64,
+    product_name: String,
+    #[serde(serialize_with = "serialize_price")]
     price: Decimal,
-    photos: Option<Vec<String>>,
+    photo: String,
     #[serde(serialize_with = "serialize_unit")]
     unit: i16,
-    dist: Option<f64>,
 }
 
 impl Order {

@@ -16,7 +16,7 @@ interface CartProduct {
     id: number,
     name: string,
     price: number,
-    photos?: string[],
+    photo: string,
     unit: string,
     dist?: number,
 

@@ -11,8 +11,9 @@ pub async fn schedules(
 ) -> Result<Json<Vec<Schedule>>, ApiError> {
     let schedules: Vec<Schedule> = sqlx::query_as::<_, Schedule>(
         r#"
-            SELECT id, address, start_time, end_time, day_of_week
-            FROM schedules
+            SELECT sc.id, pl.address, sc.start_time, sc.end_time, sc.day_of_week
+            FROM schedules sc
+            JOIN places pl ON pl.id = sc.place
             WHERE seller_id = $1
         "#,
     )

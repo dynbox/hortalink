@@ -28,7 +28,7 @@ const icons = [
 ]
 
 const icons_name = icons.map(icon => icon.name)
-const hrefs = ["/", "/", "/cart", "/users/@me"]
+const hrefs = ["/", "/search", "/cart", "/users/@me"]
 
 for(const icon of icons_name) {
     icons_files[icon] = page === icon ? files[paths.find(path => path.endsWith(`${icon}-solid.svg`))] : files[paths.find(path => path.endsWith(`${icon}.svg`))]

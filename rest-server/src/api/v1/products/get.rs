@@ -27,13 +27,8 @@ pub async fn filter_products(
     } else {
         sql_query.push(" FROM seller_products s ");
     }
-
-    if let Some(product_id) = query.product_id {
-        sql_query.push(" JOIN products p ON p.id = ")
-            .push_bind(product_id);
-    } else {
-        sql_query.push(" JOIN products p ON s.product_id = p.id ");
-    }
+    
+    sql_query.push(" JOIN products p ON s.product_id = p.id ");
 
     sql_query.push(" JOIN products_schedules ps ON ps.seller_product_id = s.id JOIN schedules sc ON sc.id = ps.schedule_id ");
 
@@ -43,6 +38,11 @@ pub async fn filter_products(
     }
 
     sql_query.push(" WHERE 1 = 1 ");
+
+    if let Some(product_id) = query.product_id {
+        sql_query.push(" AND p.id = ")
+            .push_bind(product_id);
+    }
 
     if let Some(max_price) = query.max_price {
         sql_query.push(" AND s.price < ")

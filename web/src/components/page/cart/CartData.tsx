@@ -28,7 +28,7 @@ export default function CartData(props: { cartData: CartProductWithAmount }) {
                     <div className="product">
                         <div>
                             <img
-                                src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.product_id}/${item.photos ? item.photos[0] : "undefined"}.jpg?size=256`}
+                                src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.product_id}/${item.photo ? item.photo.replace("/", "⁄") : undefined}.jpg?size=256`}
                                 width={108}
                                 height={108}
                                 alt={`Foto do produto "${item.product_name}"`}
