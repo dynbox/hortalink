@@ -47,12 +47,12 @@ const ItemsPaginationContext = createContext<{
 
 const itemsContext = createContext<{
     container_id: string,
-    
+
     items: {
-        [key: string]: MemoizedComponent
+        [key: string]: { pos: number, memo: MemoizedComponent }
     },
     setItems: React.Dispatch<React.SetStateAction<unknown>>,
-    
+
     currentItemsRaw: any[],
     setItemsRaw: React.Dispatch<React.SetStateAction<unknown>>,
 }>({
@@ -60,7 +60,7 @@ const itemsContext = createContext<{
 
     items: {},
     setItems: undefined,
-    
+
     currentItemsRaw: undefined,
     setItemsRaw: undefined,
 }) // valores padrões podem ser nulos
@@ -96,7 +96,7 @@ function ProductsUpdater(props: { store: string }) {
         })
 
         product_type_store.listen((v) => {
-            
+
             getProducts(props.store, 1)
         })
     }, [])
@@ -116,12 +116,12 @@ function Items(props: { store: string }) {
             if(item) {
                 const index = i
                 if (!newItems[item.id]) {
-                    newItems[item.id] = memo(() => (<Product item={item} i={index} />))
+                    newItems[item.id] = {pos: i, memo: memo(() => (<Product item={item} i={index} />))}
                     i += 1
                 }
             }
         })
-    
+
         const newKeys = Object.keys(newItems)
 
         let isEqual = true
@@ -138,15 +138,18 @@ function Items(props: { store: string }) {
         if(!isEqual) {
             setItems(newItems);
         }
-      
+
     }, [currentItemsRaw])
+
+    const sortedItems = Object.entries(items)
+        .sort((a, b) => a[1].pos - b[1].pos);
 
     return (
         <>
             {
-                Object.keys(items).map(itemKey => {
-                    const ItemComponent = items[itemKey]
-                    
+                sortedItems.map(([itemKey, item]) => {
+                    const ItemComponent = items[itemKey]["memo"]
+
                     return <ItemComponent key={`${container_id}-${itemKey}`}></ItemComponent>
                 })
             }
@@ -175,7 +178,7 @@ const ArrowBack = memo(({ arrow_image_src }: any) => {
       />
     );
 }, (prev, next) => true);
-  
+
 const StarImage = memo(({ star_image_src }: any) => {
     return (
       <img
@@ -186,7 +189,7 @@ const StarImage = memo(({ star_image_src }: any) => {
       />
     );
 }, (prev, next) => true);
-  
+
 const ArrowNext = memo(({ arrow_image_src }: any) => {
     return (
       <img src={arrow_image_src}
@@ -208,8 +211,10 @@ function PaginationProvider(props: { arrow_image_src: string, store: string, chi
 
     useEffect(() => {
         prevArrowRef.current.addEventListener("click", () => {
-            if(slide_pos <= 2) {
+            if(slide_pos != 0) {
                 setSlidePos(slide_pos - 2)
+            } else {
+                setSlidePos(0)
             }
         })
 
@@ -232,9 +237,9 @@ function PaginationProvider(props: { arrow_image_src: string, store: string, chi
             }
 
             setPage(page + 1)
-            
+
         }
-    }, [slide_pos])    
+    }, [slide_pos])
 
     useEffect(() => {
         if(page < 1) {

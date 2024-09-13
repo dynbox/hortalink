@@ -22,7 +22,7 @@ export default function Product(props: { item: any, i: number }) {
         return <></>
     } else {
         return (
-            <a href={`/users/${item.seller_id}/products/${item.id}`} className={`product ${props.i >= slide_pos ? "" : `hidden`}`} key={`${container_id}-${item.id}`}>
+            <a href={`/users/${item.seller_id}/products/${item.id}`} className={`product ${props.i == slide_pos || props.i == (slide_pos + 1) ? "" : `hidden`}`} key={`${container_id}-${item.id}`}>
                 <div className="head">
                     <h3>{item.product.name}</h3>
                     {
@@ -33,7 +33,7 @@ export default function Product(props: { item: any, i: number }) {
                         </span>
                     }
                 </div>
-                <img 
+                <img
                     src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.id}/${item.photos.replace("/", "⁄")}.jpg?size=256`}
                     width={145}
                     height={138}

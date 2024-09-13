@@ -24,12 +24,14 @@ pub async fn fetch(
             SELECT sp.id, p.id AS product_id, p.name,
                 sp.photos[1], sp.price,
                 COALESCE(CAST(sp.rating_sum AS FLOAT) / CAST(NULLIF(sp.rating_quantity, 0) AS FLOAT), NULL) AS rating,
-                sp.rating_quantity, sp.unit, sp.seller_id
+                sp.rating_quantity, sp.unit, sp.seller_id,
+                SUM(c.amount) AS total
             FROM cart c
-            LEFT JOIN seller_products sp ON c.seller_product_id = sp.id
+            JOIN seller_products sp ON c.seller_product_id = sp.id
             JOIN products p ON sp.product_id = p.id
             WHERE status = 4
-            ORDER BY sp.id
+            GROUP BY sp.id, p.id
+            ORDER BY total DESC
             LIMIT $1 OFFSET $2
         "#
     )
