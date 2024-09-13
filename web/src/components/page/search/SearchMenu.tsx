@@ -8,15 +8,18 @@ import Tags from "./Tags";
 import UnpaginatedProductList from "../../../layouts/UnpaginatedProductList";
 import Images from "../../../stores/Images";
 
-export default function SearchMenu(props: { store: string }) {
+export default function SearchMenu(props: { store: string, arrow_image_src: string, location_image_src: string, star_image_src: string, filter_image_src: string }) {
     const images = Images.get()
+
+    const { arrow_image_src, location_image_src, star_image_src, filter_image_src } = props
 
     return (
         <>
             <UnpaginatedProductList
-                arrow_image_src={images["arrow.svg"]}
-                location_image_src={images["location.svg"]}
-                star_image_src={images["star.svg"]}
+                arrow_image_src={arrow_image_src}
+                location_image_src={location_image_src}
+                star_image_src={star_image_src}
+                filter_image_src={filter_image_src}
                 store={props.store}
                 noInitialFetch={false}
             />

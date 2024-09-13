@@ -8,31 +8,32 @@ import Products from "../../../../stores/Products";
 import Images from "../../../../stores/Images";
 import UnpaginatedProductList from "../../../../layouts/UnpaginatedProductList";
 
-function ProductsList() {
-    const images = Images.get()
+function ProductsList({ arrow_image_src, location_image_src, star_image_src, filter_image_src }) {
   
     return (
         <>
             {
                 <UnpaginatedProductList
-                    arrow_image_src={images["arrow.svg"]}
-                    location_image_src={images["location.svg"]}
-                    star_image_src={images["star.svg"]}
+                    arrow_image_src={arrow_image_src}
+                    location_image_src={location_image_src}
+                    star_image_src={star_image_src}
+                    filter_image_src={filter_image_src}
                     store={"search_result"}
                     isColumn={true}
                     noInitialFetch={true}
+                    useCache={false}
                 />
             }
         </>
     )
 }
 
-export default function SearchResults() {
+export default function SearchResults(props: { arrow_image_src: string, location_image_src: string, star_image_src: string, filter_image_src: string }) {
     return (
         <>
             <SearchResultContainer store="search_result">
                 <Selector />
-                <ProductsList />
+                <ProductsList {...props} />
             </SearchResultContainer>
         </>
     )

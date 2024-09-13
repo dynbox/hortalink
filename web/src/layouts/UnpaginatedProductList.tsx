@@ -28,6 +28,8 @@ function getProducts(store: string, page: number) {
     }
 }
 
+type CacheCallback = (item: any) => boolean
+
 const itemsContext = createContext<{
     container_id: string,
     
@@ -38,6 +40,9 @@ const itemsContext = createContext<{
     
     currentItemsRaw: any[],
     setItemsRaw: React.Dispatch<React.SetStateAction<unknown>>,
+    
+    cacheCallback?: CacheCallback,
+    useCache?: boolean
 }>({
     container_id: undefined,
 
@@ -46,22 +51,26 @@ const itemsContext = createContext<{
     
     currentItemsRaw: undefined,
     setItemsRaw: undefined,
+
+    cacheCallback: null,
+    useCache: false
 }) // valores padrões podem ser nulos
 
 const imagesContext = createContext<{
     Star_image: JSX.Element,
     Location_image: JSX.Element,
     ArrowBack_image: JSX.Element,
-    ArrowNext_image: JSX.Element
+    ArrowNext_image: JSX.Element,
+    Filter_Image: JSX.Element
 }>({} as any)
 
-function ProductsProvider({ children }) {
+function ProductsProvider({ children, useCache }) {
     const [items, setItems] = useState({})
     const [currentItemsRaw, setItemsRaw] = useState([])
     const { container_id } = useContext(itemsContext)
 
     return (
-        <itemsContext.Provider value={{ container_id, items, setItems, currentItemsRaw, setItemsRaw }}>
+        <itemsContext.Provider value={{ container_id, items, setItems, currentItemsRaw, setItemsRaw, useCache: useCache || false }}>
             {children}
         </itemsContext.Provider>
     )
@@ -81,11 +90,11 @@ function ProductsUpdater(props: { store: string }) {
 }
 
 function Items(props: { store: string, isColumn?: boolean }) {
-    const { items, setItems, currentItemsRaw, container_id } = useContext(itemsContext)
+    const { items, setItems, useCache, currentItemsRaw, container_id } = useContext(itemsContext)
     let i = 0
 
     useEffect(() => {
-        const newItems = { ...items };
+        const newItems = useCache ? { ...items } : {} /* objeto vazio se useCache for desativado, re-renderiza os componentes sempre */;
 
         // Adiciona novos itens ao objeto 'newItems' sem causar re-renderizações desnecessárias
         currentItemsRaw.forEach((item) => {
@@ -122,7 +131,7 @@ function Items(props: { store: string, isColumn?: boolean }) {
             {
                 Object.keys(items).map(itemKey => {
                     const ItemComponent = items[itemKey]
-                    
+  
                     return <ItemComponent key={`${container_id}-${itemKey}`}></ItemComponent>
                 })
             }
@@ -173,7 +182,17 @@ const ArrowNext = memo(({ arrow_image_src }: any) => {
     );
 }, (prev, next) => true);
 
-export default function UnpaginatedProductList(props: { store: string, noInitialFetch?: boolean, isColumn?: boolean, star_image_src: string, location_image_src: string, arrow_image_src: string }) {
+const FilterImage = memo(({filter_image_src}: any) => {
+    return (
+        <img src={filter_image_src} 
+            alt="Ícone de filtro"
+            width={35}
+            height={35}
+        />
+    )
+}, (prev, next) => true)
+
+export default function UnpaginatedProductList(props: { store: string, cacheCallback?: CacheCallback, useCache?: boolean, noInitialFetch?: boolean, isColumn?: boolean, star_image_src: string, location_image_src: string, arrow_image_src: string, filter_image_src: string }) {
     useEffect(() => {
         getProducts(props.store, 1)
     }, [])
@@ -184,9 +203,10 @@ export default function UnpaginatedProductList(props: { store: string, noInitial
                 Location_image: <Location_Img location_image_src={props.location_image_src}/> as any,
                 ArrowBack_image: <ArrowBack arrow_image_src={props.arrow_image_src} /> as any,
                 ArrowNext_image: <ArrowNext arrow_image_src={props.arrow_image_src} /> as any,
-                Star_image: <StarImage star_image_src={props.star_image_src} /> as any
+                Star_image: <StarImage star_image_src={props.star_image_src} /> as any,
+                Filter_Image: <FilterImage filter_image_src={props.filter_image_src} /> as any
             }}>
-                <ProductsProvider>
+                <ProductsProvider useCache={props.useCache}>
                     <div className="product_list">
                         <div className="product_container" style={props.isColumn ? { flexDirection: "column" } : {}}>
                             <Items {...props}/>
@@ -198,6 +218,11 @@ export default function UnpaginatedProductList(props: { store: string, noInitial
         </div>
     )
 }
+
+export type {
+    CacheCallback
+}
+
 export {
     itemsContext,
     imagesContext

@@ -5,6 +5,7 @@ import SearchTypes from "../../../api/searchTypes";
 
 import Images from "../../../stores/Images";
 import { useStore } from "@nanostores/react";
+import FilterButton from "./filter/FilterButton";
 
 async function doSeach(query: string) {
     if(!query || !query.length) {
@@ -43,7 +44,7 @@ function SearchResults() {
     )
 }
 
-export default function SearchBar() {
+export default function SearchBar(props: { filter_image_src: string, star_image_src }) {
     const [hidden, setHidden] = useState(true)
 
     const images = Images.get()
@@ -97,6 +98,7 @@ export default function SearchBar() {
                         style={{ transform: "translateX(-10px)" }}
                     />
                 </div>
+                <FilterButton {...props} />
             </section>
             {
                 !hidden && <SearchResults />
