@@ -242,18 +242,9 @@ header {
                 }
         
                 .footer {
-                    span {
-                        p {
-                            color: colors.$dark;
-                            font-size: 0.75em;
-                            font-weight: 600;
-                        }
-                    }
-        
                     .price {
-                        p {
-                            color: colors.$primary-dark;
-                        }
+                        font-size: 0.75em;
+                        font-weight: 600;
                     }
                 }
             }
@@ -361,7 +352,6 @@ header {
             }
 
             .price {
-                color: colors.$primary-dark;
                 font-weight: bold;
                 font-size: 1em;
             }

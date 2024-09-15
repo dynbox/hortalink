@@ -20,7 +20,7 @@
 .products {
     display: flex;
     align-items: center;
-    
+
     width: 100%;
     margin: auto;
     max-width: 470px;
@@ -32,20 +32,20 @@
         margin-left: 5px;
     }
 
-    .product_list {    
+    .product_list {
         overflow: hidden;
         max-width: 350px;
-    
+
         .product_container {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-        
+
             padding: 10px 0;
             width: fit-content;
             margin: auto;
-        
+
             .product {
                 width: 170px;
                 background-color: colors.$minimal;
@@ -59,36 +59,36 @@
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-        
+
                     h3 {
                         font-size: 1em;
                         font-weight: 600;
                         text-transform: capitalize
                     }
-        
+
                     p {
                         color: colors.$mid;
                         font-size: 0.7rem;
                     }
-        
+
                     span {
                         display: flex;
                         align-items: center;
-        
+
                         gap: 0.2rem;
                     }
                 }
-        
+
                 img {
                     display: block;
                     object-fit: cover;
                     border-radius: 3px;
 
                     max-width: 100%;
-        
+
                     margin: 0.2rem auto;
                 }
-        
+
                 .footer {
                     span {
                         p {
@@ -99,7 +99,9 @@
                     }
         
                     .price {
-                        p {
+                        gap: 0.666px;
+
+                        .highlight {
                             color: colors.$primary-dark;
                         }
                     }
@@ -135,7 +137,7 @@
     }
 }
 
-.products_column {    
+.products_column {
     display: flex;
     flex-direction: column;
 
@@ -161,16 +163,16 @@
         ::-webkit-scrollbar {
             display: none;
         }
-    
+
         -ms-overflow-style: none;
         scrollbar-width: none;
 
         .product {
             display: flex;
-    
+
             flex-direction: row;
             gap: 1rem;
-    
+
             img {
                 object-fit: cover;
                 border-radius: 8px;

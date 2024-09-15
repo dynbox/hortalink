@@ -16,7 +16,7 @@ pub async fn filter_products(
     let mut sql_query = QueryBuilder::new(
         r#"
             SELECT DISTINCT ON (s.id) s.id, p.id AS product_id, p.name,
-               s.photos[1], s.price, s.unit,
+               s.photos[1] AS photo, s.price, s.unit, s.unit_quantity,
                COALESCE(CAST(s.rating_sum AS FLOAT) / CAST(NULLIF(s.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                s.rating_quantity, s.seller_id
         "#

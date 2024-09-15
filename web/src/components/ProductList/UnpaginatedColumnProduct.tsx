@@ -10,7 +10,7 @@ export default function UnpaginatedColumnProduct(props: { item: any }) {
         <div className="column_product" key={`${container_id}-${item.id}-column-unpaginated`}>
             <div>
                 <img
-                    src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.id}/${item.photos.replace("/", "⁄")}.jpg?size=256`}
+                    src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.id}/${item.photo.replace("/", "⁄")}.jpg?size=256`}
                     width={108}
                     height={108}
                     alt={`Foto do produto "${item.product.name}"`}

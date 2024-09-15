@@ -99,12 +99,6 @@
                             font-weight: 600;
                         }
                     }
-        
-                    .price {
-                        p {
-                            color: colors.$primary-dark;
-                        }
-                    }
                 }
             }
 
@@ -152,9 +146,9 @@
                 }
     
                 .price {
-                    color: colors.$primary-dark;
                     font-weight: bold;
                     font-size: 1em;
+                    color: colors.$primary-dark;
                 }
     
                 margin-bottom: 2rem;
@@ -259,7 +253,6 @@
             }
 
             .price {
-                color: colors.$primary-dark;
                 font-weight: bold;
                 font-size: 1em;
             }

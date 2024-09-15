@@ -34,7 +34,7 @@ export default function Product(props: { item: any, i: number }) {
                     }
                 </div>
                 <img
-                    src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.id}/${item.photos.replace("/", "⁄")}.jpg?size=256`}
+                    src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${item.id}/${item.photo.replace("/", "⁄")}.jpg?size=256`}
                     width={145}
                     height={138}
                     alt={`Foto do produto "${item.product.name}"`}
@@ -42,10 +42,11 @@ export default function Product(props: { item: any, i: number }) {
                 <div className="footer">
                     <span>
                         {Location_image}
-                        <p><ItemDist id={item.id} /></p>
+                        <p><ItemDist id={item.id}/></p>
                     </span>
                     <span className="price">
-                        <p>R$ {item.price} {item.unit}</p>
+                        <span className="highlight">R$ {item.price}</span>/
+                        <span className="quantity">{item.unit_quantity}{item.unit}</span>
                     </span>
                 </div>
             </a>

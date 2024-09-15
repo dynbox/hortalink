@@ -22,7 +22,7 @@ pub async fn fetch(
     let more_orders = sqlx::query_as::<_, SellerProductPreview>(
         r#"
             SELECT sp.id, p.id AS product_id, p.name,
-                sp.photos[1], sp.price,
+                sp.photos[1] AS photo, sp.price, sp.unit_quantity,
                 COALESCE(CAST(sp.rating_sum AS FLOAT) / CAST(NULLIF(sp.rating_quantity, 0) AS FLOAT), NULL) AS rating,
                 sp.rating_quantity, sp.unit, sp.seller_id,
                 SUM(c.amount) AS total
