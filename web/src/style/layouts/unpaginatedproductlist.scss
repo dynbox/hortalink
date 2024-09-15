@@ -92,11 +92,13 @@
                 }
         
                 .footer {
-                    span {
-                        p {
-                            color: colors.$dark;
-                            font-size: 0.75em;
-                            font-weight: 600;
+                    .price {
+                        font-size: 0.75em;
+                        font-weight: 600;
+                        gap: 0.666px;
+
+                        .highlight {
+                            color: colors.$primary-dark;
                         }
                     }
                 }

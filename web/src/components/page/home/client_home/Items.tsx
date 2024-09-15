@@ -72,11 +72,12 @@ function RenderItems(props: { store: string, star_image_src: string, location_im
                             />
                             <div className="footer">
                                 <span>
-                                    <Location_Img location_image_src={props.location_image_src} />
-                                    <p><ItemDist id={item.id} /></p>
+                                    <Location_Img location_image_src={props.location_image_src}/>
+                                    <p><ItemDist id={item.id}/></p>
                                 </span>
                                 <span className="price">
-                                    <p>R$ {item.price} {item.unit}</p>
+                                    <span className="highlight">R$ {item.price}</span>/
+                                    <span className="quantity">{item.unit_quantity}{item.unit}</span>
                                 </span>
                             </div>
                         </a>
@@ -87,7 +88,7 @@ function RenderItems(props: { store: string, star_image_src: string, location_im
     )
 }
 
-const Location_Img = memo(({ location_image_src }: any) => {
+const Location_Img = memo(({location_image_src}: any) => {
     return (
         <img
             src={location_image_src}

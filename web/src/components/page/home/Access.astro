@@ -24,12 +24,4 @@ import "../../../style/pages/home.scss";
             <a href="/access/signup">Criar conta</a>
         </section>
     </Fragment>
-    
-    <script>
-        fetch(`/api/v1/users/@me`, {
-            credentials: "include"
-        }).then(request => {
-            request.json().then((data) => console.log(data)).catch(e => {})
-        }).catch(e => {})
-    </script>
 </BaseLayout>

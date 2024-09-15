@@ -44,7 +44,8 @@ export default function UnpaginatedProduct(props: { item: any, i: number }) {
                         <p><ItemDist id={item.id}/></p>
                     </span>
                     <span className="price">
-                        <p>R$ {item.price} {item.unit}</p>
+                        <span className="highlight">R$ {item.price}</span>/
+                        <span className="quantity">{item.unit_quantity}{item.unit}</span>
                     </span>
                 </div>
             </a>

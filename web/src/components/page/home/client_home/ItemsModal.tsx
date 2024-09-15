@@ -37,7 +37,10 @@ export default function Items(props: { container_id: string, store: string, star
                                         />
                                         <p>({item.rating_quantity || "N/A "})</p>
                                     </div>
-                                    <p className="price">R$ {item.price}</p>
+                                    <span className="price">
+                                        <span className="highlight">R$ {item.price}</span>/
+                                        <span className="quantity">{item.unit_quantity}{item.unit}</span>
+                                    </span>
                                 </div>
                             </div>
                         ))
