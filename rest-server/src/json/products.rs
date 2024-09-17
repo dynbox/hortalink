@@ -86,6 +86,8 @@ pub struct FilterProducts {
     pub latitude: Option<f64>,
     #[garde(range(min = - 180.0000000, max = 180.0000000))]
     pub longitude: Option<f64>,
+    #[garde(range(min = 1.0, max = 45.0))]
+    pub distance: Option<f32>
 }
 
 #[derive(Deserialize, Validate)]

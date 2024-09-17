@@ -23,14 +23,14 @@ pub async fn filter_products(
     );
 
     if let (Some(_), Some(_)) = (query.latitude, query.longitude) {
-        sql_query.push(" FROM places pl ");
+        sql_query.push(" FROM places pl ")
+            .push(" JOIN schedules sc ON sc.place = pl.id JOIN products_schedules ps ON ps.schedule_id = sc.id JOIN seller_products s ON s.id = ps.seller_product_id");
     } else {
-        sql_query.push(" FROM seller_products s ");
+        sql_query.push(" FROM seller_products s ")
+            .push(" JOIN products_schedules ps ON ps.seller_product_id = s.id JOIN schedules sc ON sc.id = ps.schedule_id ");
     }
     
     sql_query.push(" JOIN products p ON s.product_id = p.id ");
-
-    sql_query.push(" JOIN products_schedules ps ON ps.seller_product_id = s.id JOIN schedules sc ON sc.id = ps.schedule_id ");
 
     if let Some(day_of_week) = query.day_of_week {
         sql_query.push(" AND sc.day_of_week = ")
@@ -69,12 +69,14 @@ pub async fn filter_products(
             .push_bind(start_time);
     }
 
-    if let (Some(latitude), Some(longitude)) = (query.latitude, query.longitude) {
+    if let (Some(latitude), Some(longitude), Some(distance)) = (query.latitude, query.longitude, query.distance) {
         sql_query.push(" AND ST_DWithin(pl.geolocation::geography, ST_SetSRID(ST_MakePoint(")
             .push_bind(longitude)
             .push(", ")
             .push_bind(latitude)
-            .push(")::geography, 4674), 45000) ");
+            .push(")::geography, 4674), ")
+            .push_bind(distance * 1000.0)
+            .push(" ) ");
     }
 
     sql_query.push(" ORDER BY s.id LIMIT ")
@@ -102,6 +104,7 @@ pub async fn distance(
             JOIN schedules sc ON sc.id = ps.schedule_id
             JOIN places pl ON pl.id = sc.id
             WHERE sp.id = ANY($3)
+            ORDER BY sp.id, dist ASC
         "#
     )
         .bind(query.longitude)
