@@ -1,0 +1,47 @@
+@use "../../../colors";
+
+@mixin flex() {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.searchbar_container {
+    @include flex();
+
+    width: 100%;
+    max-width: 401px;
+    gap: 1.3rem;
+
+    margin: auto;
+    margin-top: 1rem;
+
+    .input {
+        @include flex();
+        width: 100%;
+        max-width: 311px;
+        
+        input[type=text] {
+            width: 100%;
+            max-width: 311px;
+    
+            padding: 15px 16px;
+            border-radius: 13px 0 0 13px;
+            background-color: adjust-color(colors.$light_1, $alpha: -0.75);
+    
+            &::placeholder {
+                font-weight: 600;
+                color: colors.$mid_1;
+            }
+        }
+
+        .search_icon {
+            @include flex();
+            
+            border-radius: 0 13px 13px 0;
+            background-color: adjust-color(colors.$light_1, $alpha: -0.75);
+            height: 46px;
+            padding: 0 15px;
+        }
+    }
+}

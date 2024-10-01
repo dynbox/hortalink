@@ -1,8 +1,19 @@
 {
-  "extends": "astro/tsconfigs/base",
-  "compilerOptions": {
-    "resolveJsonModule": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "react"
-  }
+    "extends": "astro/tsconfigs/base",
+    "compilerOptions": {
+        "resolveJsonModule": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "react",
+
+        "baseUrl": ".",
+        "paths": {
+            "@public/*": ["public/*"],
+            "@components/*": ["src/components/*"],
+            "@interfaces/*": ["src/interfaces/*"],
+            "@layouts/*": ["src/layouts/*"],
+            "@stores/*": ["src/stores/*"],
+            "@styles/*": ["src/styles/*"],
+            "@HortalinkAPIWrapper": ["src/API/Wrapper"]
+        }
+    }
 }

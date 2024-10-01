@@ -1,16 +1,25 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import User from "../../layouts/User.astro";
+import "@styles/pages/users/@me.scss";
 
-export const prerender = false
+import BaseLayout from "@layouts/BaseLayout.astro";
+import ProfileCard from "@components/pages/users/@me/ProfileCard";
+
+import Selector from "@components/pages/users/@me/Selector";
+import Orders from "@components/pages/users/@me/Orders";
 ---
 
-<BaseLayout page="user">
+<BaseLayout>
     <Fragment slot="head">
-        <title>Hortalink perfil</title>
+        <title>Hortalink | Meu perfil</title>
     </Fragment>
-
     <Fragment slot="body">
-        <User />
+        <header>
+            <div class="background" />
+            <ProfileCard client:only="react" />
+        </header>
+        <main>
+            <Selector client:load />
+            <Orders client:only="react" />
+        </main>
     </Fragment>
 </BaseLayout>

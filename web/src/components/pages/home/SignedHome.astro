@@ -1,0 +1,30 @@
+---
+import "@styles/pages/home/signedhome.scss";
+
+import SearchBar from "./search/SearchBar.astro";
+import Categories from "./Categories.astro";
+
+import Recents from "@components/pages/home/sections/Recents/Recents.astro";
+import MoreOrders from "@components/pages/home/sections/MoreOrders/MoreOrders.astro"
+---
+
+<SearchBar />
+<div class="line" style="max-width: 401px;" />
+<Categories />
+<div class="line" style="max-width: 401px;" />
+<Recents />
+<div class="line" style="max-width: 401px;" />
+<MoreOrders />
+<script>
+    import APIWrapper, { RequestAPIFrom } from "@HortalinkAPIWrapper";
+    import Stores from "@stores/pages/Home";
+
+    const api = new APIWrapper(RequestAPIFrom.Client)
+
+    async function init() {
+        const recents = await api.getRecentProducts()
+        Stores.Products_Recent.set(recents)
+    }
+
+    init()
+</script>

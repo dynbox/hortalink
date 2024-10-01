@@ -1,20 +1,48 @@
 ---
-import Access from "../components/page/home/Access.astro";
-import ClientHome from "../components/page/home/client_home/ClientHome.astro";
-import getUser from "../util/getUser";
+import "@styles/pages/home/unsigned.scss";
 
-const session_id = Astro.cookies.get("session_id")?.value
-let user_data = null
+import BaseLayout from "@layouts/BaseLayout.astro";
 
-if(session_id) {
-    user_data = await getUser(session_id).catch(e => {
-        return null
-    }) as any
-}
-
-export const prerender = false
+import Unsigned from "@components/pages/home/Unsigned.astro";
+import SignedHome from "@components/pages/home/SignedHome.astro";
 ---
 
-{
-    user_data ? <ClientHome /> : <Access />
-}
+<BaseLayout>
+    <Fragment slot="head">
+        <title>Hortalink</title>
+    </Fragment>
+    <Fragment slot="body">
+        <div id="unsigned" hidden>
+            <Unsigned />
+        </div>
+
+        <div id="home" hidden>
+            <SignedHome />
+        </div>
+    </Fragment>
+    <script>
+        import Session from "@stores/Session";
+
+        const Unsigned = document.querySelector<HTMLDivElement>("#unsigned")
+        const Home = document.querySelector<HTMLDivElement>("#home")
+
+        const value = Session.get()
+        
+        if(value) {
+            isUnsigned(false)
+        } else {
+            Session.listen((v) => {
+                console.log(v)
+                isUnsigned(v === undefined)
+            })
+        }
+
+        function isUnsigned(unsigned: boolean) {
+            if(unsigned) {
+                Unsigned.hidden = false
+            } else {
+                Home.hidden = false
+            }
+        }
+    </script>
+</BaseLayout>
