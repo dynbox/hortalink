@@ -1,5 +1,7 @@
 ---
 import "@styles/global.scss";
+
+import ClientNavbar from "@components/ClientNavbar.astro";
 ---
 
 <head>
@@ -9,7 +11,8 @@ import "@styles/global.scss";
 </head>
 <body>
     <div id="site-container">
-        <slot name="body" />
+        <ClientNavbar />
+        <slot name="body">
     </div>
     <script>
         import Session from "@stores/Session";

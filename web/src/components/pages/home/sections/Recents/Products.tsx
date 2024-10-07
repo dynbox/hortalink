@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import Product from "@components/Product";
 import APIWrapper, { RequestAPIFrom } from "@HortalinkAPIWrapper";
 
+import PaginatedProducts from "@components/PaginatedProducts";
+
 export default function RecentProducts() {
     const api = new APIWrapper(RequestAPIFrom.Client)
     const [products, setProducts] = useState<ProductT[]>([])
@@ -21,14 +23,11 @@ export default function RecentProducts() {
     }, [])
 
     return (
-        <Products>
-            {
-                products.map((product, i) => {
-                    return (
-                        <Product product={product} key={`recent-${product.id}`} />
-                    )
-                })
-            }
-        </Products>
+        <PaginatedProducts
+            products={products}
+            setter={setProducts}
+            FetchMore={api.getRecentProducts}
+            slideSize={3}
+        />
     )
 }

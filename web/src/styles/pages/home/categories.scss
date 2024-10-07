@@ -19,6 +19,8 @@
     @include flex();
     gap: 2rem;
 
+    flex-wrap: wrap;
+
     .category {
         text-align: center;
 

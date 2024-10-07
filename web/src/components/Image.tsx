@@ -16,6 +16,6 @@ export default class MyImage extends React.Component<{ src: string, alt: string,
     };
 
     render = () => (
-        <img src={this.img ? this.img.src : undefined} width={this.props.width} height={this.props.height} alt={this.props.alt} />
+        <img hidden={!this.img} src={this.img ? this.img.src : undefined} width={this.props.width} height={this.props.height} alt={this.props.alt} />
     );
 }
