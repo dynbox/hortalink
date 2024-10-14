@@ -13,7 +13,7 @@ const Star = memo(() => (
 ))
 
 
-export default function Product(props: { product: Product }) {
+/*export default function Product(props: { product: Product }) {
     const productData = props.product
 
     return (
@@ -55,6 +55,43 @@ export default function Product(props: { product: Product }) {
                     <p>0,6km</p>
                 </div>
                 <p className="price"><span>R$ {productData.price}</span>/<span className="label">{productData.unit_quantity}{productData.unit}</span></p>
+            </div>
+        </a>
+    )
+}*/
+
+export default function ProductColumn(props: { product: Product }) {
+    const productData = props.product
+
+    return (
+        <a className="product" href={`/sellers/${productData.seller_id}/products/${productData.id}`}>
+            { productData.photo &&
+                <img 
+                    src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/products/${productData.id}/${productData.photo.replace("/", "⁄")}.jpg?size=256`}
+                    width={98}
+                    height={98}
+                    alt={`Foto do produto "${productData.product.name}"`}
+                />
+            }
+            <div className="product_data">
+                <h2>{productData.product.name}</h2>
+                <p>Distância: 0.00km</p>
+                <p>Valor por un: {productData.price}</p>
+                <div className="star">
+                    <Image
+                        src="/assets/star.svg"
+                        width={15}
+                        height={15}
+                        alt="Imagem de uma estrela"
+                    />
+                    <div>
+                        ({productData.rating_quantity})
+                    </div>
+                </div>
+                <p className="price">R$ {productData.price}</p>
+            </div>
+            <div className="seller_name">
+                <p>Vendido por: <span className="name">{productData.seller_id}</span></p>
             </div>
         </a>
     )

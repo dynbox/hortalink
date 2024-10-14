@@ -19,6 +19,7 @@ import ClientNavbar from "@components/ClientNavbar.astro";
         import APIWrapper, { RequestAPIFrom } from "@HortalinkAPIWrapper";
 
         const wrapper = new APIWrapper(RequestAPIFrom.Client)
+
         wrapper.getCurrentSession().then(data => {
             Session.set(data)
         }).catch(e => {

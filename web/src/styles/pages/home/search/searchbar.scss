@@ -6,42 +6,71 @@
     justify-content: center;
 }
 
-.searchbar_container {
-    @include flex();
-
+.search_global_container {
     width: 100%;
     max-width: 401px;
-    gap: 1.3rem;
 
     margin: auto;
-    margin-top: 1rem;
 
-    .input {
+    .searchbar_container {
         @include flex();
+        gap: 1.3rem;
+    
         width: 100%;
-        max-width: 311px;
-        
-        input[type=text] {
+        margin-top: 1rem;
+    
+        .input {
+            @include flex();
             width: 100%;
             max-width: 311px;
+            
+            input[type=text] {
+                width: 100%;
+                max-width: 311px;
+        
+                padding: 15px 16px;
+                border-radius: 13px 0 0 13px;
+                background-color: adjust-color(colors.$light_1, $alpha: -0.75);
+        
+                &::placeholder {
+                    font-weight: 600;
+                    color: colors.$mid_1;
+                }
+            }
     
-            padding: 15px 16px;
-            border-radius: 13px 0 0 13px;
-            background-color: adjust-color(colors.$light_1, $alpha: -0.75);
-    
-            &::placeholder {
-                font-weight: 600;
-                color: colors.$mid_1;
+            .search_icon {
+                @include flex();
+                
+                border-radius: 0 13px 13px 0;
+                background-color: adjust-color(colors.$light_1, $alpha: -0.75);
+                height: 46px;
+                padding: 0 15px;
             }
         }
+    }
+    
+    .results_selector {
+        @include flex();
+        align-items: start;
+        flex-direction: column;
 
-        .search_icon {
-            @include flex();
-            
-            border-radius: 0 13px 13px 0;
-            background-color: adjust-color(colors.$light_1, $alpha: -0.75);
-            height: 46px;
-            padding: 0 15px;
+        position: absolute;
+        background-color: #f2f2f2;
+
+        width: 100%;
+        max-width: 401px;
+
+        div {
+            width: 100%;
+
+            padding: 12px;
+            font-size: 0.9em;
+
+            border-radius: 8px;
+
+            &:hover {
+                background-color: adjust-color($color: #f2f2f2, $lightness: -10%);
+            }
         }
     }
 }
