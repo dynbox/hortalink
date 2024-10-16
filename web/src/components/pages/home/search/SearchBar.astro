@@ -2,6 +2,7 @@
 import "@styles/pages/home/search/searchbar.scss";
 
 import SearchBarResults from "./SearchBarResults";
+import FilterIcon from "./Filter";
 ---
 
 <section class="search_global_container">
@@ -17,7 +18,7 @@ import SearchBarResults from "./SearchBarResults";
                 />
             </div>
         </div>
-        <div class="icon">
+        <div class="icon nosearch">
             <img
                 src="/assets/bell.svg"
                 alt="Ícone de sino na cor verde. Clique para visualizar notificações."
@@ -25,7 +26,7 @@ import SearchBarResults from "./SearchBarResults";
                 height="28"
             />
         </div>
-        <div class="icon">
+        <div class="icon nosearch">
             <img
                 src="/assets/comments-home.svg"
                 alt="Ícone de comentários na cor verde. Clique para visualizar seus chats."
@@ -33,6 +34,7 @@ import SearchBarResults from "./SearchBarResults";
                 height="28"
             />
         </div>
+        <FilterIcon client:load />
     </section>
     <SearchBarResults client:only="react" />
 </section>

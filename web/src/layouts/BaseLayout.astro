@@ -2,6 +2,12 @@
 import "@styles/global.scss";
 
 import ClientNavbar from "@components/ClientNavbar.astro";
+
+interface Props {
+    no_nav?: boolean
+}
+
+const nonav = Astro.props?.no_nav
 ---
 
 <head>
@@ -11,7 +17,9 @@ import ClientNavbar from "@components/ClientNavbar.astro";
 </head>
 <body>
     <div id="site-container">
-        <ClientNavbar />
+        {
+            !nonav && <ClientNavbar />
+        }
         <slot name="body">
     </div>
     <script>

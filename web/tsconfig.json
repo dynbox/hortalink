@@ -13,7 +13,8 @@
             "@layouts/*": ["src/layouts/*"],
             "@stores/*": ["src/stores/*"],
             "@styles/*": ["src/styles/*"],
-            "@HortalinkAPIWrapper": ["src/API/Wrapper"]
+            "@HortalinkAPIWrapper": ["src/API/Wrapper"],
+            "@utils/*": ["src/utils/*"]
         }
     }
 }

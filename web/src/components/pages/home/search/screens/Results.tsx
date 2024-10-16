@@ -19,6 +19,12 @@ enum ResultType {
 function ProductResults(props: { products: ProductT[] }) {
     const products = props.products
 
+    if(!products.length) {
+        return (
+            <p className="noresult">Nenhum resultado.</p>
+        )
+    }
+
     return (
         <ProductsColumn>
             {
@@ -44,6 +50,7 @@ export default function Results() {
 
     useEffect(() => {
         document.addEventListener("keydown", (e) => {
+            if(!e.key) return;
             const key = e.key.toLowerCase()
 
             if(key === "enter") {
@@ -55,12 +62,6 @@ export default function Results() {
             }
         })
     }, [])
-
-    if(!products.length) {
-        return (
-            <></>
-        )
-    }
 
     return (
         <>

@@ -7,13 +7,19 @@ export default function SearchBarResults() {
     const [isOnSelect, setIsOnSelect] = useState<boolean>(false)
 
     function updateFilter(product_type: number) {
-        console.log(product_type)
         const currentValue = filter.get() || { page: 1, per_page: 10 }
         const newValue = { ...currentValue, product_id: product_type }
 
         filter.set(newValue)
         screen.set(Screen.Results)
         setIsOnSelect(true)
+    }
+
+    function removeProductId() {
+        const currentValue = filter.get() || { page: 1, per_page: 10 }
+        delete currentValue.product_id
+
+        filter.set(currentValue)
     }
 
     useEffect(() => {
@@ -29,9 +35,13 @@ export default function SearchBarResults() {
             }
         })
 
-        product_names.listen(() => {
+        product_names.listen((v) => {
             setIsOnSelect(false)
-        })
+
+            if(!v?.length) {
+                removeProductId()
+            }
+        }) // only SearchBar.astro will change this store, so, if it is changed, we can assume that a new search was made
 
         window.addEventListener("keydown", (e) => {
             const key = e.key.toLowerCase()

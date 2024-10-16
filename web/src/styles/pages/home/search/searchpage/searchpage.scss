@@ -38,3 +38,11 @@
         margin: 0.8rem 0 1.2rem 0;
     }
 }
+
+.noresult {
+    text-align: center;
+    color: scale-color($color: colors.$mid_1, $alpha: -60%);
+
+    font-weight: bold;
+    font-size: 1.05em;
+}

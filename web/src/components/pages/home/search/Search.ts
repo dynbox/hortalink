@@ -9,12 +9,13 @@ interface ProductSelector {
     product_id: number
 }
 enum Screen {
-    Menu = 1,
+    Home = 1,
+    Menu,
     Results
 }
 
 const filter = atom<ProductFilter>()
-const screen = atom<Screen>(Screen.Menu)
+const screen = atom<Screen>(Screen.Home)
 const product_names = atom<ProductSelector[]>([])
 const products_result = atom<Product[]>([])
 

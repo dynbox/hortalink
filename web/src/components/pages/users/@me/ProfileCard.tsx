@@ -10,7 +10,7 @@ export default function ProfileCard() {
         <div className="profile_card">
             <div className="img_container">
                 <img
-                    src={`${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/resources/products/cebola.jpg?size=256`}
+                    src={`${sessionData ? `${import.meta.env.PUBLIC_FRONTEND_CDN_URL}/avatars/${sessionData.profile.id}/${sessionData.profile.avatar}.png?size=128` : ``}`}
                     width={113}
                     height={113}
                     alt="Sua foto de perfil"

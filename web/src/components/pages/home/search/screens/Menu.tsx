@@ -19,11 +19,19 @@ export default function Menu() {
             setProducts(data)
         }
 
+        filter.listen(async v => {
+            const newData = await api.getProducts(v)
+            setProducts(newData)
+        })
+
         wrap()
     }, [])
 
     return (
         <div className="search_products_container">
+            {
+                products?.length === 0 && <p className="noresult" style={{ marginTop: "2.5rem" }}>Nenhum resultado.</p>
+            }
             <Products>
                 {
                     products?.map((product) => (
