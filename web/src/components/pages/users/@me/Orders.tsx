@@ -22,7 +22,7 @@ export default function Orders() {
                                 <p>Ordem #{order.id}</p>
                                 <p className="seller_name">Mariazinha</p>
                                 <p className="status_ok">Entregue</p>
-                                <p className="price">Valor total: <span className="price_value">R$ 11,99</span></p>
+                                <p className="price">Valor total: <span className="price_value">R$ 11,00</span></p>
                             </div>
                         </div>
                     ))

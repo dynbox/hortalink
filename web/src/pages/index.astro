@@ -23,6 +23,7 @@ import SignedHome from "@components/pages/home/SignedHome.astro";
     <script>
         import Session from "@stores/Session";
 
+        const navbar = document.querySelector<HTMLDivElement>(".navbar_container")
         const Unsigned = document.querySelector<HTMLDivElement>("#unsigned")
         const Home = document.querySelector<HTMLDivElement>("#home")
 
@@ -32,7 +33,6 @@ import SignedHome from "@components/pages/home/SignedHome.astro";
             isUnsigned(false)
         } else {
             Session.listen((v) => {
-                console.log(v)
                 isUnsigned(v === undefined)
             })
         }
@@ -43,6 +43,8 @@ import SignedHome from "@components/pages/home/SignedHome.astro";
             } else {
                 Home.hidden = false
             }
+
+            navbar.hidden = unsigned
         }
     </script>
 </BaseLayout>

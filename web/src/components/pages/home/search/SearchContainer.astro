@@ -26,7 +26,6 @@ import { Screen } from "./Search";
 
     screen.listen(v => {
         screens.forEach(screen => {
-            console.log(screen.dataset.screen, v)
             screen.hidden = !(v == (screen.dataset.screen as unknown) as Screen)
         })
     })

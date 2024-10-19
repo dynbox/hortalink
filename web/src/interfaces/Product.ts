@@ -17,6 +17,35 @@ interface Product {
     seller_id: number
 }
 
+interface DetailedProduct {
+    product: {
+        id: number,
+        product: {
+            id: number,
+            name: string
+        },
+        photos: string[],
+        photo?: string,
+        quantity: number,
+        price: number,
+        rating: number,
+        rating_quantity: number,
+        description: string,
+        unit: string,
+        unit_quantity: number
+    
+        seller_id: number
+    },
+    seller: ProductSeller,
+    schedules: number[]
+}
+
+interface ProductSeller {
+    id: number,
+    name: string,
+    avatar: string
+}
+
 interface ProductFilter {
     max_price?: number
     min_price?: number
@@ -40,8 +69,26 @@ interface ProductFullTextSearch {
     category_id: number
 }
 
+interface Rating {
+    id: number;
+    created_at: number;
+    was_edited: boolean;
+    rating: number;
+    content: string;
+    user: ProductSeller;
+}
+  
+interface FullRating {
+    rating: number;
+    ratings: Rating[];
+}
+
 export type {
     Product,
     ProductFilter,
-    ProductFullTextSearch
+    ProductFullTextSearch,
+    DetailedProduct,
+    ProductSeller,
+    Rating,
+    FullRating
 }
